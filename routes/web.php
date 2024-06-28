@@ -36,3 +36,7 @@ Route::post('/process', [CustomerController::class, 'process']);
 Route::get('/customer/forms', [CustomerController::class, 'forms']); 
 Route::get('/user/forms', [UserController::class, 'forms']); 
 
+//view dashboard 
+Route::get('/dashboard/customer', [CustomerController::class, 'dashboard']); 
+Route::get('/dashboard/user', [UserController::class, 'dashboard']); 
+

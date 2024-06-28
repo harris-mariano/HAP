@@ -92,5 +92,19 @@ class UserController extends Controller
         return view('authentication.verify', ['user' => $user]); 
     }
 
+    public function dashboard () {
+
+        return view('user.dashboard', [
+            'name' => 'Kali Landicho', 
+            'position' => 'Human Resource Officer',
+            'company' => 'adish International Corporation', 
+            'allTickets' => '20',
+            'openTickets' => '5',
+            'inProgressTickets' => '5',
+            'resolvedTickets' => '5',
+            'closedTickets' => '5'
+        ]);
+    }
+
 
 }

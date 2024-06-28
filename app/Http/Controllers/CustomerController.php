@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Mail\UserMail;
 use App\Models\Customers;
+use App\Models\Article;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
@@ -68,7 +70,7 @@ class CustomerController extends Controller
             "password" => 'required'
         ]); 
 
-        //for reset password
+        // //for reset password
         if ($validated['password'] === ($this->oneTimePassword)) {
             $request->session()->regenerate();
             return view('authentication.verify', ['email' => $validated['email']]);
@@ -83,6 +85,20 @@ class CustomerController extends Controller
         return back()->withErrors(['email' => 'The email and password do not match.'])->onlyInput('email'); 
     }
 
+    public function dashboard () {
 
+        $articles = Article::simplePaginate(15);
+
+        return view('customer.dashboard', [
+            'name' => 'Juan Dela Cruz', 
+            'position' => 'Human Resource',
+            'company' => 'Jollibee', 
+            'allTickets' => '12',
+            'openTickets' => '6',
+            'inProgressTickets' => '3',
+            'resolvedTickets' => '2',
+            'closedTickets' => '1', 
+            'articles' => $articles]);
+    }
 }
 

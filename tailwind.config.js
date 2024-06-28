@@ -14,7 +14,12 @@ module.exports = {
       },
       colors: {
         'custom-gray': '#FCFCFC',
-        'custom-orange': '#E88504', 
+        'custom-orange': '#E88504',
+        'all-tickets': '#FB923C',
+        'open': '#EAB308',
+        'in-progress' : '#3B82F6',
+        'resolved': '#22C55E', 
+        'closed': '#EF4444'
       },
     },
   },
