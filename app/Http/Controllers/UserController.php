@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\User; 
 use App\Models\Tickets; 
 use App\Models\Attachments; 
+use App\Models\History; 
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -128,8 +129,8 @@ class UserController extends Controller
 
     public function add (Request $request) {
         $validated = $request->validate([
-            "department" => ['required'],
-            "employee" => ['required'],
+            "department_id" => ['required'],
+            "employee_id" => ['required'],
             "title" => ['required'],
             "description" => ['required'],
             "attachment" => [ 'nullable|file|mimes:jpg,jpeg,png,gif,mp4,mov,pdf,docx|max:50000'],
@@ -152,8 +153,17 @@ class UserController extends Controller
                 $attachment->save();
             }
         }
-        return view('fileticket'); 
+
+        $history = new History();
+        $history->ticket_id = $ticket->id;
+        $history->status_id = 1;
+        $history->save(); 
+
+        return view('fileticket', [
+            'id' => '1',
+            'name' => 'Juan Dela Cruz', 
+            'position' => 'Human Resource',
+            'company' => 'Jollibee']); 
     }
-
-
+    
 }

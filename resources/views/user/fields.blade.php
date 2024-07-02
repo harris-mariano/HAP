@@ -58,8 +58,8 @@
                 <label for="department" class="text-sm">Department</label>
                 <select name="department" id="department" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
                     <option value="" {{ old('department') == "" ? 'selected' : '' }}>Select the department</option>
-                    <option value="HRAD" {{ old('department') == "HRAD" ? 'selected' : '' }}>HRAD</option>
-                    <option value="Team Banana" {{ old('department') == "Team Banana" ? 'selected' : '' }}>Team Banana</option>
+                    <option value="1" {{ old('department') == "1" ? 'selected' : '' }}>HRAD</option>
+                    <option value="2" {{ old('department') == "2" ? 'selected' : '' }}>Team Banana</option>
                 </select>
                 @error('department')
                 <p class="text-xs text-red-700 mt-2">{{$message}}</p>

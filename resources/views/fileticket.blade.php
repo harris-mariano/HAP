@@ -1,4 +1,4 @@
-@include('partials.header', ['title' => 'adish HAP | User Dashboard'])
+@include('partials.header', ['title' => 'adish HAP | File Ticket'])
 @include('partials.menu')
 <div class="flex flex-row gap-x-10">
     <div class="flex-none">
@@ -20,10 +20,10 @@
             </div>
             <div class="flex flex-col">
               <label for="department" class="text-sm font-medium">Assign to Department:</label>
-              <select name="department" id="department" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
+              <select name="department_id" id="department" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
                   <option value="" {{ old('department') == "" ? 'selected' : '' }}>Select the department</option>
-                  <option value="HRAD" {{ old('department') == "HRAD" ? 'selected' : '' }}>HRAD</option>
-                  <option value="Team Banana" {{ old('department') == "Team Banana" ? 'selected' : '' }}>Team Banana</option>
+                  <option value="1" {{ old('department') == "1" ? 'selected' : '' }}>HRAD</option>
+                  <option value="2" {{ old('department') == "2" ? 'selected' : '' }}>Team Banana</option>
               </select>
               @error('department')
               <p class="text-xs text-red-700 mt-2">{{$message}}</p>
@@ -31,7 +31,7 @@
             </div>
             <div class="flex flex-col">
               <label for="employee" class="text-sm font-medium">Assign to Employee:</label>
-              <select name="employee" id="employee" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
+              <select name="employee_id" id="employee" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
                   <option value="" {{ old('employee') == "" ? 'selected' : '' }}>Select the employee</option>
               </select>
               @error('employee')
