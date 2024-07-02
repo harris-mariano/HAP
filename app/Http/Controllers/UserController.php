@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 use App\Models\User; 
+use App\Models\Tickets; 
+use App\Models\Attachments; 
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserMail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {   
@@ -104,6 +107,52 @@ class UserController extends Controller
             'resolvedTickets' => '5',
             'closedTickets' => '5'
         ]);
+    }
+
+    public function getUsers (Request $request) {
+        $department = $request->input('department');
+        $users = User::where('department', $department)->get();
+        return response()->json($users);
+    }
+
+    public function ticket () {
+        $users = User::all(); 
+
+        return view('fileticket', [
+            'id' => '1',
+            'name' => 'Juan Dela Cruz', 
+            'position' => 'Human Resource',
+            'company' => 'Jollibee',
+            'users' => $users ]);
+    }
+
+    public function add (Request $request) {
+        $validated = $request->validate([
+            "department" => ['required'],
+            "employee" => ['required'],
+            "title" => ['required'],
+            "description" => ['required'],
+            "attachment" => [ 'nullable|file|mimes:jpg,jpeg,png,gif,mp4,mov,pdf,docx|max:50000'],
+        ]);
+
+        $validated['priority_id'] = 1;
+        $validated['user_id'] = 1;
+    
+        $ticket = new Tickets();
+        $ticket->fill($validated);
+        $ticket->save();
+
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('attachments', 'public');
+
+                $attachment = new Attachments();
+                $attachment->ticket_id = $ticket->id; 
+                $attachment->file_name = Storage::url($path);
+                $attachment->save();
+            }
+        }
+        return view('fileticket'); 
     }
 
 

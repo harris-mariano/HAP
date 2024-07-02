@@ -40,3 +40,10 @@ Route::get('/user/forms', [UserController::class, 'forms']);
 Route::get('/dashboard/customer', [CustomerController::class, 'dashboard']); 
 Route::get('/dashboard/user', [UserController::class, 'dashboard']); 
 
+//route to get users by department
+Route::get('department/users', [UserController::class, 'getUsers'])->name('get.users');
+
+Route::get('/file/ticket', [UserController::class, 'ticket']); 
+Route::post('/add/ticket', [UserController::class, 'add']); 
+
+
