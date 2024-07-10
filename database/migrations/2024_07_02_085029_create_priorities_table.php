@@ -12,18 +12,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('priority', function (Blueprint $table) {
+        Schema::create('priorities', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->string('category');
         });
 
-        DB::table('priority')->insert([
+        DB::table('priorities')->insert([
             ['id' => 1, 'category' => 'Required'],
-            ['id' => 2, 'category' => 'New'],
-            ['id' => 3, 'category' => 'In Progress'],
-            ['id' => 4, 'category' => 'Solved'],
-            ['id' => 5, 'category' => 'Closed'],
+            ['id' => 2, 'category' => 'Low Priority'],
+            ['id' => 3, 'category' => 'Medium Priority'],
+            ['id' => 4, 'category' => 'High Priority'],
         ]);
     }
 
@@ -32,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('priority');
+        Schema::dropIfExists('priorities');
     }
 };

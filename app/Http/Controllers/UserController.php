@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 use App\Models\User; 
-use App\Models\Tickets; 
-use App\Models\Attachments; 
-use App\Models\History; 
+use App\Models\Ticket; 
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserMail;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {   
@@ -68,102 +67,117 @@ class UserController extends Controller
         return view('authentication.login'); 
     } 
 
-    public function process (Request $request) {
-
-        $validated = $request->validate([
-            "email" => ['required', 'email'], 
-            "password" => 'required'
-        ]); 
-
-        //for reset password
-        if ($validated['password'] === ($this->oneTimePassword)) {
-            $request->session()->regenerate();
-            return view('authentication.verify', ['email' => $validated['email'], ]);
-        }
-
-        //for superuser
-        else if (auth()->attempt($validated)){
-            $request->session()->regenerate();
-            return view ('user.fields', ['password' => $this->oneTimePassword]); 
-        }
-
-        return back()->withErrors(['email' => 'The email and password do not match.'])->onlyInput('email'); 
-    }
-
-    public function view () {
-        $user = Auth::user();
-
-        return view('authentication.verify', ['user' => $user]); 
-    }
-
+    
     public function dashboard () {
+        $userId = Auth::guard('user')->id();
+
+        $user = User::find($userId);
+        $departmentId = $user->department->id; 
+        $departmentName= $user->department->name;
+
+        $userTickets = Ticket::where('employee_id', $userId)->count(); 
+
+        $userNew= Ticket::where('employee_id', $userId)
+                             ->whereHas('histories', function (Builder $query) {
+                                 $query->where('status_id', 1); 
+                             })
+                             ->count();
+        $userInProgress = Ticket::where('employee_id', $userId)
+                             ->whereHas('histories', function (Builder $query) {
+                                 $query->where('status_id', 2); 
+                             })
+                             ->count();
+        $userResolved = Ticket::where('employee_id', $userId)
+                             ->whereHas('histories', function (Builder $query) {
+                                 $query->where('status_id', 3); 
+                             })
+                             ->count();
+        $userClosed = Ticket::where('employee_id', $userId)
+                             ->whereHas('histories', function (Builder $query) {
+                                 $query->where('status_id', 4); 
+                             })
+                             ->count();
+
+        $userRequired = Ticket::where('employee_id', $userId)
+                            -> where ('priority_id', 1)
+                            ->count(); 
+        $userLow = Ticket::where('employee_id', $userId)
+                            -> where ('priority_id', 2)
+                            ->count(); 
+        $userMedium = Ticket::where('employee_id', $userId)
+                            -> where ('priority_id', 3)
+                            ->count(); 
+        $userHigh = Ticket::where('employee_id', $userId)
+                            -> where ('priority_id', 4)
+                            ->count(); 
+
+        $quarterOne = Ticket::where('employee_id', $userId)
+                            ->whereMonth('created_at', '>=', 1)
+                            ->whereMonth('created_at', '<=', 3)
+                            ->count();
+
+        $quarterTwo = Ticket::where('employee_id', $userId)
+                            ->whereMonth('created_at', '>=', 4)
+                            ->whereMonth('created_at', '<=', 6)
+                            ->count();
+        
+        $quarterThree = Ticket::where('employee_id', $userId)
+                            ->whereMonth('created_at', '>=', 7)
+                            ->whereMonth('created_at', '<=', 9)
+                            ->count();
+        
+        $quarterFour = Ticket::where('employee_id', $userId)
+                            ->whereMonth('created_at', '>=', 10)
+                            ->whereMonth('created_at', '<=', 12)
+                            ->count();
+        
+        $departmentOne = Ticket::where('department_id', $departmentId)
+                            ->whereMonth('created_at', '>=', 1)
+                            ->whereMonth('created_at', '<=', 3)
+                            ->count();
+        
+        $departmentTwo = Ticket::where('department_id', $departmentId)
+                            ->whereMonth('created_at', '>=', 4)
+                            ->whereMonth('created_at', '<=', 6)
+                            ->count();
+
+        $departmentThree = Ticket::where('department_id', $departmentId)
+                            ->whereMonth('created_at', '>=', 7)
+                            ->whereMonth('created_at', '<=', 9)
+                            ->count();
+                            
+        $departmentFour = Ticket::where('department_id', $departmentId)
+                            ->whereMonth('created_at', '>=', 10)
+                            ->whereMonth('created_at', '<=', 12)
+                            ->count();
+        
+        
 
         return view('user.dashboard', [
-            'name' => 'Kali Landicho', 
-            'position' => 'Human Resource Officer',
-            'company' => 'adish International Corporation', 
-            'allTickets' => '20',
-            'openTickets' => '5',
-            'inProgressTickets' => '5',
-            'resolvedTickets' => '5',
-            'closedTickets' => '5'
-        ]);
+            'userTickets' => $userTickets,
+            'userNew' => $userNew,
+            'userInProgress' => $userInProgress,
+            'userResolved' => $userResolved,
+            'userClosed' => $userClosed,
+            'userRequired' => $userRequired,
+            'userLow' => $userLow, 
+            'userMedium' => $userMedium,
+            'userHigh' => $userHigh, 
+            'quarterOne' => $quarterOne,
+            'quarterTwo' => $quarterTwo,
+            'quarterThree' => $quarterThree,
+            'quarterFour' => $quarterFour, 
+            'departmentName' => $departmentName,
+            'departmentOne' => $departmentOne,
+            'departmentTwo' => $departmentTwo,
+            'departmentThree' => $departmentThree,
+            'departmentFour' => $departmentFour]);
     }
 
     public function getUsers (Request $request) {
         $department = $request->input('department');
         $users = User::where('department', $department)->get();
         return response()->json($users);
-    }
-
-    public function ticket () {
-        $users = User::all(); 
-
-        return view('fileticket', [
-            'id' => '1',
-            'name' => 'Juan Dela Cruz', 
-            'position' => 'Human Resource',
-            'company' => 'Jollibee',
-            'users' => $users ]);
-    }
-
-    public function add (Request $request) {
-        $validated = $request->validate([
-            "department_id" => ['required'],
-            "employee_id" => ['required'],
-            "title" => ['required'],
-            "description" => ['required'],
-            "attachment" => [ 'nullable|file|mimes:jpg,jpeg,png,gif,mp4,mov,pdf,docx|max:50000'],
-        ]);
-
-        $validated['priority_id'] = 1;
-        $validated['user_id'] = 1;
-    
-        $ticket = new Tickets();
-        $ticket->fill($validated);
-        $ticket->save();
-
-        if ($request->hasFile('attachments')) {
-            foreach ($request->file('attachments') as $file) {
-                $path = $file->store('attachments', 'public');
-
-                $attachment = new Attachments();
-                $attachment->ticket_id = $ticket->id; 
-                $attachment->file_name = Storage::url($path);
-                $attachment->save();
-            }
-        }
-
-        $history = new History();
-        $history->ticket_id = $ticket->id;
-        $history->status_id = 1;
-        $history->save(); 
-
-        return view('fileticket', [
-            'id' => '1',
-            'name' => 'Juan Dela Cruz', 
-            'position' => 'Human Resource',
-            'company' => 'Jollibee']); 
     }
     
 }

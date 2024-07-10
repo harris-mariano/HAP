@@ -30,11 +30,21 @@
       popover.classList.add('invisible'); 
       popover.classList.remove('opacity-100'); 
     });
-  });
+
+  const userTickets = {{$userTickets}}
+  const userNew = {{$userNew}}
+  const userInProgress = {{$userInProgress}}
+  const userResolved = {{$userResolved}}
+  const userClosed = {{$userClosed}}
+
+  const newPercentage = parseFloat((userNew / userTickets) * 100).toFixed(2); 
+  const progressPercentage = parseFloat((userInProgress / userTickets) * 100).toFixed(2); 
+  const resolvedPercentage = parseFloat((userResolved / userTickets) * 100).toFixed(2); 
+  const closedPercentage = parseFloat((userClosed /userTickets) * 100).toFixed(2);
 
    const getRadialChartOptions = () => {
   return {
-    series: [25, 25, 25, 25],
+    series: [newPercentage,progressPercentage,resolvedPercentage,closedPercentage],
     colors: ["rgba(234, 179, 8, 0.8)",
             "rgba(59, 130, 246, 0.8)",   
             "rgba(34, 197, 94, 0.8)",    
@@ -88,11 +98,24 @@ if (document.getElementById("radial-chart") && typeof ApexCharts !== 'undefined'
   const chart = new ApexCharts(document.querySelector("#radial-chart"), getRadialChartOptions());
   chart.render();
 }
+else {
+  console.error("Chart element or ApexCharts library not found.");
+}
+
+const userRequired = {{$userRequired}}
+const userLow = {{$userLow}}
+const userMedium = {{$userMedium}}
+const userHigh = {{$userHigh}}
+
+const requiredPercentage = parseFloat(userRequired / userTickets); 
+const lowPercentage = parseFloat(userLow / userTickets); 
+const mediumPercentage = parseFloat(userMedium / userTickets); 
+const highPercentage = parseFloat(userHigh /userTickets);
 
 const getDonutChartOptions = () => {
   return {
-    series: [50, 25, 25],
-    colors: ["#FB923C", "#FCA863", "#FEBE82"],
+    series: [requiredPercentage, lowPercentage, mediumPercentage, highPercentage],
+    colors: ["#FECB9D", "#FEBE82", "#FCA863", "#FB923C"],
     chart: {
       height: 320,
       width: "100%",
@@ -117,7 +140,7 @@ const getDonutChartOptions = () => {
               fontFamily: "Inter, sans-serif",
               offsetY: -20,
               formatter: function (value) {
-                return value + "%"
+                return (value * 100).toFixed(2) + "%";
               },
             },
           },
@@ -130,7 +153,7 @@ const getDonutChartOptions = () => {
         top: -2,
       },
     },
-    labels: ["High Priority", "Medium Priority", "Low Priority"],
+    labels: ["Required", "Low Priority", "Medium Priority", "High Priority"],
     dataLabels: {
       enabled: false,
     },
@@ -141,14 +164,14 @@ const getDonutChartOptions = () => {
     yaxis: {
       labels: {
         formatter: function (value) {
-          return value + "%"
+          return (value * 100).toFixed(2) + "%";
         },
       },
     },
     xaxis: {
       labels: {
         formatter: function (value) {
-          return value  + "%"
+          return (value * 100).toFixed(2) + "%";
         },
       },
       axisTicks: {
@@ -166,17 +189,28 @@ if (document.getElementById("donut-chart") && typeof ApexCharts !== 'undefined')
   chart.render();
 }
 
+const quarterOne = {{$quarterOne}}
+const quarterTwo = {{$quarterTwo}}
+const quarterThree = {{$quarterThree}}
+const quarterFour = {{$quarterFour}}
+
+const departmentOne = {{$departmentOne}}
+const departmentTwo = {{$departmentTwo}}
+const departmentThree = {{$departmentThree}}
+const departmentFour = {{$departmentFour}}
+
+const departmentName = "{{$departmentName}}"
 
 const barChartOptions = {
   series: [
     {
       name: "My Tickets",
       color: "#E88504",
-      data: ["20", "25", "15", "35", "10", "20"],
+      data: [quarterOne, quarterTwo, quarterThree, quarterFour],
     },
     {
-      name: "HRAD Tickets",
-      data: ["50", "50", "35", "50", "20", "40"],
+      name: departmentName + " " + "Tickets", 
+      data: [departmentOne, departmentTwo, departmentThree, departmentFour],
       color: "#959595",
     }
   ],
@@ -230,7 +264,7 @@ const barChartOptions = {
         return value
       }
     },
-    categories: ["January", "February", "March", "April", "May", "June"],
+    categories: ["Q1", "Q2", "Q3","Q4"],
     axisTicks: {
       show: false,
     },
@@ -265,6 +299,6 @@ if(document.getElementById("bar-chart") && typeof ApexCharts !== 'undefined') {
   const chart = new ApexCharts(document.getElementById("bar-chart"), barChartOptions);
   chart.render();
 }
-
+});
 </script>
 @include('partials.footer')

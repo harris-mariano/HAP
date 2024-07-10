@@ -19,7 +19,11 @@ module.exports = {
         'open': '#EAB308',
         'in-progress' : '#3B82F6',
         'resolved': '#22C55E', 
-        'closed': '#EF4444'
+        'closed': '#EF4444', 
+        'required': "#FECB9D",
+        'low': '#FEBE82',
+        'medium': '#FCA863',
+        'high' :'#FB923C',
       },
     },
   },

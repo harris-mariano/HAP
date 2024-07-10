@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,35 +18,48 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('authentication.login');
-});
+// Route::get('/', function () {
+//     return view('authentication.login');
+// });
 
 //email notif
 Route::get('/mail/send', [CustomerController::class, 'index']);
 
-//post data to database
-Route::post('/customer/register', [CustomerController::class, 'register']); 
-
-//post data to database
-Route::post('/user/register', [UserController::class, 'register']); 
-
-//login as superuser/customer/user
-Route::post('/process', [UserController::class, 'process']); 
-Route::post('/process', [CustomerController::class, 'process']); 
-
-//get both forms
+//registration 
 Route::get('/customer/forms', [CustomerController::class, 'forms']); 
 Route::get('/user/forms', [UserController::class, 'forms']); 
+Route::post('/user/register', [UserController::class, 'register']); 
+Route::post('/customer/register', [CustomerController::class, 'register']); 
 
-//view dashboard 
-Route::get('/dashboard/customer', [CustomerController::class, 'dashboard']); 
-Route::get('/dashboard/user', [UserController::class, 'dashboard']); 
+//login
+Route::get('/login/user', [LoginController::class, 'showUserLogin'])->name('login.user');
+Route::get('/', [LoginController::class, 'showCustomerLogin'])->name('login.customer');
+Route::post('/login/user', [LoginController::class, 'userLogin']);
+Route::post('/login/customer', [LoginController::class, 'customerLogin'])->name('store.customer');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-//route to get users by department
+//route to get users by department for ajax
 Route::get('department/users', [UserController::class, 'getUsers'])->name('get.users');
 
-Route::get('/file/ticket', [UserController::class, 'ticket']); 
-Route::post('/add/ticket', [UserController::class, 'add']); 
+//view dashboard 
+Route::middleware('auth:customer')->group(function () {
+    Route::get('/dashboard/customer', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
+});
+Route::middleware('auth:user')->group(function () {
+    Route::get('/dashboard/user', [UserController::class, 'dashboard'])->name('user.dashboard');
+});
+
+//tickets
+Route::resource('tickets', TicketController::class)->only([
+    'index', 'create', 'store', 'show', 'update'
+]);
+
+//to view attachment
+Route::get('/attachments/{id}', [TicketController::class, 'attachment'])->name('show.attachment');
+
+//to add comment
+Route::post('/add/comment/{id}', [CommentController::class, 'store'])->name('comment.create'); 
+
+
 
 

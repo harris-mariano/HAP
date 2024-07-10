@@ -7,12 +7,17 @@
     <div class="sm:ml-64 w-full flex flex-row gap-x-5 bg-custom-gray p-5">
       <div class="w-full bg-white p-5 rounded-lg shadow">
           <p class="text-sm font-semibold">File a Ticket</p>
-          <form action="/add/ticket" method="POST" enctype="multipart/form-data">
+          <form action="{{ route('tickets.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
           <div class="grid grid-cols-2 gap-x-24 px-2 py-3">
             <div class="flex flex-col">
+              @auth('user')
               <label for="name" class="text-sm font-medium">Name:</label>
-              <input type="text" name="name" id="name" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm" value="{{$name}}" readonly>
+              <input type="text" name="name" id="name" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm" value="{{$user->first_name}} {{$user->last_name}} " readonly>
+              @elseauth('customer')
+              <label for="name" class="text-sm font-medium">Name:</label>
+              <input type="text" name="name" id="name" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm" value="{{$customer->first_name}} {{$customer->last_name}} " readonly>
+              @endauth
             </div>
             <div class="flex flex-col">
               <label for="date" class="text-sm font-medium">Date Filed:</label>

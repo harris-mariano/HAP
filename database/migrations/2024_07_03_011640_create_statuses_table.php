@@ -12,13 +12,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('status', function (Blueprint $table) {
+        Schema::create('statuses', function (Blueprint $table) {
             $table->id();
             $table->string('category');
             $table->timestamps();
         });
 
-        DB::table('status')->insert([
+        DB::table('statuses')->insert([
             ['id' => 1, 'category' => 'New'],
             ['id' => 2, 'category' => 'In Progress'],
             ['id' => 3, 'category' => 'Resolved'],
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('status');
+        Schema::dropIfExists('statuses');
     }
 };

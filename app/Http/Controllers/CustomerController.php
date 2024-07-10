@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Mail\UserMail;
-use App\Models\Customers;
+use App\Models\Customer;
 use App\Models\Article;
+use App\Models\Ticket;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 
 class CustomerController extends Controller
 {
@@ -47,7 +49,7 @@ class CustomerController extends Controller
             $hashedPassword = Hash::make($validated['password']);
             $validated['password'] = $hashedPassword;
         
-            $customer = new Customers();
+            $customer = new Customer();
             $customer->fill($validated);
         
             if ($request->hasFile('profile_picture')) {
@@ -64,40 +66,40 @@ class CustomerController extends Controller
             return view('authentication.login'); 
     } 
 
-    public function process (Request $request) {
-        $validated = $request->validate([
-            "email" => ['required', 'email'], 
-            "password" => 'required'
-        ]); 
-
-        // //for reset password
-        if ($validated['password'] === ($this->oneTimePassword)) {
-            $request->session()->regenerate();
-            return view('authentication.verify', ['email' => $validated['email']]);
-        }
-
-        //for superuser
-        else if (auth()->attempt($validated)){
-            $request->session()->regenerate();
-            return view ('user.fields', ['password' => $this->oneTimePassword]); 
-        }
-
-        return back()->withErrors(['email' => 'The email and password do not match.'])->onlyInput('email'); 
-    }
 
     public function dashboard () {
+        $customerId = Auth::guard('customer')->id();
+
+        $customerTickets = Ticket::where('customer_id', $customerId)->count(); 
+        $customerNew= Ticket::where('customer_id', $customerId)
+                             ->whereHas('histories', function (Builder $query) {
+                                 $query->where('status_id', 1); 
+                             })
+                             ->count();
+        $customerInProgress = Ticket::where('customer_id', $customerId)
+                             ->whereHas('histories', function (Builder $query) {
+                                 $query->where('status_id', 2); 
+                             })
+                             ->count();
+        $customerResolved = Ticket::where('customer_id', $customerId)
+                             ->whereHas('histories', function (Builder $query) {
+                                 $query->where('status_id', 3); 
+                             })
+                             ->count();
+        $customerClosed = Ticket::where('customer_id', $customerId)
+                             ->whereHas('histories', function (Builder $query) {
+                                 $query->where('status_id', 4); 
+                             })
+                             ->count();
 
         $articles = Article::simplePaginate(15);
 
         return view('customer.dashboard', [
-            'name' => 'Juan Dela Cruz', 
-            'position' => 'Human Resource',
-            'company' => 'Jollibee', 
-            'allTickets' => '12',
-            'openTickets' => '6',
-            'inProgressTickets' => '3',
-            'resolvedTickets' => '2',
-            'closedTickets' => '1', 
+            'customerTickets' => $customerTickets,
+            'customerNew' => $customerNew,
+            'customerInProgress' => $customerInProgress,
+            'customerResolved' => $customerResolved,
+            'customerClosed' => $customerClosed, 
             'articles' => $articles]);
     }
 }

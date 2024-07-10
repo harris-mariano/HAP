@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('ticket', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('status_id');
-            $table->timestamps();
+        Schema::table('users', function (Blueprint $table) {
+            $table->unsignedBigInteger('department_id')->change();
+
+            $table->foreign('department_id')->references('id')->on('departments')->onDelete('cascade');
         });
     }
 

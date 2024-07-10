@@ -23,9 +23,21 @@
     });
   });
 
+
+  const customerTickets = {{$customerTickets}}
+  const customerNew = {{$customerNew}}
+  const customerInProgress = {{$customerInProgress}}
+  const customerResolved = {{$customerResolved}}
+  const customerClosed = {{$customerClosed}}
+
+  const newPercentage = parseFloat((customerNew / customerTickets) * 100).toFixed(2); 
+  const progressPercentage = parseFloat((customerInProgress / customerTickets) * 100).toFixed(2); 
+  const resolvedPercentage = parseFloat((customerResolved / customerTickets) * 100).toFixed(2); 
+  const closedPercentage = parseFloat((customerClosed /customerTickets) * 100).toFixed(2);
+
   const getChartOptions = () => {
   return {
-    series: [50, 25, 16.67, 8.33],
+    series: [newPercentage,progressPercentage,resolvedPercentage, closedPercentage],
     colors: ["rgba(234, 179, 8, 0.8)",
             "rgba(59, 130, 246, 0.8)",   
             "rgba(34, 197, 94, 0.8)",    
