@@ -89,7 +89,7 @@ class TicketController extends Controller
 
     public function show ($id) {
         $ticket = Ticket::with(['attachments', 'histories'])->findOrFail($id); 
-        $employees = User::where('department', $ticket->department_id)->get();
+        $employees = User::where('department_id', $ticket->department_id)->get();
         
         return view('editticket', [
             'ticket' => $ticket,

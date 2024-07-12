@@ -176,7 +176,7 @@ class UserController extends Controller
 
     public function getUsers (Request $request) {
         $department = $request->input('department');
-        $users = User::where('department', $department)->get();
+        $users = User::where('department_id', $department)->get();
         return response()->json($users);
     }
     

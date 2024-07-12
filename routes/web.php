@@ -3,6 +3,7 @@
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -60,6 +61,8 @@ Route::get('/attachments/{id}', [TicketController::class, 'attachment'])->name('
 //to add comment
 Route::post('/add/comment/{id}', [CommentController::class, 'store'])->name('comment.create'); 
 
+//view profile
+Route::get('/view/profile', [ProfileController::class, 'index'])->name('view.profile');
 
-
-
+//edit profile
+Route::put('/update/profile', [ProfileController::class, 'update'])->name('update.profile');

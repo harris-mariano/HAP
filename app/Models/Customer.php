@@ -14,7 +14,8 @@ class Customer extends Authenticatable
         'email', 
         'password', 
         'first_name', 
-        'last_name', 
+        'last_name',
+        'middle_name', 
         'company', 
         'position', 
         'profile_picture'
