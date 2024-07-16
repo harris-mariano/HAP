@@ -1,4 +1,4 @@
-@include('partials.header', ['title' => 'adish HAP | All Tickets'])
+@include('partials.header', ['title' => 'adish HAP | Assigned Tickets'])
 @include('partials.menu')
 <div class="flex flex-row gap-x-10">
     <div class="flex-none">
@@ -6,7 +6,7 @@
     </div>
     <div class="sm:ml-64 w-full flex flex-row gap-x-5 bg-custom-gray p-5">
         <div class="w-full bg-white p-5 rounded-lg shadow">
-            <p class="text-sm font-semibold">My Filed Tickets</p>
+            <p class="text-sm font-semibold">{{$user->department->name}} Tickets</p>
             <div class="relative flex items-center mt-5">
                 <input type="text" id="searchInput" placeholder="Type a title here" class="bg-gray-100 p-2 pr-10 text-sm rounded-sm w-full">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="absolute right-3 h-5 w-5">
@@ -129,27 +129,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @auth('user')
-                    @foreach($userTickets as $ticket)
+                    @foreach($departmentTickets as $ticket)
                     <tr class="border-b">
                         <td class="px-6 py-4">{{ $ticket->created_at->format('F d, Y') }}</td>
                         <td class="px-6 py-4">{{ $ticket->title }}</td>
                         <td class="px-6 py-4">{{ $ticket->department->name }}</td>
                         <td class="px-6 py-4">{{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }}</td>
                         <td class="px-6 py-4">
-                            @foreach ($ticket->histories as $history)
-                            @if ($history->status->category == 'New')
-                                <span class="inline-block bg-open rounded-full py-1.5 w-full text-white text-center">{{ $history->status->category }}</span>
-                            @elseif ($history->status->category == 'In Progress')
-                                <span class="inline-block bg-in-progress rounded-full py-1.5 w-full text-white text-center">{{ $history->status->category }}</span>
-                            @elseif ($history->status->category == 'Resolved')
-                                <span class="inline-block bg-resolved rounded-full py-1.5 w-full text-white text-center">{{ $history->status->category }}</span>
-                            @elseif ($history->status->category == 'Closed')
-                                <span class="inline-block bg-closed rounded-full py-1.5 w-full text-white text-center">{{ $history->status->category }}</span>
+                            @if ($ticket->status->category == 'New')
+                                <span class="inline-block bg-open rounded-full py-1.5 w-full text-white text-center">{{ $ticket->status->category }}</span>
+                            @elseif ($ticket->status->category == 'In Progress')
+                                <span class="inline-block bg-in-progress rounded-full py-1.5 w-full text-white text-center">{{ $ticket->status->category }}</span>
+                            @elseif ($ticket->status->category == 'Resolved')
+                                <span class="inline-block bg-resolved rounded-full py-1.5 w-full text-white text-center">{{ $ticket->status->category }}</span>
+                            @elseif ($ticket->status->category == 'Closed')
+                                <span class="inline-block bg-closed rounded-full py-1.5 w-full text-white text-center">{{ $ticket->status->category }}</span>
                             @else
-                                {{ $history->status->category }}
+                                {{ $ticket->status->category }}
                             @endif
-                            @endforeach
                         </td>
                         <td class="px-6 py-4">
                             @if ($ticket->priority->category == 'Required')
@@ -169,69 +166,24 @@
                         </td>
                     </tr>
                     @endforeach
-                    @elseauth('customer')
-                    @foreach($customerTickets as $ticket)
-                    <tr class="border-b">
-                        <td class="px-6 py-4">{{ $ticket->created_at->format('F d, Y') }}</td>
-                        <td class="px-6 py-4">{{ $ticket->title }}</td>
-                        <td class="px-6 py-4">{{ $ticket->department->name }}</td>
-                        <td class="px-6 py-4">{{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }}</td>
-                        <td class="px-6 py-4">
-                            @foreach ($ticket->histories as $history)
-                            @if ($history->status->category == 'New')
-                                <span class="inline-block bg-open rounded-full py-1.5 w-full text-white text-center">{{ $history->status->category }}</span>
-                            @elseif ($history->status->category == 'In Progress')
-                                <span class="inline-block bg-in-progress rounded-full py-1.5 w-full text-white text-center">{{ $history->status->category }}</span>
-                            @elseif ($history->status->category == 'Resolved')
-                                <span class="inline-block bg-resolved rounded-full py-1.5 w-full text-white text-center">{{ $history->status->category }}</span>
-                            @elseif ($history->status->category == 'Closed')
-                                <span class="inline-block bg-closed rounded-full py-1.5 w-full text-white text-center">{{ $history->status->category }}</span>
-                            @else
-                                {{ $history->status->category }}
-                            @endif
-                            @endforeach
-                        </td>
-                        <td class="px-6 py-4">
-                            @if ($ticket->priority->category == 'Required')
-                                <span class="inline-block bg-required rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
-                            @elseif ($ticket->priority->category == 'Low')
-                                <span class="inline-block bg-low rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
-                            @elseif ($ticket->priority->category == 'Medium')
-                                <span class="inline-block bg-medium rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
-                            @elseif ($ticket->priority->category == 'High')
-                                <span class="inline-block bg-high rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
-                            @else
-                                {{ $ticket->priority->category }}
-                            @endif
-                        </td>
-                        <td class="px-6 py-4">
-                            <a href="{{ route('tickets.show', ['ticket' => $ticket->id]) }}" class="font-medium text-in-progress">View</a>
-                        </td>
-                    </tr>
-                    @endforeach
-                    @endauth
                     </tbody>
                 </table>
 
                 <div class="mt-5">
-                    @auth('user')
-                    {{ $userTickets->links() }}
-                    @elseauth('customer')
-                    {{ $customerTickets->links() }}
-                    @endauth
+                    {{ $departmentTickets->links() }}
                 </div>
 
             </div>
-            
-            
       </div>
-<script>
+   <script>
     document.addEventListener("DOMContentLoaded", function() {
         const statusButton = document.getElementById('statusButton');
         const ticketStatus = document.getElementById('ticketStatus');
 
         const priorityButton = document.getElementById('priorityButton');
         const priorityLevel = document.getElementById('priorityLevel');
+
+        console.log(statusButton, ticketStatus, priorityButton, priorityLevel);
         
         statusButton.addEventListener('click', function() {
             ticketStatus.classList.toggle('hidden');
@@ -265,7 +217,7 @@
             allPriorityCheckbox.checked = Array.from(otherPriorityCheckboxes).every(checkbox => checkbox.checked);
             }
             console.log(checkedPriorities);
-        filterTable();
+        filterDepartment();
             });
         });
 
@@ -289,7 +241,7 @@
                 updateStatusArray(checkbox.id, isChecked);
             });
             console.log(checkedStatuses);
-            filterTable();
+            filterDepartment();
         });
 
         otherStatusCheckboxes.forEach(function(checkbox) {
@@ -301,7 +253,7 @@
             allStatusCheckbox.checked = Array.from(otherStatusCheckboxes).every(checkbox => checkbox.checked);
         }
         console.log(checkedStatuses);
-        filterTable();
+        filterDepartment();
             });
         });
 
@@ -316,9 +268,9 @@
         const searchInput = document.getElementById('searchInput');
         const table = document.getElementById('ticketsTable').getElementsByTagName('tbody')[0];
 
-        searchInput.addEventListener('input', filterTable);
+        searchInput.addEventListener('input', filterDepartment);
 
-        function filterTable() {
+        function filterDepartment() {
             const searchQuery = searchInput.value.trim().toLowerCase();
             const selectedStatuses = checkedStatuses.map(s => s.toLowerCase());
             const selectedPriorities = checkedPriorities.map(p => p.toLowerCase());
@@ -392,7 +344,7 @@
         ticketStatus.classList.add('hidden');
         priorityLevel.classList.add('hidden');
 
-        filterTable();
+        filterDepartment();
         }
 
         const clearButton = document.getElementById('clearButton');
@@ -402,6 +354,5 @@
         resetFilters();
     });
     });
-
 </script>
-@include('partials.footer')
+@include('partials.footer'); 

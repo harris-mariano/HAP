@@ -72,25 +72,17 @@ class CustomerController extends Controller
 
         $customerTickets = Ticket::where('customer_id', $customerId)->count(); 
         $customerNew= Ticket::where('customer_id', $customerId)
-                             ->whereHas('histories', function (Builder $query) {
-                                 $query->where('status_id', 1); 
-                             })
-                             ->count();
+                            ->where('status_id', 1)
+                            ->count();
         $customerInProgress = Ticket::where('customer_id', $customerId)
-                             ->whereHas('histories', function (Builder $query) {
-                                 $query->where('status_id', 2); 
-                             })
-                             ->count();
+                            ->where('status_id', 2)
+                            ->count();
         $customerResolved = Ticket::where('customer_id', $customerId)
-                             ->whereHas('histories', function (Builder $query) {
-                                 $query->where('status_id', 3); 
-                             })
-                             ->count();
+                            ->where('status_id', 3)
+                            ->count();
         $customerClosed = Ticket::where('customer_id', $customerId)
-                             ->whereHas('histories', function (Builder $query) {
-                                 $query->where('status_id', 4); 
-                             })
-                             ->count();
+                            ->where('status_id', 4)
+                            ->count();
 
         $articles = Article::simplePaginate(15);
 

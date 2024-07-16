@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasEvents;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Ticket extends Model
 {
-    use HasFactory;
+    use HasFactory, HasEvents; 
 
     protected $fillable = [
         'user_id',
@@ -17,6 +18,7 @@ class Ticket extends Model
         'priority_id',
         'title',
         'description',
+        'status_id',
     ];
 
     public function department()
@@ -56,6 +58,10 @@ class Ticket extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class, 'ticket_id', 'id')->orderBy('updated_at', 'desc');
+    }
+
+    public function status () {
+        return $this->belongsTo(Status::class, 'status_id');
     }
 
     

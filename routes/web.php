@@ -58,6 +58,9 @@ Route::resource('tickets', TicketController::class)->only([
 //to view attachment
 Route::get('/attachments/{id}', [TicketController::class, 'attachment'])->name('show.attachment');
 
+//to view assigned tickets
+Route::get('assigned/tickets', [TicketController::class, 'assigned'])->name('tickets.assigned'); 
+
 //to add comment
 Route::post('/add/comment/{id}', [CommentController::class, 'store'])->name('comment.create'); 
 

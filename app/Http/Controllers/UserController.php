@@ -78,25 +78,17 @@ class UserController extends Controller
         $userTickets = Ticket::where('employee_id', $userId)->count(); 
 
         $userNew= Ticket::where('employee_id', $userId)
-                             ->whereHas('histories', function (Builder $query) {
-                                 $query->where('status_id', 1); 
-                             })
-                             ->count();
+                            ->where('status_id', 1)
+                            ->count();
         $userInProgress = Ticket::where('employee_id', $userId)
-                             ->whereHas('histories', function (Builder $query) {
-                                 $query->where('status_id', 2); 
-                             })
-                             ->count();
+                            ->where('status_id', 2)
+                            ->count();
         $userResolved = Ticket::where('employee_id', $userId)
-                             ->whereHas('histories', function (Builder $query) {
-                                 $query->where('status_id', 3); 
-                             })
-                             ->count();
+                            ->where('status_id', 3)
+                            ->count();
         $userClosed = Ticket::where('employee_id', $userId)
-                             ->whereHas('histories', function (Builder $query) {
-                                 $query->where('status_id', 4); 
-                             })
-                             ->count();
+                            ->where('status_id', 4)
+                            ->count();
 
         $userRequired = Ticket::where('employee_id', $userId)
                             -> where ('priority_id', 1)
