@@ -50,7 +50,7 @@ class CommentController extends Controller
                 $attachment->save();
         }
 
-        return back()->with(['tickets' => $ticket]);
+        return back()->with('message', 'Your comment has been submitted successfully.');
     }
 
 }

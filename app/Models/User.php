@@ -54,4 +54,21 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Department::class, 'department_id');
     }
+
+    // public function isCustomer()
+    // {
+    //     return $this->role_id === 3;
+    // }
+
+    // public function isUser()
+    // {
+    //     return $this->role_id === 2;
+    // }
+
+    // public function isSuperUser()
+    // {
+    //     return $this->role_id === 1;
+    // }
+
+
 }

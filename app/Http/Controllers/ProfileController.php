@@ -37,7 +37,7 @@ class ProfileController extends Controller
             }
 
             $user->update(); 
-            return back(); 
+            return back()->with('message', 'Your profile has been updated successfully.'); 
         }
         else if(Auth::guard('customer')->check()){
             /** @var \App\Models\Customer $customer **/
@@ -54,7 +54,7 @@ class ProfileController extends Controller
             }
 
             $customer->update();
-            return back(); 
+            return back()->with('message', 'Your profile has been updated successfully.'); 
         }
     }
 }

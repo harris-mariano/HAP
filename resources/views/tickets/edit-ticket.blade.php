@@ -1,10 +1,11 @@
 @include('partials.header', ['title' => 'adish HAP | Individual Ticket'])
 @include('partials.menu')
-<div class="flex flex-row gap-x-10">
+<div class="flex flex-row gap-x-10 pt-24">
     <div class="flex-none">
       @include('partials.sidebar')
     </div>
     <div class="sm:ml-64 w-full flex flex-col gap-y-5 bg-custom-gray p-5">
+        @include('components.messages')
         <div class="w-full bg-white p-5 rounded-lg shadow">
             <form action="{{ route('tickets.update', ['ticket' => $ticket->id]) }}" method="POST">
               @method('PUT')
@@ -132,7 +133,7 @@
                 <a href="{{ route('show.attachment', ['id' => $attachment->id]) }}" target="_blank" class="underline text-in-progress text-sm">{{ $attachment->file_name }}</a>
             @endforeach
             @else 
-            <label for="attachments" class="flex flex-col items-center justify-center w-full h-30 border-2 border-gray-300 rounded-lg cursor-pointer mt-2">
+            <label for="attachments" class="flex flex-col items-center justify-center w-full h-30 border border-gray-300 rounded-sm cursor-pointer mt-2">
                 <div class="flex flex-col items-center justify-center pt-5 pb-6">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 ">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
@@ -145,7 +146,7 @@
         @auth('user')
         @if(auth('user')->user()->department_id == $ticket->department_id)
         <div class="flex justify-end">
-            <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-bold">Update Ticket</button>
+            <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Update Ticket</button>
         </div>
         @endif
         @endauth
@@ -158,7 +159,7 @@
         <div class="mt-2">
             <form action="{{route('comment.create', ['id' => $ticket->id])}}" method="POST" enctype="multipart/form-data">
             @csrf
-            <textarea name="comment" id="comment" rows="5" class="border w-full text-sm px-4 py-2" placeholder="Write comment..." required></textarea>
+            <textarea name="comment" id="comment" rows="5" class="border w-full text-sm px-4 py-2 rounded-sm" placeholder="Write comment..." required></textarea>
             @error('comment')
             <p class="text-xs text-red-700 mt-2">{{$message}}</p>
             @enderror
@@ -175,7 +176,7 @@
                 @enderror
             </label>
             <div class="flex justify-end">
-                <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-bold">Post Comment</button>
+                <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Post Comment</button>
             </div>
          </form>
         </div>

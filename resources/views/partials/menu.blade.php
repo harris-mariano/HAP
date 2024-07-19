@@ -1,4 +1,4 @@
-<nav class="bg-white">
+<header class="bg-white fixed top-0 left-0 w-full z-10">
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-4 p-4">
       <a href="#" class="flex items-center">
           <img src="../images/logo-name.png" class="w-28 h-12 fixed" alt="adish Logo" />
@@ -29,4 +29,4 @@
         </div>
         @endauth
     </div>
-</nav>
+</header>

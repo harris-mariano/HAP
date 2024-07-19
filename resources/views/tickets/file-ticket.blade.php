@@ -1,6 +1,6 @@
 @include('partials.header', ['title' => 'adish HAP | File Ticket'])
 @include('partials.menu')
-<div class="flex flex-row gap-x-10">
+<div class="flex flex-row gap-x-10 pt-24">
     <div class="flex-none">
       @include('partials.sidebar')
     </div>
@@ -65,7 +65,7 @@
           </div>
           <div class="flex flex-col px-2">
               <label for="attachments" class="text-sm font-medium">Attachments:</label>
-              <label for="attachments" class="flex flex-col items-center justify-center w-full h-30 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer mt-2">
+              <label for="attachments" class="flex flex-col items-center justify-center w-full h-30 border-2 border-gray-300 border-dashed rounded-sm cursor-pointer mt-2">
                   <div class="flex flex-col items-center justify-center pt-5 pb-6">
                       <svg class="w-6 h-6 mt-1 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
@@ -83,7 +83,7 @@
             </div> 
             <div class="flex flex row gap-x-5">
               <a id="cancelButton" href="#" class="w-full p-2 mt-5 text-sm text-right">Cancel</a>
-              <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-bold">File Ticket</button>
+              <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">File Ticket</button>
           </div>
         </form>
     </div>

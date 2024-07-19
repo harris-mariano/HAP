@@ -1,11 +1,13 @@
 @include('partials.header', ['title' => 'adish HAP | Customer Dashboard'])
 @include('partials.menu')
-<div class="flex flex-row gap-x-10">
+<div class="flex flex-row gap-x-10 pt-24">
     <div class="flex-none">
         @include('partials.sidebar')
     </div>
    @include('components.ticketstatus')
-   @include('components.knowledgebase')
+   <div class="w-full bg-white p-5 rounded-lg shadow">
+   @include('components.knowledge-base')
+   </div>
    
 <script>
   document.addEventListener("DOMContentLoaded", function() {

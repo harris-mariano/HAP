@@ -1,10 +1,10 @@
 @include('partials.header', ['title' => 'adish HAP | Assigned Tickets'])
 @include('partials.menu')
-<div class="flex flex-row gap-x-10">
+<div class="flex flex-row gap-x-10 pt-24">
     <div class="flex-none">
       @include('partials.sidebar')
     </div>
-    <div class="sm:ml-64 w-full flex flex-row gap-x-5 bg-custom-gray p-5">
+    <div class="sm:ml-64 w-full min-h-screen flex flex-col gap-x-5 bg-custom-gray p-5">
         <div class="w-full bg-white p-5 rounded-lg shadow">
             <p class="text-sm font-semibold">{{$user->department->name}} Tickets</p>
             <div class="relative flex items-center mt-5">
@@ -355,4 +355,4 @@
     });
     });
 </script>
-@include('partials.footer'); 
+@include('partials.footer')

@@ -85,10 +85,7 @@ class TicketController extends Controller
         $history->user_id = $validated['employee_id'];
         $history->save(); 
 
-        $user = Auth::guard('user')->user();
-        $customer = Auth::guard('customer')->user();
-
-        return back()->with(['user' => $user, 'customer' => $customer]);
+        return redirect()->route('tickets.index')->with('message', 'Your ticket has been submitted successfully.');
     }
 
     public function show ($id) {
@@ -137,6 +134,6 @@ class TicketController extends Controller
 
         $ticket->update($validated);
 
-        return back();
+        return back()->with('message', 'Your ticket has been updated successfully.');
     }
 }

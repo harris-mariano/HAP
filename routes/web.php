@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\LoginController;
@@ -63,6 +64,10 @@ Route::get('assigned/tickets', [TicketController::class, 'assigned'])->name('tic
 
 //to add comment
 Route::post('/add/comment/{id}', [CommentController::class, 'store'])->name('comment.create'); 
+
+Route::resource('articles', ArticleController::class)->only([
+    'index', 'store', 'show', 'update'
+]);
 
 //view profile
 Route::get('/view/profile', [ProfileController::class, 'index'])->name('view.profile');
