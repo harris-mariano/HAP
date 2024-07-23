@@ -62,7 +62,7 @@ class UserController extends Controller
         }
         
         $user->save();
-        Mail::to($this->mailtrapEmail)->send(new UserMail($validated['email']));
+        Mail::to($this->mailtrapEmail)->send(new UserMail($validated['first_name'], 'registration'));
         $request->session()->put('email', $validated['email']);
         return view('authentication.login'); 
     } 
@@ -143,8 +143,6 @@ class UserController extends Controller
                             ->whereMonth('created_at', '<=', 12)
                             ->count();
         
-        
-
         return view('user.dashboard', [
             'userTickets' => $userTickets,
             'userNew' => $userNew,
@@ -170,6 +168,38 @@ class UserController extends Controller
         $department = $request->input('department');
         $users = User::where('department_id', $department)->get();
         return response()->json($users);
+    }
+
+    public function resetUserPassword(Request $request, User $user) {
+        /** @var \App\Models\User $user **/
+         $user = Auth::guard('user')->user(); 
+
+        $validated = $request->validate([
+            'old_password' => ['required'],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed', 
+                'different:old_password', 
+                'regex:/[a-z]/', 
+                'regex:/[A-Z]/', 
+                'regex:/[0-9]/', 
+                'regex:/[@$!%*#?&]/', 
+            ],
+        ]);
+        $validated['new_password'] = $validated['password']; 
+
+        if (!Hash::check($validated['old_password'], $user->password)) {
+            return back()->withErrors(['old_password' => 'The provided old password does not match your current password.'])->withInput();
+        }
+
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+
+        Auth::guard('user')->logout();
+
+        return redirect()->intended('/login/user')->with('message', 'Your password has been updated successfully.');
     }
     
 }

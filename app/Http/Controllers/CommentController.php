@@ -8,11 +8,16 @@ use App\Models\Attachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserMail;
 
 class CommentController extends Controller
-{
-    public function index() {
+{   
+    protected $mailtrapEmail; 
 
+    public function __construct()
+    {
+        $this->mailtrapEmail = env('EMAIL');
     }
 
     public function store(Request $request, $id) {
@@ -50,6 +55,27 @@ class CommentController extends Controller
                 $attachment->save();
         }
 
+        //
+        if ($userId !== null) {
+            $userFullName = $comment->user->first_name . ' ' . $comment->user->last_name; 
+            if ($userId == $ticket->employee_id) {
+                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->customer->first_name, 'ticket_comment', $ticket->title, null, null, null, $userFullName, $validated['comment']));
+            }
+            else {
+                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_comment',  $ticket->title, null, null, null, $userFullName, $validated['comment']));
+                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->customer->first_name, 'ticket_comment',  $ticket->title, null, null, null, $userFullName, $validated['comment']));
+            }
+        } 
+        else if ($customerId !== null) {
+            $customerFullName = $comment->customer->first_name . ' ' . $comment->customer->last_name; 
+            if ($customerId == $ticket->customer_id){
+                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_comment',  $ticket->title, null, null, null, $customerFullName, $validated['comment']));
+            }
+            else {
+                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_comment',  $ticket->title, null, null, null, $customerFullName, $validated['comment']));
+                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->customer->first_name, 'ticket_comment',  $ticket->title, null, null, null, $customerFullName, $validated['comment']));
+            }
+        } 
         return back()->with('message', 'Your comment has been submitted successfully.');
     }
 

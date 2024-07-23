@@ -9,40 +9,48 @@
 </div>
 <div class="w-full px-10 flex flex-col justify-center items-center -mt-5">
     <div class="w-1/3 bg-custom-gray text-center flex flex-col gap-y-8 p-10">
-        <p class="font-bold text-sm">Please reset your password</p>
-        <p class="text-sm">You're almost there! We have sent an email to <span class="font-bold text-sm">{{ $email }}</span> to confirm your registration.</p>
-        <p class="text-sm">If you don’t see it, you may need to <span class="text-sm font-bold">check your spam</span> folder.</p>
+        <p class="font-semibold text-sm">Reset Password</p>
+        @auth('customer')
+        <p class="text-sm">We have sent an email to <span class="font-medium text-sm">{{$customer->email}}</span> to confirm this action.</p>
+        @elseauth('user')
+        <p class="text-sm">We have sent an email to <span class="font-medium text-sm">{{$user->email}}</span> to confirm this action.</p>
+        @endauth
+        <p class="text-sm">If you don’t see it, you may need to <span class="text-sm font-medium">check your spam</span> folder.</p>
 
         <div class="text-left px-2">
-            <form action="#" method="POST">
+            @auth('customer')
+            <form action="/customer/password" method="POST">
+            @elseauth('user')
+            <form action="/user/password" method="POST">
+            @endauth
                 @csrf
                 @method('PUT')
-                <label for="old_password" class="text-sm">Old Password</label>
+                <label for="old_password" class="text-sm font-medium">Old Password</label>
                 <div class="relative mb-3">
                     <input type="password" name="old_password" id="old_password" placeholder="Enter your old password" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm ">
                     <i class="togglePassword absolute top-1/2 -mt-1 right-2 transform -translate-y-1/2 cursor-pointer far fa-eye text-gray-400"></i>
                 </div>
                 @error('old_password')
-                <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                <p class="text-xs text-red-700 -mt-5">{{$message}}</p>
                 @enderror
 
-                <label for="password" class="text-sm">New Password</label>
+                <label for="password" class="text-sm font-medium">New Password</label>
                 <div class="relative mb-5">
                     <input type="password" name="password" id="password" placeholder="Enter your new password" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm">
                     <i class="togglePassword absolute top-1/3 right-2 transform -translate-y-1/2 cursor-pointer far fa-eye text-gray-400"></i>
                     <p class="text-xs text-gray-400 -mt-3">Passwords must be 8 characters long, and must contain one lowercase letter, one uppercase letter, one number, and one symbol.  </p>
                 </div>
                 @error('password')
-                <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                <p class="text-xs text-red-700 -mt-4">{{$message}}</p>
                 @enderror
 
-                <label for="confirm_password" class="text-sm">Confirm Password</label>
+                <label for="password_confirmation" class="text-sm font-medium">Confirm Password</label>
                 <div class="relative">
-                    <input type="password" name="confirm_password" id="confirm_password" placeholder="Re-type your new password" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm">
+                    <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Re-type your new password" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm">
                     <i class="togglePassword absolute top-1/2 -mt-1 right-2 transform -translate-y-1/2 cursor-pointer far fa-eye text-gray-400"></i>
                 </div>
-                @error('confirm_password')
-                <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                @error('password_confirmation')
+                <p class="text-xs text-red-700 -mt-4">{{$message}}</p>
                 @enderror
 
                 <div class="flex justify-center items-center">

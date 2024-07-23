@@ -61,7 +61,7 @@ class CustomerController extends Controller
                 $customer->profile_picture = $imagePath;
             }
             $customer->save();
-            Mail::to($this->mailtrapEmail)->send(new UserMail($validated['email']));
+            Mail::to($this->mailtrapEmail)->send(new UserMail($validated['first_name'], 'registration'));
             $request->session()->put('email', $validated['email']);
             return view('authentication.login'); 
     } 
@@ -93,6 +93,38 @@ class CustomerController extends Controller
             'customerResolved' => $customerResolved,
             'customerClosed' => $customerClosed, 
             'articles' => $articles]);
+    }
+
+    public function resetCustomerPassword(Request $request, Customer $customer) {
+        /** @var \App\Models\Customer $customer **/
+         $customer = Auth::guard('customer')->user(); 
+
+        $validated = $request->validate([
+            'old_password' => ['required'],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed', 
+                'different:old_password', 
+                'regex:/[a-z]/', 
+                'regex:/[A-Z]/', 
+                'regex:/[0-9]/', 
+                'regex:/[@$!%*#?&]/', 
+            ],
+        ]);
+        $validated['new_password'] = $validated['password']; 
+
+        if (!Hash::check($validated['old_password'], $customer->password)) {
+            return back()->withErrors(['old_password' => 'The provided old password does not match your current password.'])->withInput();
+        }
+
+        $customer->password = Hash::make($validated['password']);
+        $customer->save();
+
+        Auth::guard('customer')->logout();
+
+        return redirect()->intended('/')->with('message', 'Your password has been updated successfully.');
     }
 }
 

@@ -65,6 +65,7 @@ Route::get('assigned/tickets', [TicketController::class, 'assigned'])->name('tic
 //to add comment
 Route::post('/add/comment/{id}', [CommentController::class, 'store'])->name('comment.create'); 
 
+//article controller
 Route::resource('articles', ArticleController::class)->only([
     'index', 'store', 'show', 'update'
 ]);
@@ -74,3 +75,12 @@ Route::get('/view/profile', [ProfileController::class, 'index'])->name('view.pro
 
 //edit profile
 Route::put('/update/profile', [ProfileController::class, 'update'])->name('update.profile');
+
+//view reset password
+Route::get('/reset/password', [ProfileController::class, 'reset'])->name('reset.password');
+
+//reset password customer
+Route::put('/customer/password', [CustomerController::class, 'resetCustomerPassword']);
+
+//reset password user
+Route::put('/user/password', [UserController::class, 'resetUserPassword']);

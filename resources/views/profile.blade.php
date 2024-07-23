@@ -83,7 +83,7 @@
                   </div>
             </div>
             <div class="flex justify-end gap-x-3">
-                <a href=# class="w-32 p-2 mt-5 bg-in-progress rounded-sm text-white text-sm text-center font-semibold">Reset Password</a>
+                <a href={{ route('reset.password') }} class="w-32 p-2 mt-5 bg-in-progress rounded-sm text-white text-sm text-center font-semibold">Reset Password</a>
                 <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Update Profile</button>
             </div>
           </form>

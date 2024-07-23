@@ -1,5 +1,6 @@
 @include('partials.header', ['title' => 'adish HAP | Login'])
 @include('partials.nav')
+@include('components.messages')
     <div class="bg-custom-gray w-full flex flex-col py-32 items-center gap-y-10">
         <div class="w-1/4 text-center">
             <p class="text-4xl font-bold">Empowering support, one ticket at a time with adish HAP.</p>

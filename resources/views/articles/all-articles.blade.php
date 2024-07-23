@@ -5,7 +5,7 @@
       @include('partials.sidebar')
     </div>
     @auth('customer')
-    <div class="sm:ml-64 w-full flex flex-row gap-x-5 bg-custom-gray p-5">
+    <div class="sm:ml-64 w-full min-h-screen flex flex-row gap-x-5 bg-custom-gray p-5">
       <div class="w-full bg-white p-5 rounded-lg shadow">
         @include('components.knowledge-base')
         </div>

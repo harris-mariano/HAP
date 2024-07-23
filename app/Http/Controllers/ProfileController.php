@@ -7,9 +7,18 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User; 
 use App\Models\Customer; 
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserMail;
 
 class ProfileController extends Controller
 {
+    protected $mailtrapEmail; 
+
+    public function __construct()
+    {
+        $this->mailtrapEmail = env('EMAIL');
+    }
+
     public function index () {
         return view ('profile');
     }
@@ -56,6 +65,23 @@ class ProfileController extends Controller
             $customer->update();
             return back()->with('message', 'Your profile has been updated successfully.'); 
         }
+    }
+
+    public function reset () {
+
+        if (Auth::guard('user')->check()){
+            $user = Auth::guard('user')->user();
+
+            Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'reset_password'));
+            return view ('authentication.verify', ['user' => $user]); 
+        }
+        else if(Auth::guard('customer')->check()){
+            $customer = Auth::guard('customer')->user();
+
+            Mail::to($this->mailtrapEmail)->send(new UserMail($customer->first_name, 'reset_password'));
+            return view ('authentication.verify', ['customer' => $customer]); 
+        }
+
     }
 }
 

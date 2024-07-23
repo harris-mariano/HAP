@@ -7,11 +7,21 @@ use App\Models\User;
 use App\Models\Ticket; 
 use App\Models\Attachment; 
 use App\Models\History; 
+use App\Models\Status; 
+use App\Models\Priority;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserMail;
 
 class TicketController extends Controller
 {   
+    protected $mailtrapEmail; 
+
+    public function __construct()
+    {
+        $this->mailtrapEmail = env('EMAIL');
+    }
     
     public function index () {
         $userId = Auth::guard('user')->id();
@@ -85,6 +95,17 @@ class TicketController extends Controller
         $history->user_id = $validated['employee_id'];
         $history->save(); 
 
+        if ($userId !== null) {
+            $user = Auth::guard('user')->user(); 
+            Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'ticket_creation', $ticket->title));
+            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_assignment', $ticket->title));
+        } 
+        elseif ($customerId !== null) {
+            $customer = Auth::guard('customer')->user(); 
+            Mail::to($this->mailtrapEmail)->send(new UserMail($customer->first_name, 'ticket_creation', $ticket->title));
+            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_assignment', $ticket->title));
+        }
+        
         return redirect()->route('tickets.index')->with('message', 'Your ticket has been submitted successfully.');
     }
 
@@ -132,6 +153,29 @@ class TicketController extends Controller
             "status_id" => ['required'], 
         ]);
 
+        $statusChanged = $ticket->status_id != $validated['status_id'];
+        $priorityChanged = $ticket->priority_id != $validated['priority_id'];
+        $employeeChanged = $ticket->employee_id != $validated['employee_id'];
+
+        $status = $statusChanged ? Status::find($validated['status_id'])->category : null;
+        $priority = $priorityChanged ? Priority::find($validated['priority_id'])->category : null;
+        $employeeFirstName = $employeeChanged ? User::find($validated['employee_id'])->first_name : null;
+        $employeeFullName = $employeeChanged ? User::find($validated['employee_id'])->first_name . ' ' . User::find($validated['employee_id'])->last_name : null;
+
+        if ($statusChanged || $priorityChanged || $employeeChanged) {
+            if ($ticket->user_id !== null) {
+                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->user->first_name, 'ticket_update', $ticket->title, $status, $priority, $employeeFullName));
+                if ($employeeChanged) {
+                    Mail::to($this->mailtrapEmail)->send(new UserMail($employeeFirstName, 'ticket_assignment', $ticket->title));
+                }
+            } elseif ($ticket->customer_id !== null) {
+                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->customer->first_name, 'ticket_update', $ticket->title, $status, $priority, $employeeFullName));
+                if ($employeeChanged) {
+                    Mail::to($this->mailtrapEmail)->send(new UserMail($employeeFirstName, 'ticket_assignment', $ticket->title));
+                }
+            }
+        }
+        
         $ticket->update($validated);
 
         return back()->with('message', 'Your ticket has been updated successfully.');
