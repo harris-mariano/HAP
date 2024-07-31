@@ -23,10 +23,12 @@ class User extends Authenticatable
         'first_name', 
         'middle_name',
         'last_name', 
-        'company', 
+        'company_id', 
         'position', 
-        'department',
-        'profile_picture'
+        'department_id',
+        'profile_picture',
+        'role_id',
+        'type_id',
     ];
 
     /**
@@ -50,25 +52,34 @@ class User extends Authenticatable
 
     protected $guard = 'user';
 
+    public function isCustomer()
+    {
+        return $this->role_id === 3;
+    }
+
+    public function isUser()
+    {
+        return $this->role_id === 2;
+    }
+
+    public function isSuperUser()
+    {
+        return $this->role_id === 1;
+    }
+
     public function department()
     {
         return $this->belongsTo(Department::class, 'department_id');
     }
 
-    // public function isCustomer()
-    // {
-    //     return $this->role_id === 3;
-    // }
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
 
-    // public function isUser()
-    // {
-    //     return $this->role_id === 2;
-    // }
-
-    // public function isSuperUser()
-    // {
-    //     return $this->role_id === 1;
-    // }
-
+    public function type () 
+    {
+        return $this->belongsTo(Type::class, 'type_id');
+    }
 
 }

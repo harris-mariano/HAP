@@ -4,13 +4,13 @@
     <div class="flex-none">
       @include('partials.sidebar')
     </div>
-    @auth('customer')
+    @if(auth('user')->user()->isCustomer())
     <div class="sm:ml-64 w-full min-h-screen flex flex-row gap-x-5 bg-custom-gray p-5">
       <div class="w-full bg-white p-5 rounded-lg shadow">
         @include('components.knowledge-base')
         </div>
     </div>
-    @elseauth('user')
+    @elseif(auth('user')->user()->isUser() || auth('user')->user()->isSuperUser())
     <div class="sm:ml-64 w-full flex flex-col gap-5 bg-custom-gray p-5">
       @include('components.messages')
     <div class="flex flex-col gap-y-5">
@@ -43,9 +43,9 @@
               <p class="text-xs text-red-700 mt-2">{{$message}}</p>
               @enderror
             </div>
-            <div class="flex flex row gap-x-5">
-              <a id="cancelButton" href="#" class="w-full p-2 mt-5 text-sm text-right">Cancel</a>
-              <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Publish Article</button>
+            <div class="flex flex row gap-x-2 justify-end mr-2">
+              <button id="cancelButton" class="w-24 p-2 mt-5 border border-custom-orange rounded-sm text-sm font-semibold">Cancel</button>
+              <button type="submit" class="w-24 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Publish</button>
           </div>
         </form>
       </div>
@@ -69,7 +69,7 @@
       </div>
     </div>
   </div>
-    @endauth
+    @endif
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <script>
       const quill = new Quill('#editor', {

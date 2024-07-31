@@ -10,13 +10,13 @@
             <div class="flex flex-row justify-between p-2 items-center">
                 <div class="flex flex-row items-center gap-x-2">
                     @if($article->user->profile_picture)
-                    <img src="{{ asset('storage/' . $article->user->profile_picture) }}" class="w-10 h-10 mb-3 mt-2" alt="Profile Picture" />
+                    <img src="{{ asset('storage/' . $article->user->profile_picture) }}" class="w-10 h-10 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
                     @else 
                     <img src="{{ asset('images/user.png') }}" class="w-10 h-10 mb-3 mt-2" alt="Default Profile Picture" />
                     @endif
                     <div class="flex flex-col text-sm">
                         <p class="font-medium">{{$article->user->first_name}} {{$article->user->last_name}}</p>
-                        <p>{{$article->user->position}} at {{$article->user->company}}</p>
+                        <p>{{$article->user->position}} at {{$article->user->company->name}}</p>
                     </div>
                 </div>
                 <div class="flex flex-col text-sm">
@@ -26,7 +26,7 @@
         </div>
         <hr>
         @auth('user')
-        @if($article->user_id == Auth::guard('user')->user()->id)
+        @if($article->user_id == Auth::guard('user')->user()->id || auth('user')->user()->isSuperUser())
         <form action="{{ route('articles.update', ['article' => $article->id]) }}" method="POST">
             @method('PUT')
             @csrf
@@ -38,7 +38,7 @@
                     <p class="text-xs text-red-700 mt-2">{{$message}}</p>
                     @enderror
                 </div>
-                <div class="flex flex-col mb-5 h-64">
+                <div class="flex flex-col mb-5 h-full">
                     <label for="content" class="text-sm font-medium mb-2">Content:</label>
                     <div id="editor" class="overflow-y-auto">{!! $article->content !!}</div>
                     <textarea name="content" id="content" style="display: none;"></textarea>
@@ -47,23 +47,17 @@
                     @enderror
                   </div>
             </div>
-            <div class="flex justify-end">
-                <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Update Article</button>
+            <div class="flex justify-end mr-5">
+                <button type="submit" class="w-24 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Update</button>
             </div>
         </form>
-        @else
-        <div class="p-5 flex flex-col gap-y-3">
-            <p class="font-semibold text-lg">{{$article->title}}</p>
-            <p class="text-sm text-justify">{!! $article->content !!}</p>
-            <p class="text-xs italic">Last updated on {{$article->updated_at->format('F d, Y')}}</p>
-        </div>
-        @endif
-        @elseauth('customer')
+        @elseif (auth('user')->user()->isUser() || auth('user')->user()->isCustomer())
         <div class="p-5 flex flex-col gap-y-3">
             <p class="text-xs italic text-gray-700">Last updated on {{$article->updated_at->format('F d, Y')}}</p>
             <p class="font-semibold text-lg">{{$article->title}}</p>
             <div class="ql-editor p-0 text-sm text-justify">{!! $article->content !!}</div>
         </div>
+        @endif
         @endauth
         </div>
     </div>

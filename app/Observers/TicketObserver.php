@@ -97,7 +97,7 @@ class TicketObserver
             $user = Auth::guard('user')->user();
             $userFirstName = $user->first_name;
             $userLastName = $user->last_name;
-            $description = "Ticket has been assigned to {$newEmployeeFullName} from {$oldEmployeeFullName}.";
+            $description = "Ticket has been assigned to {$newEmployeeFullName} from {$oldEmployeeFullName} by {$userFirstName} {$userLastName}.";
             
 
             History::create([

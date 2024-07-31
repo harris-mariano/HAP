@@ -3,18 +3,21 @@
 <div class="flex flex-row gap-x-10 pt-24">
     <div class="flex-none">
       @include('partials.sidebar')
-    </div>
-    @include('components.ticketstatus')
-    <div class="w-full flex flex-col gap-y-5">
-      <div class="w-full bg-white p-5 rounded-lg shadow">
+    </div>     
+    <div class="sm:ml-64 w-full flex flex-row gap-x-5 bg-custom-gray p-5">
+      @include('components.ticketstatus')
+      <div class="w-full flex flex-col gap-y-5">
+        <div class="w-full bg-white p-5 rounded-lg shadow">
           <p class="text-sm font-semibold">Tickets Priority Level</p>
           <div class="py-6" id="donut-chart"></div>
-      </div>
-      <div class="w-full bg-white p-5 rounded-lg shadow">
+        </div>
+        <div class="w-full bg-white p-5 rounded-lg shadow">
           <p class="text-sm font-semibold">Filed Tickets</p>
           <div id="bar-chart"></div>
+        </div>
       </div>
     </div>
+    
 </div>
 <script>
   document.addEventListener("DOMContentLoaded", function() {
@@ -199,17 +202,18 @@ const departmentTwo = {{$departmentTwo}}
 const departmentThree = {{$departmentThree}}
 const departmentFour = {{$departmentFour}}
 
-const departmentName = "{{$departmentName}}"
+const departmentName1 = "{{$departmentName1}}"
+const departmentName2 = "{{$departmentName2}}"
 
 const barChartOptions = {
   series: [
     {
-      name: "My Tickets",
+      name: departmentName1 + " " + "Tickets", 
       color: "#E88504",
       data: [quarterOne, quarterTwo, quarterThree, quarterFour],
     },
     {
-      name: departmentName + " " + "Tickets", 
+      name: departmentName2 + " " + "Tickets", 
       data: [departmentOne, departmentTwo, departmentThree, departmentFour],
       color: "#959595",
     }

@@ -9,27 +9,28 @@
 </div>
 <div class="w-full px-10 flex flex-col justify-center items-center -mt-5">
     <div class="w-1/3 bg-custom-gray text-center flex flex-col gap-y-8 p-10">
-        <p class="font-semibold text-sm">Reset Password</p>
-        <p class="text-sm">Enter your email address associated with your account, and we will send you a link to reset your password. </p>
+        <p class="font-semibold text-sm">Verification Link Expired</p>
+        <p class="text-sm">To request for a new link, enter your email address associated with your account, and we will send you a new link to reset your password.</p>
+        <p class="text-sm">Kindly remember that the link is only valid for the next hour. If you haven't received your verification email or it has expired, request a new verification link again.</p>
 
         <div class="text-left px-2">
             <form action="{{route('send.email')}}" method="POST">
                 @csrf
                 <label for="email" class="text-sm font-medium">Work Email</label>
                 <div class="relative mb-3">
-                    <input type="email" name="email" id="email" placeholder="Enter your work email" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm">
+                    <input type="email" name="email" id="email" placeholder="Enter your work email" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm ">
                 </div>
                 @error('email')
                 <p class="text-xs text-red-700 -mt-5">{{$message}}</p>
                 @enderror
 
                 <div class="flex flex-col mt-5 gap-y-2 justify-center items-center">
-                <button type="submit" class="p-2 w-1/2 bg-blue-500 rounded-sm text-white text-sm font-semibold">Send Link</button>
-                <button type="button" onclick="window.history.back()" class="p-2 w-1/2 rounded-sm text-sm border border-blue-500 font-semibold">Go Back</button>
-                <p class="text-sm text-center mt-10">Need help? <a href="mailto:helpdesk@adish.com.ph" class="text-custom-orange underline">Contact us</a>.</p>
+                    <button type="submit" class="p-2 w-1/2 bg-blue-500 rounded-sm text-white text-sm font-semibold">Send Link</button>
+                    <a href="http://127.0.0.1:8000/dashboard/user" class="p-2 w-1/2 rounded-sm text-sm font-semibold text-center border border-blue-500">Go Back</a>
+                    <p class="text-sm text-center mt-10">Need help? <a href="mailto:helpdesk@adish.com.ph" class="text-custom-orange underline">Contact us</a>.</p>
                 </div>
             </form>
-            </div>
+        </div>
     </div>
 </div>
 

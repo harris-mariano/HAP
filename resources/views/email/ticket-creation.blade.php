@@ -1,4 +1,4 @@
-@include('partials.header', ['title' => 'adish HAP | Email Verification'])
+@include('partials.header', ['title' => 'adish HAP | Ticket Creation'])
 <div class="relative flex items-center justify-center h-16 mt-20">
     <div class="absolute top-0 flex items-center justify-center rounded-full bg-white h-16 w-16">
         <div class="text-custom-orange text-4xl">

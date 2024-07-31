@@ -8,12 +8,13 @@
         @include('components.messages')
         <div class="w-full bg-white p-5 rounded-lg shadow">
             <form action="{{ route('tickets.update', ['ticket' => $ticket->id]) }}" method="POST">
+              @auth('user')
               @method('PUT')
               @csrf
             <div class="grid grid-cols-2 gap-x-24 px-2 py-3">
                 <div class="flex flex-col">
                     <label for="status" class="text-sm font-medium">Ticket Status:</label>
-                    @auth('customer')
+                    @if(auth('user')->user()->isCustomer())
                     @if ($ticket->status->category == 'New')
                         <div id="status" class="bg-open mt-2 text-white mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->status->category }}</div>
                     @elseif ($ticket->status->category == 'In Progress')
@@ -25,8 +26,7 @@
                     @else
                         {{ $ticket->status->category }}
                     @endif
-                    @elseauth('user')
-                    @if(auth('user')->user()->department_id == $ticket->department_id)
+                    @elseif(auth('user')->user()->department_id == $ticket->department_id || auth('user')->user()->isSuperUser())
                     <select name="status_id" id="status" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
                             <option value="" {{ $ticket->status->id == "" ? 'selected' : '' }}>Select the ticket status </option>
                             <option value="1" {{ $ticket->status->id == "1" ? 'selected' : '' }}>New</option>
@@ -50,7 +50,6 @@
                         {{ $ticket->status->category }}
                     @endif
                     @endif
-                    @endauth
                 </div>
                 <div class="flex flex-col">
                     <label for="date" class="text-sm font-medium">Last Updated on:</label>
@@ -58,10 +57,9 @@
                 </div>
                 <div class="flex flex-col">
                     <label for="department" class="text-sm font-medium">Department Assigned:</label>
-                    @auth('customer')
+                    @if(auth('user')->user()->isCustomer())
                     <div id="department" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->department->name }}</div>
-                    @elseauth('user')
-                    @if(auth('user')->user()->department_id == $ticket->department_id)
+                    @elseif(auth('user')->user()->department_id == $ticket->department_id || auth('user')->user()->isSuperUser())
                         <select name="department_id" id="department" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
                             <option value="" {{ $ticket->department->id == "" ? 'selected' : '' }}>Select the department</option>
                             <option value="1" {{ $ticket->department->id == "1" ? 'selected' : '' }}>HRAD</option>
@@ -73,14 +71,12 @@
                     @else
                     <div id="department" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->department->name }}</div>
                     @endif
-                    @endauth
                 </div>
                 <div class="flex flex-col">
                     <label for="employee" class="text-sm font-medium">Employee Assigned:</label>
-                    @auth('customer')
+                    @if(auth('user')->user()->isCustomer())
                     <div id="employee" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }}</div>
-                    @elseauth('user')
-                    @if(auth('user')->user()->department_id == $ticket->department_id)
+                    @elseif(auth('user')->user()->department_id == $ticket->department_id || auth('user')->user()->isSuperUser())
                         <select name="employee_id" id="employee" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
                             <option value="" {{$ticket->employee->id == "" ? 'selected' : ''}}>Select the employee</option>
                             @foreach($employees as $employee)
@@ -93,7 +89,6 @@
                     @else
                     <div id="employee" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }}</div>
                     @endif
-                    @endauth
                 </div>
                 <div class="flex flex-col">
                     <label for="title" class="text-sm font-medium">Title:</label>
@@ -101,10 +96,9 @@
                 </div>
                 <div class="flex flex-col">
                     <label for="priority" class="text-sm font-medium">Priority Level:</label>
-                    @auth('customer')
+                    @if(auth('user')->user()->isCustomer())
                     <div id="priority" class="mt-2 mb-5 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->priority->category }}</div>
-                    @elseauth('user')
-                    @if(auth('user')->user()->department_id == $ticket->department_id)
+                    @elseif(auth('user')->user()->department_id == $ticket->department_id || auth('user')->user()->isSuperUser())
                     <select name="priority_id" id="priority" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
                         <option value="" {{ $ticket->priority->id == "" ? 'selected' : '' }}>Select the priority level</option>
                         <option value="1" {{ $ticket->priority->id == "1" ? 'selected' : '' }}>Required</option>
@@ -118,7 +112,6 @@
                     @else
                     <div id="priority" class="mt-2 mb-5 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->priority->category }}</div>
                     @endif
-                    @endauth
                 </div>
       </div> 
       <div class="flex flex-col px-2 h-auto mb-7">
@@ -143,10 +136,9 @@
             </label>
             @endif
         </div>
-        @auth('user')
-        @if(auth('user')->user()->department_id == $ticket->department_id)
+        @if(auth('user')->user()->department_id == $ticket->department_id || auth('user')->user()->isSuperUser())
         <div class="flex justify-end">
-            <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Update Ticket</button>
+            <button type="submit" class="w-24 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Update</button>
         </div>
         @endif
         @endauth
@@ -176,7 +168,7 @@
                 @enderror
             </label>
             <div class="flex justify-end">
-                <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Post Comment</button>
+                <button type="submit" class="w-24 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Post</button>
             </div>
          </form>
         </div>
@@ -184,19 +176,13 @@
         <div class="border-b p-3 mt-5">
             <div class="flex flex-row items-center justify-between">
                 <div class="flex flex-row items-center gap-x-2">
-                    @if ($comment->customer && isset($comment->customer->profile_picture))
-                    <img src="{{ asset('storage/' . $comment->customer->profile_picture) }}" class="w-8 h-8" alt="Profile Picture" />
-                    @elseif ($comment->user && isset($comment->user->profile_picture))
-                        <img src="{{ asset('storage/' . $comment->user->profile_picture) }}" class="w-8 h-8" alt="Profile Picture" />
+                    @if ($comment->user && isset($comment->user->profile_picture))
+                        <img src="{{ asset('storage/' . $comment->user->profile_picture) }}" class="w-8 h-8 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
                     @else
                         <img src="{{ asset('images/user.png') }}" class="w-8 h-8" alt="Default Profile Picture" />
                     @endif
                     <p class="text-sm font-medium">
-                        @if ($comment->customer)
-                            {{ $comment->customer->first_name }} {{ $comment->customer->last_name }}
-                        @elseif ($comment->user)
-                            {{ $comment->user->first_name }} {{ $comment->user->last_name }}
-                        @endif
+                    {{ $comment->user->first_name }} {{ $comment->user->last_name }}
                     </p>
                 </div>
                 <p class="text-sm text-gray-500">{{ $comment->updated_at->format('F d, Y') }}</p>
@@ -224,27 +210,15 @@
         @endforeach
         <div class="flex flex-col gap-y-1 border-b p-2">
             <p class="text-sm text-gray-500">{{ $ticket->created_at->format('F d, Y h:i A') }}</p>
-            @if ($ticket->customer_id)
-            <p class="text-sm">Ticket has set its status to New by {{$ticket->customer->first_name}} {{$ticket->customer->last_name}}.</p>
-            @elseif ($ticket->user_id)
             <p class="text-sm">Ticket has set its status to New by  {{$ticket->user->first_name}} {{$ticket->user->last_name}}.</p>
-            @endif
         </div>
         <div class="flex flex-col gap-y-1 border-b p-2">
             <p class="text-sm text-gray-500">{{ $ticket->created_at->format('F d, Y h:i A') }}</p>
-            @if ($ticket->customer_id)
-            <p class="text-sm">Ticket has been assigned to {{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }} by {{$ticket->customer->first_name}} {{$ticket->customer->last_name}} .</p>
-            @elseif ($ticket->user_id)
             <p class="text-sm">Ticket has been assigned to {{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }} by {{$ticket->user->first_name}} {{$ticket->user->last_name}}.</p>
-            @endif
         </div>
         <div class="flex flex-col gap-y-1 border-b p-2">
             <p class="text-sm text-gray-500">{{ $ticket->created_at->format('F d, Y h:i A') }}</p>
-            @if ($ticket->customer_id)
-            <p class="text-sm">Ticket has been created by {{$ticket->customer->first_name}} {{$ticket->customer->last_name}} .</p>
-            @elseif ($ticket->user_id)
             <p class="text-sm">Ticket has been created by {{$ticket->user->first_name}} {{$ticket->user->last_name}} .</p>
-            @endif
         </div>
     </div>
     </div>

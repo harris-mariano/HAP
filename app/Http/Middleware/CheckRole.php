@@ -16,7 +16,11 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, ...$roles)
     {
-        $user = Auth::user();
+        $user = Auth::guard('user')->user();
+
+        if (is_null($user)) {
+            return redirect()->route('login.user');
+        }
 
         foreach ($roles as $role) {
             if ($user->role_id == $role) {
@@ -26,4 +30,5 @@ class CheckRole
 
         abort(403, 'Unauthorized.');
     }
+    
 }

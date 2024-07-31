@@ -29,15 +29,7 @@ class CommentController extends Controller
         ]);
 
         $userId = Auth::guard('user')->id();
-        $customerId = Auth::guard('customer')->id();
-
-        if ($userId !== null) {
-            $validated['user_id'] = $userId;
-        } 
-        elseif ($customerId !== null) {
-            $validated['customer_id'] = $customerId;
-        }
-
+        $validated['user_id'] = $userId;
         $validated['ticket_id'] = $ticket->id; 
         $comment = new Comment(); 
         $comment->fill($validated);
@@ -55,27 +47,26 @@ class CommentController extends Controller
                 $attachment->save();
         }
 
-        //
         if ($userId !== null) {
-            $userFullName = $comment->user->first_name . ' ' . $comment->user->last_name; 
-            if ($userId == $ticket->employee_id) {
-                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->customer->first_name, 'ticket_comment', $ticket->title, null, null, null, $userFullName, $validated['comment']));
-            }
-            else {
-                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_comment',  $ticket->title, null, null, null, $userFullName, $validated['comment']));
-                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->customer->first_name, 'ticket_comment',  $ticket->title, null, null, null, $userFullName, $validated['comment']));
-            }
-        } 
-        else if ($customerId !== null) {
-            $customerFullName = $comment->customer->first_name . ' ' . $comment->customer->last_name; 
-            if ($customerId == $ticket->customer_id){
-                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_comment',  $ticket->title, null, null, null, $customerFullName, $validated['comment']));
-            }
-            else {
-                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_comment',  $ticket->title, null, null, null, $customerFullName, $validated['comment']));
-                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->customer->first_name, 'ticket_comment',  $ticket->title, null, null, null, $customerFullName, $validated['comment']));
-            }
-        } 
+        $userFullName = $comment->user->first_name . ' ' . $comment->user->last_name; 
+        //asignee commented 
+        if ($comment->user_id == $ticket->employee_id) {
+            //the one who files will receive a notif 
+            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->user->first_name, 'ticket_comment', $ticket->title, null, null, null, $userFullName, $validated['comment']));
+        }
+        //filer commented
+        elseif ($comment->user_id == $ticket->user_id) {
+            //the asignee will receive the comment
+            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_comment',  $ticket->title, null, null, null, $userFullName, $validated['comment']));
+        }
+        //not asignee or filer commented 
+        else {
+            //the one who files will receive a notif 
+            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->user->first_name, 'ticket_comment', $ticket->title, null, null, null, $userFullName, $validated['comment']));
+            //the asignee will receive the comment
+            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_comment',  $ticket->title, null, null, null, $userFullName, $validated['comment']));
+        }
+    }
         return back()->with('message', 'Your comment has been submitted successfully.');
     }
 

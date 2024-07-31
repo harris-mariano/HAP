@@ -8,6 +8,16 @@
         @include('components.messages')
         <div class="w-full bg-white p-5 rounded-lg shadow">
             <p class="text-sm font-semibold">My Filed Tickets</p>
+            @if ($userTickets->count() <= 0) 
+            <div class="h-screen flex items-center justify-center">
+                <div class="text-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-14 mx-auto">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                  </svg>
+                  <p class="mt-2 text-sm font-medium">No filed tickets yet</p>
+                </div>
+              </div>
+              @else
             <div class="relative flex items-center mt-5">
                 <input type="text" id="searchInput" placeholder="Type a title here" class="bg-gray-100 p-2 pr-10 text-sm rounded-sm w-full">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="absolute right-3 h-5 w-5">
@@ -164,45 +174,7 @@
                             @endif
                         </td>
                         <td class="px-6 py-4">
-                            <a href="{{ route('tickets.show', ['ticket' => $ticket->id]) }}" class="font-medium text-in-progress">View</a>
-                        </td>
-                    </tr>
-                    @endforeach
-                    @elseauth('customer')
-                    @foreach($customerTickets as $ticket)
-                    <tr class="border-b">
-                        <td class="px-6 py-4">{{ $ticket->created_at->format('F d, Y') }}</td>
-                        <td class="px-6 py-4">{{ $ticket->title }}</td>
-                        <td class="px-6 py-4">{{ $ticket->department->name }}</td>
-                        <td class="px-6 py-4">{{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }}</td>
-                        <td class="px-6 py-4">
-                            @if ($ticket->status->category == 'New')
-                                <span class="inline-block bg-open rounded-full py-1.5 w-full text-white text-center">{{ $ticket->status->category }}</span>
-                            @elseif ($ticket->status->category == 'In Progress')
-                                <span class="inline-block bg-in-progress rounded-full py-1.5 w-full text-white text-center">{{ $ticket->status->category }}</span>
-                            @elseif ($ticket->status->category == 'Resolved')
-                                <span class="inline-block bg-resolved rounded-full py-1.5 w-full text-white text-center">{{ $ticket->status->category }}</span>
-                            @elseif ($ticket->status->category == 'Closed')
-                                <span class="inline-block bg-closed rounded-full py-1.5 w-full text-white text-center">{{ $ticket->status->category }}</span>
-                            @else
-                                {{ $ticket->status->category }}
-                            @endif
-                        </td>
-                        <td class="px-6 py-4">
-                            @if ($ticket->priority->category == 'Required')
-                                <span class="inline-block bg-required rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
-                            @elseif ($ticket->priority->category == 'Low')
-                                <span class="inline-block bg-low rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
-                            @elseif ($ticket->priority->category == 'Medium')
-                                <span class="inline-block bg-medium rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
-                            @elseif ($ticket->priority->category == 'High')
-                                <span class="inline-block bg-high rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
-                            @else
-                                {{ $ticket->priority->category }}
-                            @endif
-                        </td>
-                        <td class="px-6 py-4">
-                            <a href="{{ route('tickets.show', ['ticket' => $ticket->id]) }}" class="font-medium text-in-progress">View</a>
+                            <a href="{{ route('tickets.show', ['ticket' => $ticket->id]) }}" class="font-medium text-in-progress hover:text-blue-800">View</a>
                         </td>
                     </tr>
                     @endforeach
@@ -211,15 +183,11 @@
                 </table>
 
                 <div class="mt-5">
-                    @auth('user')
                     {{ $userTickets->links() }}
-                    @elseauth('customer')
-                    {{ $customerTickets->links() }}
-                    @endauth
                 </div>
 
             </div>
-            
+            @endif
             
       </div>
 <script>

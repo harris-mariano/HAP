@@ -8,6 +8,12 @@ use Illuminate\Support\Facades\Auth;
 
 class ArticleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('checkRole:1,2,3')->only(['index', 'show']);
+        $this->middleware('checkRole:1,2')->only(['store', 'update']);
+    }
+
     public function index () {
         $articles = Article::orderBy('created_at', 'desc')
                     ->simplePaginate(10, ['*'], 'allArticles');

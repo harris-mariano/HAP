@@ -21,6 +21,8 @@ class TicketController extends Controller
     public function __construct()
     {
         $this->mailtrapEmail = env('EMAIL');
+        $this->middleware('checkRole:1,2,3')->only(['index', 'create', 'store', 'show']);
+        $this->middleware('checkRole:1,2')->only(['update']);
     }
     
     public function index () {
@@ -29,23 +31,14 @@ class TicketController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->simplePaginate(10);
 
-        $customerId = Auth::guard('customer')->id();
-        $customerTickets = Ticket::where('customer_id', $customerId)
-                ->orderBy('created_at', 'desc')
-                ->simplePaginate(10);
-
         return view('tickets.all-tickets', [
-            'userTickets' => $userTickets,
-            'customerTickets' => $customerTickets]);
+            'userTickets' => $userTickets]);
     }
 
     public function create () {
         $user = Auth::guard('user')->user();
-        $customer = Auth::guard('customer')->user();
 
-        return view('tickets.file-ticket', [
-            'user' => $user,
-            'customer' => $customer ]);
+        return view('tickets.file-ticket', ['user' => $user]);
     }
 
     public function store (Request $request) {
@@ -59,17 +52,11 @@ class TicketController extends Controller
         ]);
 
         $userId = Auth::guard('user')->id();
-        $customerId = Auth::guard('customer')->id();
 
         $validated['priority_id'] = 1; //required
         $validated['status_id'] = 1; //new
-
-        if ($userId !== null) {
-            $validated['user_id'] = $userId;
-        } 
-        elseif ($customerId !== null) {
-            $validated['customer_id'] = $customerId;
-        }
+        $validated['user_id'] = $userId;
+        
 
         $ticket = new Ticket();
         $ticket->fill($validated);
@@ -95,17 +82,10 @@ class TicketController extends Controller
         $history->user_id = $validated['employee_id'];
         $history->save(); 
 
-        if ($userId !== null) {
-            $user = Auth::guard('user')->user(); 
-            Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'ticket_creation', $ticket->title));
-            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_assignment', $ticket->title));
-        } 
-        elseif ($customerId !== null) {
-            $customer = Auth::guard('customer')->user(); 
-            Mail::to($this->mailtrapEmail)->send(new UserMail($customer->first_name, 'ticket_creation', $ticket->title));
-            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_assignment', $ticket->title));
-        }
-        
+        $user = Auth::guard('user')->user(); 
+        Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'ticket_creation', $validated['title']));
+        Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_assignment', $validated['title']));
+       
         return redirect()->route('tickets.index')->with('message', 'Your ticket has been submitted successfully.');
     }
 
@@ -135,10 +115,14 @@ class TicketController extends Controller
         $departmentTickets = Ticket::where('department_id', $userDepartment)
         ->orderBy('created_at', 'desc')
         ->simplePaginate(10);
+
+        $allTickets = Ticket::orderBy('created_at', 'desc')
+        ->simplePaginate(10);
         
         return view ('tickets.assigned-tickets', [
             'user' => $user,
-            'departmentTickets' => $departmentTickets, 
+            'departmentTickets' => $departmentTickets,
+            'allTickets' => $allTickets, 
         ]); 
     }
 
@@ -163,17 +147,10 @@ class TicketController extends Controller
         $employeeFullName = $employeeChanged ? User::find($validated['employee_id'])->first_name . ' ' . User::find($validated['employee_id'])->last_name : null;
 
         if ($statusChanged || $priorityChanged || $employeeChanged) {
-            if ($ticket->user_id !== null) {
                 Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->user->first_name, 'ticket_update', $ticket->title, $status, $priority, $employeeFullName));
                 if ($employeeChanged) {
                     Mail::to($this->mailtrapEmail)->send(new UserMail($employeeFirstName, 'ticket_assignment', $ticket->title));
                 }
-            } elseif ($ticket->customer_id !== null) {
-                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->customer->first_name, 'ticket_update', $ticket->title, $status, $priority, $employeeFullName));
-                if ($employeeChanged) {
-                    Mail::to($this->mailtrapEmail)->send(new UserMail($employeeFirstName, 'ticket_assignment', $ticket->title));
-                }
-            }
         }
         
         $ticket->update($validated);

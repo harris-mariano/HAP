@@ -2,8 +2,10 @@
 
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
-use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\UserController;
@@ -20,35 +22,26 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('authentication.login');
-// });
-
-//email notif
-Route::get('/mail/send', [CustomerController::class, 'index']);
-
-//registration 
-Route::get('/customer/forms', [CustomerController::class, 'forms']); 
-Route::get('/user/forms', [UserController::class, 'forms']); 
-Route::post('/user/register', [UserController::class, 'register']); 
-Route::post('/customer/register', [CustomerController::class, 'register']); 
 
 //login
-Route::get('/login/user', [LoginController::class, 'showUserLogin'])->name('login.user');
-Route::get('/', [LoginController::class, 'showCustomerLogin'])->name('login.customer');
-Route::post('/login/user', [LoginController::class, 'userLogin']);
-Route::post('/login/customer', [LoginController::class, 'customerLogin'])->name('store.customer');
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/', [LoginController::class, 'index'])->name('login.user');
+Route::post('/login/user', [LoginController::class, 'store']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('checkRole:1,2,3');
 
-//route to get users by department for ajax
-Route::get('department/users', [UserController::class, 'getUsers'])->name('get.users');
+//ajax routes 
+//route to get users by department
+Route::get('department/users', [UserController::class, 'getUsers'])->name('get.users')->middleware('checkRole:1,2,3');
+//route to get departments by company
+Route::get('company/departments', [UserController::class, 'getDepartments'])->name('get.departments')->middleware('checkRole:1');
 
 //view dashboard 
-Route::middleware('auth:customer')->group(function () {
-    Route::get('/dashboard/customer', [CustomerController::class, 'dashboard'])->name('customer.dashboard');
-});
-Route::middleware('auth:user')->group(function () {
-    Route::get('/dashboard/user', [UserController::class, 'dashboard'])->name('user.dashboard');
+Route::get('/dashboard/user', [UserController::class, 'dashboard'])->name('user.dashboard')->middleware('checkRole:1,2,3');
+
+//user controller
+Route::middleware('checkRole:1')->group(function () {
+    Route::resource('users', UserController::class)->only([
+        'index', 'store', 'update'
+    ]);
 });
 
 //tickets
@@ -57,30 +50,45 @@ Route::resource('tickets', TicketController::class)->only([
 ]);
 
 //to view attachment
-Route::get('/attachments/{id}', [TicketController::class, 'attachment'])->name('show.attachment');
+Route::get('/attachments/{id}', [TicketController::class, 'attachment'])->name('show.attachment')->middleware('checkRole:1,2,3');
 
 //to view assigned tickets
-Route::get('assigned/tickets', [TicketController::class, 'assigned'])->name('tickets.assigned'); 
+Route::get('assigned/tickets', [TicketController::class, 'assigned'])->name('tickets.assigned')->middleware('checkRole:1,2'); 
 
 //to add comment
-Route::post('/add/comment/{id}', [CommentController::class, 'store'])->name('comment.create'); 
+Route::post('/add/comment/{id}', [CommentController::class, 'store'])->name('comment.create')->middleware('checkRole:1,2,3'); 
 
 //article controller
 Route::resource('articles', ArticleController::class)->only([
     'index', 'store', 'show', 'update'
 ]);
 
-//view profile
-Route::get('/view/profile', [ProfileController::class, 'index'])->name('view.profile');
+Route::middleware('checkRole:1,2,3')->group(function () {
+    //view profile
+    Route::get('/view/profile', [ProfileController::class, 'index'])->name('view.profile');
+    //edit profile
+    Route::put('/update/profile', [ProfileController::class, 'update'])->name('update.profile');
+});
 
-//edit profile
-Route::put('/update/profile', [ProfileController::class, 'update'])->name('update.profile');
+Route::middleware('checkRole:1')->group(function () {
+    Route::resource('departments', DepartmentController::class)->only([
+        'create', 'show', 'store', 'update'
+    ]);
+});
 
-//view reset password
-Route::get('/reset/password', [ProfileController::class, 'reset'])->name('reset.password');
+Route::middleware('checkRole:1')->group(function () {
+    Route::resource('companies', CompanyController::class)->only([
+        'store', 'update'
+   ]);
+});
 
-//reset password customer
-Route::put('/customer/password', [CustomerController::class, 'resetCustomerPassword']);
+//view email input page
+Route::get('/reset/password', [PasswordController::class, 'reset'])->name('view.reset');
+//send email link and push data in db
+Route::post('/send/email',[PasswordController::class, 'sendEmail'])->name('send.email');
+//view reset password page
+Route::get('/reset/password/{token}', [PasswordController::class, 'resetPassword'])->name('reset.link'); 
+// reset password user
+Route::put('/user/password', [PasswordController::class, 'resetUserPassword'])->middleware('checkRole:1,2,3');
 
-//reset password user
-Route::put('/user/password', [UserController::class, 'resetUserPassword']);
+

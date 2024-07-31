@@ -11,10 +11,8 @@
   <tbody>
       @foreach($articles as $article)
       <tr class="text-sm">
-          <td class="py-2 px-4 border-b border-gray-300">{{ $article->title }}</td>
-          <td class="py-2 px-4 border-b border-gray-300 text-right">
-              <a href="{{ route('articles.show', ['article' => $article->id]) }}" class="font-medium text-in-progress">View</a>
-          </td>
+          <td class="py-2 px-4 border-b border-gray-300">
+            <a href="{{ route('articles.show', ['article' => $article->id]) }}" class="hover:text-in-progress">{{$article->title}}</a></td>
       </tr>
       @endforeach
   </tbody>

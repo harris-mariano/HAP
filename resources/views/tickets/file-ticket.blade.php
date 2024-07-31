@@ -14,9 +14,6 @@
               @auth('user')
               <label for="name" class="text-sm font-medium">Name:</label>
               <input type="text" name="name" id="name" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm" value="{{$user->first_name}} {{$user->last_name}} " readonly>
-              @elseauth('customer')
-              <label for="name" class="text-sm font-medium">Name:</label>
-              <input type="text" name="name" id="name" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm" value="{{$customer->first_name}} {{$customer->last_name}} " readonly>
               @endauth
             </div>
             <div class="flex flex-col">
@@ -81,9 +78,9 @@
                 <p class="text-xs text-red-700 mt-2">{{$message}}</p>
                 @enderror
             </div> 
-            <div class="flex flex row gap-x-5">
-              <a id="cancelButton" href="#" class="w-full p-2 mt-5 text-sm text-right">Cancel</a>
-              <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">File Ticket</button>
+            <div class="flex flex row gap-x-2 justify-end mr-2">
+              <button id="cancelButton" class="w-24 p-2 mt-5 border border-custom-orange rounded-sm text-sm font-semibold">Cancel</button>
+              <button type="submit" class="w-24 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">File</button>
           </div>
         </form>
     </div>

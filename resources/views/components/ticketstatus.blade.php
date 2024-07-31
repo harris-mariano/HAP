@@ -1,4 +1,4 @@
-<div class="sm:ml-64 w-full flex flex-row gap-x-5 bg-custom-gray p-5">
+
     <div class="w-1/4 bg-white p-5 rounded-lg shadow">
       <div class="flex flex-row gap-y-1 items-center">
         <p class="text-sm font-semibold">Tickets Statuses</p>
@@ -25,34 +25,6 @@
         </div>
       </div>
     </div>
-      @auth('customer')
-        <div class="flex flex-row gap-x-4 mt-5">
-          <div class="w-full h-24 bg-all-tickets bg-opacity-80 rounded-lg text-sm font-medium text-center flex flex-col justify-center items-center">
-            <p class="text-white text-4xl">{{$customerTickets}}</p>
-            <p>All Tickets</p>
-        </div>
-        </div>
-        <div class="flex flex-row gap-x-4 mt-5">
-          <div class="w-24 h-24 bg-open bg-opacity-80 rounded-lg text-sm font-medium text-center flex flex-col justify-center items-center">
-            <p class="text-white text-4xl">{{$customerNew}}</p>
-            <p>New</p>
-          </div>
-            <div class="w-24 h-24 bg-in-progress bg-opacity-80 rounded-lg text-sm font-medium text-center flex flex-col justify-center items-center">
-              <p class="text-white text-4xl">{{$customerInProgress}}</p>
-              <p>In Progress</p>
-            </div>
-        </div>
-        <div class="flex flex-row gap-x-4 mt-5">
-            <div class="w-24 h-24 bg-resolved bg-opacity-80 rounded-lg text-sm font-medium text-center flex flex-col justify-center items-center">
-              <p class="text-white text-4xl">{{$customerResolved}}</p>
-              <p>Resolved</p>
-          </div>
-          <div class="w-24 h-24 bg-closed bg-opacity-80 rounded-lg text-sm font-medium text-center flex flex-col justify-center items-center">
-            <p class="text-white text-4xl">{{$customerClosed}}</p>
-            <p>Closed</p>
-        </div>
-      </div>
-        @elseauth('user')
         <div class="flex flex-row gap-x-4 mt-5">
           <div class="w-full h-24 bg-all-tickets bg-opacity-80 rounded-lg text-sm font-medium text-center flex flex-col justify-center items-center">
             <p class="text-white text-4xl">{{$userTickets}}</p>
@@ -79,6 +51,5 @@
             <p>Closed</p>
         </div>
         </div>
-        @endauth
     <div class="py-6" id="radial-chart"></div>
     </div>
