@@ -24,7 +24,7 @@ class CommentController extends Controller
         $ticket = Ticket::findOrFail($id); 
 
         $validated = $request->validate([
-            'comment' => 'required|string',
+            'comment' => 'required|string|min:5',
             'photo' => 'nullable|file|mimes:jpeg,png,gif,mp4,mov|max:50000'
         ]);
 
@@ -52,19 +52,19 @@ class CommentController extends Controller
         //asignee commented 
         if ($comment->user_id == $ticket->employee_id) {
             //the one who files will receive a notif 
-            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->user->first_name, 'ticket_comment', $ticket->title, null, null, null, $userFullName, $validated['comment']));
+            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->user->first_name, 'ticket_comment', $ticket->title, null, null, null, $userFullName, $validated['comment'], $ticket->id));
         }
         //filer commented
         elseif ($comment->user_id == $ticket->user_id) {
-            //the asignee will receive the comment
-            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_comment',  $ticket->title, null, null, null, $userFullName, $validated['comment']));
+            //the asignee will receive the notif
+            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_comment',  $ticket->title, null, null, null, $userFullName, $validated['comment'], $ticket->id));
         }
         //not asignee or filer commented 
         else {
             //the one who files will receive a notif 
-            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->user->first_name, 'ticket_comment', $ticket->title, null, null, null, $userFullName, $validated['comment']));
-            //the asignee will receive the comment
-            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_comment',  $ticket->title, null, null, null, $userFullName, $validated['comment']));
+            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->user->first_name, 'ticket_comment', $ticket->title, null, null, null, $userFullName, $validated['comment'], $ticket->id));
+            //the asignee will receive the notif
+            Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_comment',  $ticket->title, null, null, null, $userFullName, $validated['comment'], $ticket->id));
         }
     }
         return back()->with('message', 'Your comment has been submitted successfully.');

@@ -40,12 +40,12 @@
                 @enderror
 
                 <div class="flex justify-center items-center">
-                <button type="submit" class="p-2 w-1/2 mt-7 bg-blue-500 rounded-sm text-white text-sm font-semibold">Reset Password</button>
+                <button type="submit" class="p-2 w-1/2 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Reset Password</button>
                 </div>
             </form>
             </div>
 
-        <p class="text-sm text-center mt-3">Need help? <a href="#" class="text-custom-orange underline">Contact us</a>.</p>
+        <p class="text-sm text-center mt-3">Need help? <a href="{{route('view.contact')}}" class="text-custom-orange underline">Contact us</a>.</p>
     </div>
 </div>
 

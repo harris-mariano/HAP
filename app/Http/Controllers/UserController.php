@@ -11,61 +11,48 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\UserMail;
 use App\Models\Department;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {   
-    protected $mailtrapEmail, $oneTimePassword;
+    protected $mailtrapEmail;
 
     public function __construct()
     {
         $this->mailtrapEmail = env('EMAIL');
-        $this->oneTimePassword = env('PASSWORD');
     }
 
     public function index () {
         $allUsers = User::orderBy('created_at', 'desc')
-        ->simplePaginate(10, ['*'], 'allUsers');
+        ->simplePaginate(5, ['*'], 'allUsers');
 
         $companies = Company::all();
 
-        $allCompanies = Company::orderBy('created_at', 'desc')
-        ->simplePaginate(10, ['*'], 'allCompanies');
-
         $allDepartments = Department::orderBy('created_at', 'desc')
-        ->simplePaginate(10, ['*'], 'allDepartments');
+        ->simplePaginate(5, ['*'], 'allDepartments');
+
+        //random password
+        $password = Str::random(12);
         
         return view ('user.all-users', [
             'allUsers' => $allUsers, 
             'companies' => $companies, 
-            'password' => $this->oneTimePassword, 
-            'allCompanies' => $allCompanies,
+            'password' => $password, 
             'allDepartments' => $allDepartments]); 
-    }
-
-    public function update (Request $request, User $user) {
-        $validated = $request->validate([
-            'type_id' => ['required', 'numeric', Rule::in([1, 2])]
-        ]); 
-
-        $user->type_id = $validated['type_id'];  
-        $user->save();
-
-        return redirect()->back()->with('message', 'The user status has been updated successfully.');
     }
 
     public function store(Request $request) {
         $validated = $request->validate([
             "profile_picture" => 'image|mimes:jpeg,png,bmp,tiff|max:2048', 
             "email" => ['required', Rule::unique('users', 'email')],
-            'password' => ['required'], //already defined in view 
-            "first_name" => ['required'],
-            "last_name" => ['required'],
-            "company" => ['required'],
-            "department" => ['required'],
-            "position" => ['required'],
-            "superuser" => ['nullable', 'boolean']
+            'password' => 'required',
+            "first_name" => 'required|string|min:2|max:30',
+            "middle_name" => 'nullable|string|min:3|max:30',
+            "last_name" => 'required|string|min:3|max:30',
+            "company" => 'required',
+            "department" => 'required',
+            "position" => 'required|string|min:10|max:30',
+            "superuser" => 'nullable|boolean'
         ]); 
 
         $hashedPassword = Hash::make($validated['password']);
@@ -75,12 +62,12 @@ class UserController extends Controller
         ? ($request->input('superuser') == '1' ? 1 : 2) 
         : 3;
 
-
         $user = new User();
-        $user->type_id = 1; 
+        $user->type_id = 1; //active
         $user->department_id = $validated['department']; 
         $user->company_id = $validated['company'];
         $user->role_id = $role_id;
+        $user->is_new = true; //newly created account
         $user->fill($validated);
     
         if ($request->hasFile('profile_picture')) {
@@ -378,6 +365,8 @@ class UserController extends Controller
         $department = $request->input('department');
         $users = User::where('department_id', $department)
                 ->where('role_id', '!=', 1) //exclude superuser
+                ->where('type_id', '=', 1) //active account
+                ->where('is_new', '=', false) //not newly created account
                 ->get();
         return response()->json($users);
     }
@@ -388,5 +377,4 @@ class UserController extends Controller
         return response()->json($departments);
     }
 
-    
 }

@@ -45,8 +45,6 @@ class TicketObserver
 
             History::create([
                 'ticket_id' => $ticket->id,
-                'status_id' => $newStatusId,
-                'priority_id' => $oldPriorityId,
                 'user_id' => $userId,
                 'description' => $description,
             ]);
@@ -73,8 +71,6 @@ class TicketObserver
 
             History::create([
                 'ticket_id' => $ticket->id,
-                'status_id' => $oldStatusId,
-                'priority_id' => $newPriorityId,
                 'user_id' => $userId,
                 'description' => $description,
             ]);
@@ -102,8 +98,6 @@ class TicketObserver
 
             History::create([
                 'ticket_id' => $ticket->id,
-                'status_id' => $oldStatusId,
-                'priority_id' => $oldPriorityId,
                 'user_id' => $userId,
                 'description' => $description,
             ]);

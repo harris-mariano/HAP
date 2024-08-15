@@ -11,21 +11,23 @@ class DepartmentController extends Controller
     public function create() {
         $companies = Company::all();
 
-        return view('add-department', [
+        return view('departments.add-department', [
             'companies' => $companies
         ]);
     }
 
     public function store (Request $request) {
         $validated = $request->validate([
-            'company' => 'required|integer',
-            'department' => 'required|string'
+            'company' => 'required|integer|exists:companies,id',
+            'departments.*.name' => 'required|string'
         ]);
 
-        $department = new Department(); 
-        $department->company_id = $validated['company'];
-        $department->name = $validated['department'];
-        $department->save(); 
+        foreach ($request->input('departments') as $department) {
+            Department::create([
+                'name' => $department['name'],
+                'company_id' => $validated['company'],
+            ]);
+        }
 
         return back()->with('message', 'Your department has been created successfully.');
     }
@@ -35,7 +37,7 @@ class DepartmentController extends Controller
         $companies = Company::all();
         $departments = Department::where('company_id', $department->company_id)->get();
 
-        return view('edit-department', [
+        return view('departments.edit-department', [
             'department' => $department,
             'companies' => $companies,
             'departments' => $departments,

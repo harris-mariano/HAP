@@ -1,0 +1,180 @@
+@include('partials.header', ['title' => 'adish HAP | User Information'])
+@include('partials.menu')
+<div class="flex flex-row gap-x-10 pt-24">
+    <div class="flex-none">
+      @include('partials.sidebar')
+    </div>
+    <div class="sm:ml-64 w-full flex flex-col gap-x-5 bg-custom-gray p-5">
+      @include('components.messages')
+        <div class="w-full bg-white p-5 rounded-lg shadow">
+            <p class="text-sm font-semibold">User Information</p>
+            <form action="{{ route('change.profile', ['user' => $user->id]) }}" method="POST" enctype="multipart/form-data">
+              @method('PUT')
+              @csrf
+              <div class="flex flex-col items-center justify-center">
+                <label for="profile_picture" class="text-sm font-medium">Profile Picture</label>
+                <img id="profile_picture_preview" src="{{ $user->profile_picture ? asset('storage/' . $user->profile_picture) : asset('images/user.png') }}" class="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+                <input type="file" name="profile_picture" id="profile_picture" class="text-sm file:mr-2 file:py-2 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-[#EAEAEA]" accept=".png, .jpg, .jpeg, .tiff, .tif">
+                <p class="text-xs text-gray-400 mb-5 mt-1">Accepts formats such as JPEG, PNG, BMP, TIFF, and must not exceed into 2MB.</p>
+                @error('profile_picture')
+                    <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                @enderror
+            </div>
+            <div class="grid grid-cols-2 gap-x-24 px-2 py-3">
+                <div class="flex flex-col">
+                    <label for="first_name" class="text-sm font-medium">First Name</label>
+                    <input type="text" name="first_name" id="first_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{ $user->first_name }}" 
+                    pattern="[A-Za-z\s-]+"
+                    title="The input type accepts letters, hypen, and spaces only.">
+                    @error('first_name')
+                    <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                  @enderror
+                  </div>
+                  <div class="flex flex-col">
+                    <label for="email" class="text-sm font-medium">Work Email</label>
+                    <input type="email" name="email" id="email" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{ $user->email }}">
+                  </div>
+                  <div class="flex flex-col">
+                    <label for="middle_name" class="text-sm font-medium">Middle Name</label>
+                    <input type="text" name="middle_name" id="middle_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" placeholder="Enter middle name here" value="{{  $user->middle_name }}"
+                    pattern="[A-Za-z\s-]+"
+                    title="The input type accepts letters, hypen, and spaces only.">
+                    @error('middle_name')
+                    <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                  @enderror
+                  </div>
+                  <div class="flex flex-col">
+                    <label for="company_id" class="text-sm font-medium">Company</label>
+                    <select id="company_id" name="company_id" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
+                        <option value="" {{ $user->company_id == "" ? 'selected' : '' }}>Select the company</option>
+                        @foreach($companies as $company)
+                            <option value="{{ $company->id }}" {{ $user->company_id == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
+                        @endforeach
+                    </select>
+                  </div>
+                  <div class="flex flex-col">
+                    <label for="last_name" class="text-sm font-medium">Last Name</label>
+                    <input type="text" name="last_name" id="last_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{ $user->last_name }}"
+                    pattern="[A-Za-z\s-]+"
+                    title="The input type accepts letters, hypen, and spaces only.">
+                    @error('last_name')
+                    <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                  @enderror
+                  </div>
+                  <div class="flex flex-col">
+                    <label for="department_id" class="text-sm font-medium">Department</label>
+                    <select name="department_id" id="department_id" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
+                        <option value="" {{ $user->department_id == "" ? 'selected' : '' }}>Select the department</option>
+                        @foreach($departments as $department)
+                            <option value="{{$department->id}}" {{$user->department_id == $department->id ? 'selected' : ''}}>{{$department->name}}</option>
+                            @endforeach
+                    </select>
+                    @error('department')
+                    <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                    @enderror
+                  </div>
+                  <div class="flex flex-col">
+                    <label for="role_id" class="text-sm font-medium">Role</label>
+                    <select id="role_id" name="role_id" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
+                        <option value="" {{ $user->role_id == "" ? 'selected' : '' }}>Select the role</option>
+                        @foreach($roles as $role)
+                            <option value="{{ $role->id }}" {{ $user->role_id == $role->id ? 'selected' : '' }}>{{ $role->role }}</option>
+                        @endforeach
+                    </select>
+                  </div>
+                  <div class="flex flex-col">
+                    <label for="position" class="text-sm font-medium">Position</label>
+                    <input type="text" name="position" id="position" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{ $user->position }}"
+                    pattern="[A-Za-z\s-]+"
+                    title="The input type accepts letters, hypen, and spaces only.">
+                    @error('position')
+                    <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                  @enderror
+                  </div>
+            </div>
+            <div class="flex flex-row items-center justify-end gap-x-2 mr-2">
+              <div>
+                <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Update Profile</button>
+              </div>
+            </form>
+            <div>
+              @if ($user->type_id == 1 )
+              <form action="{{route('change.status', ['user' => $user->id])}}" method="POST">
+                @method('PUT')
+                @csrf
+                <input type="hidden" name="type_id" value="2">
+                <button type="submit" class="w-32 p-2 mt-5 bg-closed rounded-sm text-white text-sm font-semibold hover:bg-red-600" onclick="confirmation(event)">Disable Account</button>
+            </form>
+              @else 
+              <form action="{{route('change.status', ['user' => $user->id])}}" method="POST">
+                @method('PUT')
+                @csrf
+                <input type="hidden" name="type_id" value="1">
+                <button type="submit" class="w-32 p-2 mt-5 bg-resolved rounded-sm text-white text-sm font-semibold hover:bg-green-600" onclick="confirmation(event)">Enable Account</button>
+            </form>
+              @endif
+            </div>
+            </div>
+        </div>    
+    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          function sanitizeInput(event) {
+              event.target.value = event.target.value.replace(/[^A-Za-z\s-]/g, '');
+          }
+      
+          const inputs = [
+              document.getElementById('first_name'),
+              document.getElementById('middle_name'),
+              document.getElementById('last_name'),
+              document.getElementById('position')
+          ];
+      
+          inputs.forEach(input => {
+              input.addEventListener('input', sanitizeInput);
+          });
+
+        const fileInput = document.getElementById('profile_picture');
+        const imagePreview = document.getElementById('profile_picture_preview');
+
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0]; 
+            
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                };
+                
+                reader.readAsDataURL(file); 
+            } else {
+                imagePreview.src = '{{ asset('images/user.png') }}';
+            }
+        });
+
+    $(document).ready(function() {
+    $('#company_id').change(function() {
+        var company = $(this).val();
+        console.log("company", company); 
+        $.ajax({
+            url: '{{ route("get.departments") }}', 
+            type: 'GET',
+            data: { company: company },
+            success: function(data) {
+                console.log('data', data);
+                $('#department_id').empty();
+                $('#department_id').append('<option value="">Select the department</option>');
+                $.each(data, function(index, department) {
+                  $('#department_id').append('<option value="' + department.id + '">' + department.name + '</option>');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching users:', error);
+            }
+        });
+    });
+});
+});
+      </script>
+@include('partials.footer')

@@ -23,7 +23,7 @@
             </div>
             <div class="grid grid-cols-2 gap-x-24 px-2 py-3">
                 <div class="flex flex-col">
-                    <label for="first_name" class="text-sm font-medium">First Name:</label>
+                    <label for="first_name" class="text-sm font-medium">First Name</label>
                     <input type="text" name="first_name" id="first_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{  Auth::guard('user')->user()->first_name }}" 
                     pattern="[A-Za-z\s-]+"
                     title="The input type accepts letters, hypen, and spaces only.">
@@ -32,12 +32,12 @@
                   @enderror
                   </div>
                   <div class="flex flex-col">
-                    <label for="email" class="text-sm font-medium">Work Email:</label>
+                    <label for="email" class="text-sm font-medium">Work Email</label>
                     <input type="email" name="email" id="email" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm" value="{{ Auth::guard('user')->user()->email }}" readonly>
                   </div>
                   <div class="flex flex-col">
-                    <label for="middle_name" class="text-sm font-medium">Middle Name:</label>
-                    <input type="text" name="middle_name" id="middle_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{  Auth::guard('user')->user()->middle_name }}"
+                    <label for="middle_name" class="text-sm font-medium">Middle Name</label>
+                    <input type="text" name="middle_name" id="middle_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" placeholder="Enter your middle name here" value="{{  Auth::guard('user')->user()->middle_name }}"
                     pattern="[A-Za-z\s-]+"
                     title="The input type accepts letters, hypen, and spaces only.">
                     @error('middle_name')
@@ -45,11 +45,11 @@
                   @enderror
                   </div>
                   <div class="flex flex-col">
-                    <label for="company" class="text-sm font-medium">Company:</label>
+                    <label for="company" class="text-sm font-medium">Company</label>
                     <input type="text" name="company" id="company" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm" value="{{ Auth::guard('user')->user()->company->name }}" readonly>
                   </div>
                   <div class="flex flex-col">
-                    <label for="last_name" class="text-sm font-medium">Last Name:</label>
+                    <label for="last_name" class="text-sm font-medium">Last Name</label>
                     <input type="text" name="last_name" id="last_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{ Auth::guard('user')->user()->last_name }}"
                     pattern="[A-Za-z\s-]+"
                     title="The input type accepts letters, hypen, and spaces only.">
@@ -58,13 +58,13 @@
                   @enderror
                   </div>
                   <div class="flex flex-col">
-                    <label for="position" class="text-sm font-medium">Position:</label>
+                    <label for="position" class="text-sm font-medium">Position</label>
                     <input type="text" name="position" id="position" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm" value="{{ Auth::guard('user')->user()->position }}" readonly>
                   </div>
             </div>
             <div class="flex flex row gap-x-2 justify-end mr-2">
-                <a href={{ route('view.reset') }} class="w-32 p-2 mt-5 bg-in-progress rounded-sm text-white text-sm text-center font-semibold">Reset Password</a>
-                <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Update Profile</button>
+                <a href="{{ route('view.reset') }}" class="w-32 p-2 mt-5 bg-in-progress rounded-sm text-white text-sm text-center font-semibold hover:bg-blue-600">Reset Password</a>
+                <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Update Profile</button>
             </div>
           </form>
           @endauth

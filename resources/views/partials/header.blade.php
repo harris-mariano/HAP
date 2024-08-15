@@ -10,12 +10,29 @@
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
-  <script src="
-  https://cdn.jsdelivr.net/npm/sweetalert2@11.12.3/dist/sweetalert2.all.min.js
-  "></script>
-  <link href="
-  https://cdn.jsdelivr.net/npm/sweetalert2@11.12.3/dist/sweetalert2.min.css
-  " rel="stylesheet">
   @vite('resources/css/app.css')
 </head>
+{{-- for active/inactive --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    function confirmation(event) {
+        event.preventDefault();
+        const form = event.target.closest('form');
+        Swal.fire({
+        title: "Are you sure?",
+        text: "This will change the user's status and access to the system.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#FB923C",
+        cancelButtonColor: "#9CA3AF",
+        confirmButtonText: "Proceed"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          console.log('Submitting form:', form); 
+         form.submit();
+        }
+      });
+      return false; 
+    }
+</script>
 <body class="font-sans">

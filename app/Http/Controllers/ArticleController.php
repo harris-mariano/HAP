@@ -16,12 +16,12 @@ class ArticleController extends Controller
 
     public function index () {
         $articles = Article::orderBy('created_at', 'desc')
-                    ->simplePaginate(10, ['*'], 'allArticles');
+                    ->simplePaginate(5, ['*'], 'allArticles');
         
         $userId = Auth::guard('user')->id();
         $userArticles = Article::where('user_id', $userId)
                 ->orderBy('created_at', 'desc')
-                ->simplePaginate(10, ['*'], 'userArticles');
+                ->simplePaginate(5, ['*'], 'userArticles');
 
         return view ('articles.all-articles', [
             'articles' => $articles, 
@@ -38,9 +38,10 @@ class ArticleController extends Controller
 
     public function store (Request $request) {
         $validated = $request->validate([
-            "title" => ['required'],
-            "content" => ['required']
+            "title" => 'required|string|min:10|max:100',
+            "content" => 'required|string|min:10',
         ]);
+
         $userId = Auth::guard('user')->id();
         $validated['user_id'] = $userId; 
 
@@ -51,11 +52,11 @@ class ArticleController extends Controller
     }
 
     public function update (Request $request, Article $article) {
-
         $validated = $request->validate([
-            "title" => ['required'],
-            "content" => ['required'],
+            "title" => 'required|string|min:10|max:100',
+            "content" => 'required|string|min:10',
         ]);
+        
         $article->update($validated);
 
         return back()->with('message', 'Your article has been updated successfully.');

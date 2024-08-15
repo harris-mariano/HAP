@@ -9,7 +9,7 @@
 <div class="w-full p-10 flex flex-col justify-center items-center -mt-16">
     <div class="w-1/2 bg-custom-gray rounded-sm text-center flex flex-col gap-y-10 py-10 px-20">
         <p class="font-semibold text-sm">Reset Password Request</p>
-        <p class="text-sm">Hello <span class="font-medium">{{ $name }}</span>, we have received a request to reset your password. To proceed, kindly clink the link below.</p>
+        <p class="text-sm">Hello <span class="font-medium">{{ $name }}</span>, we have received a request to reset your password. To proceed, kindly click the link below.</p>
         <a href="{{ route('reset.link', ['token' => $token]) }}" class="bg-custom-orange text-white font-semibold text-sm p-2 rounded-sm">Reset My Password</a>
         <p class="text-sm">The password request link will expire in an hour. If you did not request a password reset, you can safely ignore this email.</p>
         <p class="text-sm mt-3">Have questions? <span class="text-custom-orange">Just hit reply</span>.</p>

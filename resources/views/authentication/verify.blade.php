@@ -24,9 +24,9 @@
                 @enderror
 
                 <div class="flex flex-col mt-5 gap-y-2 justify-center items-center">
-                <button type="submit" class="p-2 w-1/2 bg-blue-500 rounded-sm text-white text-sm font-semibold">Send Link</button>
-                <button type="button" onclick="window.history.back()" class="p-2 w-1/2 rounded-sm text-sm border border-blue-500 font-semibold">Go Back</button>
-                <p class="text-sm text-center mt-10">Need help? <a href="mailto:helpdesk@adish.com.ph" class="text-custom-orange underline">Contact us</a>.</p>
+                <button type="submit" class="p-2 w-1/2 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Send Link</button>
+                <button type="button" onclick="window.history.back()" class="p-2 w-1/2 rounded-sm text-sm border border-custom-orange font-semibold hover:bg-orange-500 hover:text-white">Go Back</button>
+                <p class="text-sm text-center mt-10">Need help? <a href="{{route('view.contact')}}" class="text-custom-orange underline">Contact us</a>.</p>
                 </div>
             </form>
             </div>

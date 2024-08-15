@@ -9,7 +9,7 @@ class CompanyController extends Controller
 {
     public function store(Request $request) {
         $validated = $request->validate([
-            'name' => 'required|string',
+            'name' => 'required|string|unique:companies',
         ]);
 
         $company = new Company(); 

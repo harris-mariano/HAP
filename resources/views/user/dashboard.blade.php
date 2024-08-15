@@ -118,7 +118,7 @@ const highPercentage = parseFloat(userHigh /userTickets);
 const getDonutChartOptions = () => {
   return {
     series: [requiredPercentage, lowPercentage, mediumPercentage, highPercentage],
-    colors: ["#FECB9D", "#FEBE82", "#FCA863", "#FB923C"],
+    colors: ["#9CA3AF", "#FEBE82", "#FCA863", "#FB923C"],
     chart: {
       height: 320,
       width: "100%",
@@ -147,7 +147,7 @@ const getDonutChartOptions = () => {
               },
             },
           },
-          size: "80%",
+          size: "70%",
         },
       },
     },
@@ -215,7 +215,7 @@ const barChartOptions = {
     {
       name: departmentName2 + " " + "Tickets", 
       data: [departmentOne, departmentTwo, departmentThree, departmentFour],
-      color: "#959595",
+      color: "#9CA3AF",
     }
   ],
   chart: {

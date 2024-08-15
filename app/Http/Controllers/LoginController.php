@@ -6,15 +6,6 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {   
-    protected $mailtrapEmail, $oneTimePassword;
-
-    public function __construct()
-    {
-
-        $this->oneTimePassword = env('PASSWORD');
-        $this->mailtrapEmail = env('EMAIL');
-    }
-
     
     public function index()
     {
@@ -25,19 +16,19 @@ class LoginController extends Controller
     {
         $this->validate($request, [
             'email'   => 'required|email',
-            'password' => 'required|min:6'
+            'password' => 'required'
         ]);
 
         if (Auth::guard('user')->attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::guard('user')->user();
 
-            //for newly created accounts
-            if ($request->password == ($this->oneTimePassword) && $user->type_id == 1) {
+            //for newly created and active accounts
+            if ($user->is_new == true && $user->type_id == 1) {
                 return redirect()->route('view.reset');
             }
 
-            //for old accounts
-            else if ($request->password !== ($this->oneTimePassword) && $user->type_id == 1){
+            //for old and active accounts
+            else if ($user->is_new == false && $user->type_id == 1){
                 return redirect()->intended('/dashboard/user');
             }
 
@@ -48,18 +39,14 @@ class LoginController extends Controller
             }
         }
         else {
-            return back()->withErrors(['email' => 'Invalid credentials. Make sure you are a registered user or customer.'])->onlyInput('email'); 
+            return back()->withErrors(['email' => 'Invalid credentials. Make sure you are a registered user.'])->onlyInput('email'); 
         }
     }
 
     public function logout()
     {
-        if (Auth::guard('user')->check()) {
-            Auth::guard('user')->logout();
-            return redirect()->intended('/');
-        }
-
-        return redirect('/');
+        Auth::guard('user')->logout();
+        return redirect()->intended('/');
     }
 
 }

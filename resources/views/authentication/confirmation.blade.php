@@ -14,8 +14,8 @@
         <p class="text-sm">Kindly remember that the link is only valid for the next hour. If you haven't received your verification email or it has expired, request a new verification link again.</p>
 
         <div class="flex flex-col mt-5 gap-y-2 justify-center items-center">
-            <a href="http://127.0.0.1:8000/dashboard/user" class="p-2 w-1/2 rounded-sm text-sm text-white font-semibold text-center bg-blue-500">Go Back</a>
-            <p class="text-sm text-center mt-10">Need help? <a href="mailto:helpdesk@adish.com.ph" class="text-custom-orange underline">Contact us</a>.</p>
+            <button type="button" onclick="window.history.back()" class="p-2 w-1/2 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Go Back</button>
+            <p class="text-sm text-center mt-10">Need help? <a href="{{route('view.contact')}}" class="text-custom-orange underline">Contact us</a>.</p>
         </div>
     </div>
 </div>

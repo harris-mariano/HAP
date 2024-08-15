@@ -3,6 +3,7 @@
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PasswordController;
@@ -40,7 +41,7 @@ Route::get('/dashboard/user', [UserController::class, 'dashboard'])->name('user.
 //user controller
 Route::middleware('checkRole:1')->group(function () {
     Route::resource('users', UserController::class)->only([
-        'index', 'store', 'update'
+        'index', 'store'
     ]);
 });
 
@@ -71,6 +72,15 @@ Route::middleware('checkRole:1,2,3')->group(function () {
 });
 
 Route::middleware('checkRole:1')->group(function () {
+    //show profile
+    Route::get('/profile/{id}', [ProfileController::class, 'show'])->name('show.profile');
+    //edit profile
+    Route::put('/change/profile/{user}', [ProfileController::class, 'change'])->name('change.profile');
+    //status change
+    Route::put('/change/status/{user}', [ProfileController::class, 'status'])->name('change.status');
+});
+
+Route::middleware('checkRole:1')->group(function () {
     Route::resource('departments', DepartmentController::class)->only([
         'create', 'show', 'store', 'update'
     ]);
@@ -82,13 +92,18 @@ Route::middleware('checkRole:1')->group(function () {
    ]);
 });
 
+
 //view email input page
-Route::get('/reset/password', [PasswordController::class, 'reset'])->name('view.reset');
+Route::get('/reset/password', [PasswordController::class, 'index'])->name('view.reset');
 //send email link and push data in db
 Route::post('/send/email',[PasswordController::class, 'sendEmail'])->name('send.email');
 //view reset password page
 Route::get('/reset/password/{token}', [PasswordController::class, 'resetPassword'])->name('reset.link'); 
 // reset password user
-Route::put('/user/password', [PasswordController::class, 'resetUserPassword'])->middleware('checkRole:1,2,3');
+Route::put('/user/password', [PasswordController::class, 'resetUserPassword']);
+
+Route::get('/contact', [ContactController::class, 'index'])->name('view.contact'); 
+Route::post('/submit/contact', [ContactController::class, 'store'])->name('submit.contact'); 
+
 
 

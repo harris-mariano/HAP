@@ -13,7 +13,7 @@
               @csrf
             <div class="grid grid-cols-2 gap-x-24 px-2 py-3">
                 <div class="flex flex-col">
-                    <label for="status" class="text-sm font-medium">Ticket Status:</label>
+                    <label for="status" class="text-sm font-medium">Ticket Status</label>
                     @if(auth('user')->user()->isCustomer())
                     @if ($ticket->status->category == 'New')
                         <div id="status" class="bg-open mt-2 text-white mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->status->category }}</div>
@@ -52,11 +52,11 @@
                     @endif
                 </div>
                 <div class="flex flex-col">
-                    <label for="date" class="text-sm font-medium">Last Updated on:</label>
+                    <label for="date" class="text-sm font-medium">Last Updated on</label>
                     <div id="date" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->updated_at->format('F d, Y') }}</div>
                 </div>
                 <div class="flex flex-col">
-                    <label for="department" class="text-sm font-medium">Department Assigned:</label>
+                    <label for="department" class="text-sm font-medium">Department Assigned</label>
                     @if(auth('user')->user()->isCustomer())
                     <div id="department" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->department->name }}</div>
                     @elseif(auth('user')->user()->department_id == $ticket->department_id || auth('user')->user()->isSuperUser())
@@ -73,7 +73,7 @@
                     @endif
                 </div>
                 <div class="flex flex-col">
-                    <label for="employee" class="text-sm font-medium">Employee Assigned:</label>
+                    <label for="employee" class="text-sm font-medium">Employee Assigned</label>
                     @if(auth('user')->user()->isCustomer())
                     <div id="employee" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }}</div>
                     @elseif(auth('user')->user()->department_id == $ticket->department_id || auth('user')->user()->isSuperUser())
@@ -91,11 +91,11 @@
                     @endif
                 </div>
                 <div class="flex flex-col">
-                    <label for="title" class="text-sm font-medium">Title:</label>
+                    <label for="title" class="text-sm font-medium">Title</label>
                     <div id="title" class="mt-2 mb-5 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->title }}</div>
                 </div>
                 <div class="flex flex-col">
-                    <label for="priority" class="text-sm font-medium">Priority Level:</label>
+                    <label for="priority" class="text-sm font-medium">Priority Level</label>
                     @if(auth('user')->user()->isCustomer())
                     <div id="priority" class="mt-2 mb-5 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->priority->category }}</div>
                     @elseif(auth('user')->user()->department_id == $ticket->department_id || auth('user')->user()->isSuperUser())
@@ -115,11 +115,11 @@
                 </div>
       </div> 
       <div class="flex flex-col px-2 h-auto mb-7">
-        <label for="description" class="text-sm font-medium mb-2">Description:</label>
+        <label for="description" class="text-sm font-medium mb-2">Description</label>
         <div class="ql-editor mt-1 w-full h-auto bg-[#EAEAEA] p-2 text-sm rounded-sm">{!! $ticket->description !!}</div>
       </div>
       <div class="flex flex-col px-2 mb-7">
-        <label for="attachments" class="text-sm font-medium mb-2">Attachments:</label>
+        <label for="attachments" class="text-sm font-medium mb-2">Attachments</label>
         <div class="flex flex-col space-y-2">
             @if (count($ticket->attachments) > 0 )
             @foreach ($ticket->attachments as $attachment)
@@ -138,7 +138,7 @@
         </div>
         @if(auth('user')->user()->department_id == $ticket->department_id || auth('user')->user()->isSuperUser())
         <div class="flex justify-end">
-            <button type="submit" class="w-24 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Update</button>
+            <button type="submit" class="w-24 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Update</button>
         </div>
         @endif
         @endauth
@@ -168,7 +168,7 @@
                 @enderror
             </label>
             <div class="flex justify-end">
-                <button type="submit" class="w-24 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Post</button>
+                <button type="submit" class="w-24 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Post</button>
             </div>
          </form>
         </div>
@@ -222,6 +222,7 @@
         </div>
     </div>
     </div>
+</div>
     
 <script>
     document.addEventListener("DOMContentLoaded", function() {

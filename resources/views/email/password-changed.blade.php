@@ -10,7 +10,7 @@
     <div class="w-1/2 bg-custom-gray rounded-sm text-center flex flex-col gap-y-10 py-10 px-20">
         <p class="font-semibold text-sm">Password Changed</p>
         <p class="text-sm">Hello <span class="font-medium">{{ $name }}</span>, we wanted to give you a notice that your password has been recently changed.</p>
-        <p class="text-sm">You can <span class="underline text-custom-orange"><a href="http://127.0.0.1:8000/">log in</a></span> with your new password. If you requested this change, you can disregard this email. If you did not request this change, 
+        <p class="text-sm">You can <span class="underline text-custom-orange"><a href="http://127.0.0.1:8000/">login</a></span> with your new password. If you requested this change, you can disregard this email. If you did not request this change, 
             please reply to this email, and we will assist you further.</p>
         <p class="text-sm mt-3">Have questions? <span class="text-custom-orange">Just hit reply</span>.</p>
 

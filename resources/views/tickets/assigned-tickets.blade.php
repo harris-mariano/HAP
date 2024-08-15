@@ -181,19 +181,19 @@
                         </td>
                         <td class="px-6 py-4">
                             @if ($ticket->priority->category == 'Required')
-                                <span class="inline-block bg-required rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
+                                <span class="inline-block bg-gray-400 rounded-full py-1.5 w-full text-white text-center">{{ $ticket->priority->category }}</span>
                             @elseif ($ticket->priority->category == 'Low')
-                                <span class="inline-block bg-low rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
+                                <span class="inline-block bg-low rounded-full py-1.5 w-full text-white text-center">{{ $ticket->priority->category }}</span>
                             @elseif ($ticket->priority->category == 'Medium')
-                                <span class="inline-block bg-medium rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
+                                <span class="inline-block bg-medium rounded-full py-1.5 w-full text-white text-center">{{ $ticket->priority->category }}</span>
                             @elseif ($ticket->priority->category == 'High')
-                                <span class="inline-block bg-high rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
+                                <span class="inline-block bg-all-tickets rounded-full py-1.5 w-full text-white text-center">{{ $ticket->priority->category }}</span>
                             @else
                                 {{ $ticket->priority->category }}
                             @endif
                         </td>
                         <td class="px-6 py-4">
-                            <a href="{{ route('tickets.show', ['ticket' => $ticket->id]) }}" class="font-medium text-in-progress hover:text-blue-800">View</a>
+                            <a href="{{ route('tickets.show', ['ticket' => $ticket->id]) }}" class="p-2 font-medium text-in-progress rounded-sm hover:bg-in-progress hover:text-white">View</a>
                         </td>
                     </tr>
                     @endforeach            
@@ -349,19 +349,19 @@
                         </td>
                         <td class="px-6 py-4">
                             @if ($ticket->priority->category == 'Required')
-                                <span class="inline-block bg-required rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
+                                <span class="inline-block bg-gray-400 rounded-full py-1.5 w-full text-white text-center">{{ $ticket->priority->category }}</span>
                             @elseif ($ticket->priority->category == 'Low')
-                                <span class="inline-block bg-low rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
+                                <span class="inline-block bg-low rounded-full py-1.5 w-full text-white text-center">{{ $ticket->priority->category }}</span>
                             @elseif ($ticket->priority->category == 'Medium')
-                                <span class="inline-block bg-medium rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
+                                <span class="inline-block bg-medium rounded-full py-1.5 w-full text-white text-center">{{ $ticket->priority->category }}</span>
                             @elseif ($ticket->priority->category == 'High')
-                                <span class="inline-block bg-high rounded-full py-1.5 w-full text-center">{{ $ticket->priority->category }}</span>
+                                <span class="inline-block bg-all-tickets rounded-full py-1.5 w-full text-white text-center">{{ $ticket->priority->category }}</span>
                             @else
                                 {{ $ticket->priority->category }}
                             @endif
                         </td>
                         <td class="px-6 py-4">
-                            <a href="{{ route('tickets.show', ['ticket' => $ticket->id]) }}" class="font-medium text-in-progress hover:text-blue-800">View</a>
+                            <a href="{{ route('tickets.show', ['ticket' => $ticket->id]) }}" class="p-2 font-medium text-in-progress rounded-sm hover:bg-in-progress hover:text-white">View</a>
                         </td>
                     </tr>
                     @endforeach            

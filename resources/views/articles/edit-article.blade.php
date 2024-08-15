@@ -61,6 +61,7 @@
         @endauth
         </div>
     </div>
+</div>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <script>
       const quill = new Quill('#editor', {
@@ -69,7 +70,8 @@
         toolbar: [
             ['bold', 'italic', 'underline'],
             [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            ['clean']
+            ['clean'],
+            ['image']
         ]
       }});
 

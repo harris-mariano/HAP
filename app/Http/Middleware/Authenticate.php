@@ -16,9 +16,6 @@ class Authenticate extends Middleware
             if ($request->routeIs('user.*') && !auth()->guard('user')->check()) {
                 return route('login.user');
             }
-            if ($request->routeIs('customer.*') && !auth()->guard('customer')->check()) {
-                return route('login.customer');
-            }
         }
     }
 }

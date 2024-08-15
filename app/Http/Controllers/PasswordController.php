@@ -14,15 +14,14 @@ use App\Models\User;
 
 class PasswordController extends Controller
 {
-    protected $mailtrapEmail, $oneTimePassword;
+    protected $mailtrapEmail;
 
     public function __construct()
     {
-        $this->oneTimePassword = env('PASSWORD');
         $this->mailtrapEmail = env('EMAIL');
     }
 
-    public function reset () {
+    public function index () {
         return view ('authentication.verify'); 
     }
 
@@ -31,24 +30,26 @@ class PasswordController extends Controller
             'email' => 'required|email|exists:users'
         ]);
 
+        $user = User::where('email', $validated['email'])->first();
         $token = Str::random(length:64);
 
-        DB::table('password_reset_tokens')->insert([
-            'email' => $validated['email'],
-            'token' => $token,
-            'created_at' => Carbon::now(),
-            'expires_at' => Carbon::now()->addMinutes(60),
-        ]); 
-
-        if (Auth::guard('user')->check()){
-            $user = Auth::guard('user')->user();
-            Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'reset_password', null, null, null, null, null, null, $token));
+        //inactive account
+        if ($user->type_id == 2) {
+            return back()->withErrors(['email' => 'Your account is inactive. Please contact administrator for assistance. 
+            '])->onlyInput('email'); 
         }
-        else {
-            Mail::to($this->mailtrapEmail)->send(new UserMail($validated['email'], 'reset_password', null, null, null, null, null, null, $token));
-
+        
+        //exists in database
+        if ($user->email == $validated['email']) {
+            DB::table('password_reset_tokens')->insert([
+                'email' => $validated['email'],
+                'token' => $token,
+                'created_at' => Carbon::now(),
+                'expires_at' => Carbon::now()->addMinutes(60),
+            ]); 
         }
-
+        
+        Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'reset_password', null, null, null, null, null, null, null, $token));
         return view ('authentication.confirmation'); 
     }
 
@@ -91,14 +92,14 @@ class PasswordController extends Controller
             return view('authentication.expired');
         }
 
-        if ($validated['password'] == ($this->oneTimePassword)) {
-            return back()->withErrors([
-                'password' => 'The password you entered cannot be the company-defined one-time password.',
-            ]);
-        }
-
         $user = User::where('email', $validated['email'])->first();
+
+        //check old password
+        if (Hash::check($validated['password'], $user->password)) {
+            return redirect()->back()->withErrors(['password' => 'The new password cannot be the same as the old password.']);
+        }
         $user->password = Hash::make($validated['password']);
+        $user->is_new = false; //to handle newly created accounts
         $user->save();
 
         DB::table('password_reset_tokens')->where(['token' => $validated['token']])->delete(); 
@@ -106,6 +107,7 @@ class PasswordController extends Controller
         if (Auth::guard('user')->check()){
             Auth::guard('user')->logout();
         }
+
         Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'password_changed'));
         return redirect()->intended('/')->with('message', 'Your password has been updated successfully.');
     }

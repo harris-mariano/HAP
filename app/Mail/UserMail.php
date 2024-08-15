@@ -11,7 +11,7 @@ class UserMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $isSuccess, $name, $type, $title, $status, $priority, $employee, $commenter, $comment, $token;
+    protected $isSuccess, $name, $type, $title, $status, $priority, $employee, $commenter, $comment, $ticketId, $token;
 
     /**
      * Create a new message instance.
@@ -19,7 +19,7 @@ class UserMail extends Mailable
      * @return void
      */
 
-     public function __construct($name, $type, $title = null, $status = null, $priority = null, $employee = null, $commenter = null, $comment = null, $token = null)
+     public function __construct($name, $type, $title = null, $status = null, $priority = null, $employee = null, $commenter = null, $comment = null, $ticketId = null, $token = null)
     {
         $this->name = $name;
         $this->type = $type;
@@ -29,6 +29,7 @@ class UserMail extends Mailable
         $this->employee = $employee;
         $this->commenter = $commenter;
         $this->comment = $comment;
+        $this->ticketId = $ticketId;
         $this->token = $token;
     }
 
@@ -71,6 +72,10 @@ class UserMail extends Mailable
                 $subject = 'Password Changed';
                 $view = 'email.password-changed';
             break;
+            case 'new_message':
+                $subject = 'New Message';
+                $view = 'email.new-message';
+            break;
             default:
                 break;
         }
@@ -86,6 +91,7 @@ class UserMail extends Mailable
                 'employee' => $this->employee,
                 'commenter' => $this->commenter,
                 'comment' => $this->comment,
+                'ticketId' => $this->ticketId,
                 'token' => $this->token,
             ]);
     }

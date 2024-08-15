@@ -42,14 +42,20 @@ class TicketController extends Controller
     }
 
     public function store (Request $request) {
+        $messages = [
+            'attachments.max' => 'You can only upload a maximum of 5 attachments.',
+            "attachments.*.mimes" => 'Only JPEG, PNG, GIF, MP4, and MOV files are allowed.',
+            "attachments.*.max" => 'Each attachment can be a maximum of 50MB.',
+        ];
+
         $validated = $request->validate([
-            "department_id" => ['required'],
-            "employee_id" => ['required'],
-            "title" => ['required'],
-            "description" => ['required'],
+            "department_id" => 'required',
+            "employee_id" => 'required',
+            "title" => 'required',
+            "description" => 'required',
             'attachments' => 'nullable|array|max:5',
             'attachments.*' => 'file|mimes:jpeg,png,gif,mp4,mov|max:50000',
-        ]);
+        ], $messages);
 
         $userId = Auth::guard('user')->id();
 
@@ -77,8 +83,6 @@ class TicketController extends Controller
 
         $history = new History();
         $history->ticket_id = $ticket->id;
-        $history->status_id = 1; //new
-        $history->priority_id = 1; //required 
         $history->user_id = $validated['employee_id'];
         $history->save(); 
 
@@ -91,7 +95,10 @@ class TicketController extends Controller
 
     public function show ($id) {
         $ticket = Ticket::with(['attachments', 'histories'])->findOrFail($id); 
-        $employees = User::where('department_id', $ticket->department_id)->get();
+        $employees = User::where('department_id', $ticket->department_id)
+                    ->where('role_id', '!=', 1) //not superuser
+                    ->where('type_id', '!=', 2) //not inactive
+                    ->get();
         $histories = $ticket->histories()->orderBy('created_at', 'desc')->get();
 
         return view('tickets.edit-ticket', [
@@ -131,10 +138,10 @@ class TicketController extends Controller
     public function update (Request $request, Ticket $ticket) {
 
         $validated = $request->validate([
-            "department_id" => ['required'],
-            "employee_id" => ['required'],
-            "priority_id" => ['required'], 
-            "status_id" => ['required'], 
+            "department_id" => 'required',
+            "employee_id" => 'required',
+            "priority_id" => 'required', 
+            "status_id" => 'required', 
         ]);
 
         $statusChanged = $ticket->status_id != $validated['status_id'];

@@ -62,7 +62,7 @@
                                 <p class="text-xs text-red-700 mt-2">{{$message}}</p>
                             @enderror
 
-                            <label for="company" class="text-sm font-medium">Company:</label>
+                            <label for="company" class="text-sm font-medium">Company</label>
                             <select id="company" name="company" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
                                 <option value="" {{ old('company') == "" ? 'selected' : '' }}>Select the company</option>
                                 @foreach($companies as $company)
@@ -70,7 +70,7 @@
                                 @endforeach
                             </select>
                         
-                            <label for="department" class="text-sm font-medium">Department:</label>
+                            <label for="department" class="text-sm font-medium">Department</label>
                             <select name="department" id="department" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
                                 <option value="" {{ old('department') == "" ? 'selected' : '' }}>Select the department</option>
                             </select>
@@ -87,8 +87,8 @@
                             @enderror
             
                             <div class="flex flex row gap-x-2 justify-end mr-2">
-                                <button id="cancelButton" class="w-24 p-2 mt-5 border border-custom-orange rounded-sm text-sm font-semibold">Cancel</button>
-                                <button type="submit" class="w-24 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Create</button>
+                                <button id="cancelButton" class="w-24 p-2 mt-5 border border-custom-orange rounded-sm text-sm font-semibold hover:bg-orange-500 hover:text-white">Cancel</button>
+                                <button type="submit" class="w-24 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Create</button>
                             </div>
                 </form>
                 
@@ -111,7 +111,7 @@
                                 Picture
                             </th>
                             <th scope="col" class="px-6 py-3">
-                                Full Name
+                                Name
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 Email
@@ -124,6 +124,9 @@
                             </th>
                             <th scope="col" class="px-6 py-3">
                                Position
+                            </th>
+                            <th scope="col" class="px-6 py-3">
+                                Role
                             </th>
                             <th scope="col" class="px-6 py-3">
                                 Status
@@ -148,31 +151,35 @@
                         <td class="px-6 py-4">{{ $user->company->name }}</td>
                         <td class="px-6 py-4">{{ $user->department->name }}</td>
                         <td class="px-6 py-4">{{ $user->position }}</td>
+                        <td class="px-6 py-4">{{ $user->role->role }}</td>
                         <td class="px-6 py-4">
                             @if ($user->type_id == 1)
                                 <span class="inline-block bg-resolved rounded-full py-1.5 w-full text-white text-center">{{ $user->type->type }}</span>
                             @elseif ($user->type_id == 2)
-                                <span class="inline-block bg-red-500 rounded-full py-1.5 w-full text-white text-center">{{ $user->type->type }}</span>
+                                <span class="inline-block bg-closed rounded-full py-1.5 w-full text-white text-center">{{ $user->type->type }}</span>
                             @else
                             {{ $user->type->type }}
                             @endif
                         </td>
-                        <td class="px-6 py-4">
+                        {{-- <td class="px-6 py-4 text-center">
                             @if ($user->type_id == 1)
-                            <form action="{{route('users.update', ['user' => $user->id])}}" method="POST">
+                            <form action="{{route('change.status', ['user' => $user->id])}}" method="POST">
                                 @method('PUT')
                                 @csrf
-                                <input type="hidden" id="type_id" name="type_id" value="2">
-                                <button type="submit" class="font-medium text-red-500">Set as Inactive</button>
+                                <input type="hidden" name="type_id" value="2">
+                                <button type="button" class="p-2 font-medium text-closed rounded-sm hover:bg-closed hover:text-white" onclick="confirmation(event)">Disable</button>
                             </form>
                             @elseif ($user->type_id == 2)
-                            <form action="{{route('users.update', ['user' => $user->id])}}" method="POST">
+                            <form action="{{route('change.status', ['user' => $user->id])}}" method="POST">
                                 @method('PUT')
                                 @csrf
-                                <input type="hidden" id="type_id" name="type_id" value="1">
-                                <button type="submit" class="font-medium text-resolved">Set as Active</button>
+                                <input type="hidden" name="type_id" value="1">
+                                <button type="button" class="p-2 font-medium text-resolved rounded-sm hover:bg-resolved hover:text-white" onclick="confirmation(event)">Enable</button>
                             </form>
                             @endif
+                        </td> --}}
+                        <td class="px-6 py-4">
+                            <a href="{{ route('show.profile', ['id' => $user->id]) }}" class="p-2 font-medium text-in-progress rounded-sm hover:bg-in-progress hover:text-white">View</a>
                         </td>
                     </tr>
                     @endforeach
@@ -185,16 +192,13 @@
       </div>
 
     <div class="w-full bg-white p-5 rounded-lg shadow">
-        <div class="flex items-center gap-x-2">
+        <div class="flex flex-row items-center">
             <p class="text-sm font-semibold">All Departments and Companies</p>
-            <a href="{{ route('departments.create') }}">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="size-4 text-custom-orange">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                  </svg>
+            <a href="{{ route('departments.create') }}" class="p-2 rounded-sm ml-auto text-sm font-semibold text-custom-orange mr-1 hover:bg-custom-orange hover:text-white">Create New
             </a> 
         </div>
         <div class="relative flex items-center mt-5">
-            <input type="text" id="searchDepartment" placeholder="Type a department here" class="bg-gray-100 p-2 pr-10 text-sm rounded-sm w-full">
+            <input type="text" id="searchDepartment" placeholder="Type a department or company name here" class="bg-gray-100 p-2 pr-10 text-sm rounded-sm w-full">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="absolute right-3 h-5 w-5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
             </svg>
@@ -220,7 +224,7 @@
                         <td class="px-6 py-4">{{$department->name}}</td>
                         <td class="px-6 py-4">{{$department->company->name}}</td>
                         <td class="px-6 py-4">
-                            <a href="{{ route('departments.show', ['department' => $department->id]) }}" class="font-medium text-in-progress hover:text-blue-800">View</a>
+                            <a href="{{ route('departments.show', ['department' => $department->id]) }}" class="p-2 font-medium text-in-progress rounded-sm hover:bg-in-progress hover:text-white">View</a>
                         </td>
                     </tr>
                     @endforeach
@@ -233,9 +237,10 @@
     </div>
     
     </div>
+
    <script>
     document.addEventListener("DOMContentLoaded", function() {
-        
+
         function sanitizeInput(event) {
               event.target.value = event.target.value.replace(/[^A-Za-z\s-]/g, '');
           }
@@ -271,10 +276,13 @@
         });
         
     var cancelButton = document.getElementById("cancelButton");
+    const superuserCheckbox = document.getElementById('superuser');
     cancelButton.addEventListener("click", function(){
-    var clearElements = ["profile_picture", "email", "first_name", "middle_name", "last_name", "department", "position", "company"];
+    var clearElements = ["profile_picture", "email", "first_name", "middle_name", "last_name", "department", "position", "company", "superuser"];
         clearElements.forEach(function(elementId) {
         document.getElementById(elementId).value = "";
+        superuserCheckbox.checked = false;
+        imagePreview.src = '{{ asset('images/user.png') }}';
     });
     });
 
@@ -295,7 +303,7 @@
         const searchQuery = this.value.trim().toLowerCase();
 
         Array.from(usersTable.rows).forEach(function (row) {
-            const title = row.cells[0].textContent.trim().toLowerCase();
+            const title = row.cells[1].textContent.trim().toLowerCase();
             if (title.includes(searchQuery)) {
                 row.style.display = '';
             } else {

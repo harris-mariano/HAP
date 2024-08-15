@@ -69,6 +69,7 @@
       </div>
     </div>
   </div>
+</div>
     @endif
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
     <script>
@@ -78,7 +79,8 @@
         toolbar: [
             ['bold', 'italic', 'underline'],
             [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-            ['clean']
+            ['clean'],
+            ['image']
         ]
       },
         placeholder: 'Describe the necessary actions needed to be performed by the user',
