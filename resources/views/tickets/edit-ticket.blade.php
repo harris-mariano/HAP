@@ -34,9 +34,6 @@
                             <option value="3" {{ $ticket->status->id == "3" ? 'selected' : '' }}>Resolved</option>
                             <option value="4" {{ $ticket->status->id == "4" ? 'selected' : '' }}>Closed</option>
                         </select>
-                        @error('department')
-                        <p class="text-xs text-red-700 mt-2">{{$message}}</p>
-                        @enderror
                     @else
                     @if ($ticket->status->category == 'New')
                         <div id="status" class="bg-open mt-2 text-white mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->status->category }}</div>
@@ -65,9 +62,6 @@
                             <option value="1" {{ $ticket->department->id == "1" ? 'selected' : '' }}>HRAD</option>
                             <option value="2" {{ $ticket->department->id == "2" ? 'selected' : '' }}>Team Banana</option>
                         </select>
-                        @error('department')
-                        <p class="text-xs text-red-700 mt-2">{{$message}}</p>
-                        @enderror
                     @else
                     <div id="department" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->department->name }}</div>
                     @endif
@@ -83,9 +77,6 @@
                             <option value="{{$employee->id}}" {{$ticket->employee->id == $employee->id ? 'selected' : ''}}>{{$employee->first_name}} {{$employee->last_name}}</option>
                             @endforeach
                         </select>
-                        @error('employee')
-                        <p class="text-xs text-red-700 mt-2">{{$message}}</p>
-                        @enderror
                     @else
                     <div id="employee" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }}</div>
                     @endif
@@ -106,9 +97,6 @@
                         <option value="3" {{ $ticket->priority->id == "3" ? 'selected' : '' }}>Medium Priority</option>
                         <option value="4" {{ $ticket->priority->id == "4" ? 'selected' : '' }}>High Priority</option>
                     </select>
-                    @error('department')
-                    <p class="text-xs text-red-700 mt-2">{{$message}}</p>
-                    @enderror
                     @else
                     <div id="priority" class="mt-2 mb-5 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->priority->category }}</div>
                     @endif
@@ -151,22 +139,22 @@
         <div class="mt-2">
             <form action="{{route('comment.create', ['id' => $ticket->id])}}" method="POST" enctype="multipart/form-data">
             @csrf
-            <textarea name="comment" id="comment" rows="5" class="border w-full text-sm px-4 py-2 rounded-sm" placeholder="Write comment..." required></textarea>
-            @error('comment')
-            <p class="text-xs text-red-700 mt-2">{{$message}}</p>
-            @enderror
+            <textarea name="comment" id="comment" rows="5" class="border w-full text-sm px-2.5 py-2 rounded-sm" placeholder="Write a comment..." required>{{old('comment')}}</textarea>
             <label for="photo" class="flex flex-col ml-3 -mt-9 cursor-pointer">
                 <div class="flex flex-row items-center gap-x-2 ">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-in-progress">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
                       </svg>                      
-                    <p id="file-name" class="text-sm text-in-progress">Add attachment</p>
+                    <p id="file-name" class="text-sm text-in-progress">Attach a photo or video</p>
                 </div>
                 <input id="photo" name="photo" type="file" class="hidden" accept=".jpg, .jpeg, .png, .mov, .mp4"/>
-                @error('photo')
-                <p class="text-xs text-red-700 mt-5">{{$message}}</p>
-                @enderror
             </label>
+            @error('comment')
+            <p class="text-xs text-red-700 my-4">{{$message}}</p>
+            @enderror
+            @error('photo')
+            <p class="text-xs text-red-700 my-4">{{$message}}</p>
+            @enderror
             <div class="flex justify-end">
                 <button type="submit" class="w-24 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Post</button>
             </div>

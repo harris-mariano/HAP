@@ -24,6 +24,7 @@ class LoginController extends Controller
 
             //for newly created and active accounts
             if ($user->is_new == true && $user->type_id == 1) {
+                $request->session()->put('email', $request->email);
                 return redirect()->route('view.reset');
             }
 
@@ -47,6 +48,7 @@ class LoginController extends Controller
     {
         Auth::guard('user')->logout();
         return redirect()->intended('/');
+        $request->session()->forget('email');
     }
 
 }

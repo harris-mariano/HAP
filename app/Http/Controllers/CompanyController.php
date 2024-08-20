@@ -9,7 +9,7 @@ class CompanyController extends Controller
 {
     public function store(Request $request) {
         $validated = $request->validate([
-            'name' => 'required|string|unique:companies',
+            'name' => 'required|string|unique:companies|min:10',
         ]);
 
         $company = new Company(); 
@@ -22,7 +22,7 @@ class CompanyController extends Controller
     public function update (Request $request, Company $company) {
 
         $validated = $request->validate([
-           'company' => 'required|string',
+           'company' => 'required|string|min:10',
         ]);
         $company->name = $validated['company'];
         $company->update();

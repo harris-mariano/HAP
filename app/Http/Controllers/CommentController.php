@@ -24,7 +24,7 @@ class CommentController extends Controller
         $ticket = Ticket::findOrFail($id); 
 
         $validated = $request->validate([
-            'comment' => 'required|string|min:5',
+            'comment' => 'required|string|min:10',
             'photo' => 'nullable|file|mimes:jpeg,png,gif,mp4,mov|max:50000'
         ]);
 

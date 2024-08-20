@@ -18,18 +18,18 @@
                 <input type="file" name="profile_picture" id="profile_picture" class="text-sm file:mr-2 file:py-2 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-[#EAEAEA]" accept=".png, .jpg, .jpeg, .tiff, .tif">
                 <p class="text-xs text-gray-400 mb-5 mt-1">Accepts formats such as JPEG, PNG, BMP, TIFF, and must not exceed into 2MB.</p>
                 @error('profile_picture')
-                    <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                    <p class="text-xs text-red-700 -mt-5">{{$message}}</p>
                 @enderror
             </div>
             <div class="grid grid-cols-2 gap-x-24 px-2 py-3">
                 <div class="flex flex-col">
                     <label for="first_name" class="text-sm font-medium">First Name</label>
                     <input type="text" name="first_name" id="first_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{  Auth::guard('user')->user()->first_name }}" 
-                    pattern="[A-Za-z\s-]+"
+                    pattern="[A-Za-z -]+"
                     title="The input type accepts letters, hypen, and spaces only.">
                     @error('first_name')
-                    <p class="text-xs text-red-700 mt-2">{{$message}}</p>
-                  @enderror
+                    <p class="text-xs text-red-700 -mt-6">{{$message}}</p>
+                    @enderror
                   </div>
                   <div class="flex flex-col">
                     <label for="email" class="text-sm font-medium">Work Email</label>
@@ -38,11 +38,11 @@
                   <div class="flex flex-col">
                     <label for="middle_name" class="text-sm font-medium">Middle Name</label>
                     <input type="text" name="middle_name" id="middle_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" placeholder="Enter your middle name here" value="{{  Auth::guard('user')->user()->middle_name }}"
-                    pattern="[A-Za-z\s-]+"
+                    pattern="[A-Za-z -]+"
                     title="The input type accepts letters, hypen, and spaces only.">
                     @error('middle_name')
-                    <p class="text-xs text-red-700 mt-2">{{$message}}</p>
-                  @enderror
+                    <p class="text-xs text-red-700 -mt-6">{{$message}}</p>
+                    @enderror
                   </div>
                   <div class="flex flex-col">
                     <label for="company" class="text-sm font-medium">Company</label>
@@ -51,10 +51,10 @@
                   <div class="flex flex-col">
                     <label for="last_name" class="text-sm font-medium">Last Name</label>
                     <input type="text" name="last_name" id="last_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{ Auth::guard('user')->user()->last_name }}"
-                    pattern="[A-Za-z\s-]+"
+                    pattern="[A-Za-z -]+"
                     title="The input type accepts letters, hypen, and spaces only.">
                     @error('last_name')
-                    <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                    <p class="text-xs text-red-700 -mt-6">{{$message}}</p>
                   @enderror
                   </div>
                   <div class="flex flex-col">

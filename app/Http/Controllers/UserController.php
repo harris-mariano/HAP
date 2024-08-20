@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserMail;
 use App\Models\Department;
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -33,39 +34,44 @@ class UserController extends Controller
 
         //random password
         $password = Str::random(12);
+
+        $departments = Department::where('company_id', old('company_id'))
+                    ->get();
+                    
+        $roles = Role::all();
         
         return view ('user.all-users', [
             'allUsers' => $allUsers, 
             'companies' => $companies, 
+            'departments' => $departments,
+            'roles' => $roles,
             'password' => $password, 
             'allDepartments' => $allDepartments]); 
     }
 
     public function store(Request $request) {
         $validated = $request->validate([
-            "profile_picture" => 'image|mimes:jpeg,png,bmp,tiff|max:2048', 
+            "profile_picture" => 'nullable|image|mimes:jpeg,png,bmp,tiff|max:2048', 
             "email" => ['required', Rule::unique('users', 'email')],
             'password' => 'required',
             "first_name" => 'required|string|min:2|max:30',
-            "middle_name" => 'nullable|string|min:3|max:30',
-            "last_name" => 'required|string|min:3|max:30',
-            "company" => 'required',
-            "department" => 'required',
-            "position" => 'required|string|min:10|max:30',
+            "middle_name" => 'nullable|string|min:2|max:30',
+            "last_name" => 'required|string|min:2|max:30',
+            "company_id" => 'required',
+            "department_id" => 'required',
+            "position" => 'required|string|min:5|max:30',
             "superuser" => 'nullable|boolean'
         ]); 
 
         $hashedPassword = Hash::make($validated['password']);
         $validated['password'] = $hashedPassword;
 
-        $role_id = $validated['company'] == 1 
+        $role_id = $validated['company_id'] == 1 
         ? ($request->input('superuser') == '1' ? 1 : 2) 
         : 3;
 
         $user = new User();
         $user->type_id = 1; //active
-        $user->department_id = $validated['department']; 
-        $user->company_id = $validated['company'];
         $user->role_id = $role_id;
         $user->is_new = true; //newly created account
         $user->fill($validated);
@@ -78,7 +84,7 @@ class UserController extends Controller
         
         $user->save();
         Mail::to($this->mailtrapEmail)->send(new UserMail($validated['first_name'], 'registration'));
-        $request->session()->put('email', $validated['email']);
+        // $request->session()->put('email', $validated['email']);
         return redirect()->back()->with('message', 'The user has been successfully created.');
     } 
 
@@ -364,7 +370,6 @@ class UserController extends Controller
     public function getUsers (Request $request) {
         $department = $request->input('department');
         $users = User::where('department_id', $department)
-                ->where('role_id', '!=', 1) //exclude superuser
                 ->where('type_id', '=', 1) //active account
                 ->where('is_new', '=', false) //not newly created account
                 ->get();

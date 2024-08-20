@@ -26,8 +26,16 @@ class ProfileController extends Controller
     public function show ($id) {
         $user = User::findOrFail($id);
         $companies = Company::all();
-        $roles = Role::all();
         $departments = Department::where('company_id', $user->company_id)->get();
+
+        //if not from adish, customer role only
+        if ($user->company_id != 1) {
+            $roles = Role::where('id', 3)->get();
+        }
+        //if from adish, can be any role
+        else {
+            $roles = Role::all();
+        }
 
         return view ('user.edit-profile', [
             'user' => $user,
@@ -39,10 +47,10 @@ class ProfileController extends Controller
 
     public function update (Request $request, User $user) {
         $validated = $request->validate([
-            "first_name" => 'required|string',
-            "middle_name" => 'nullable',
-            "last_name" => 'required|string',
-            "profile_picture" => 'image|mimes:jpeg,png,bmp,tiff|max:2048',
+            "first_name" => 'required|string|min:2|max:30',
+            "middle_name" => 'nullable|string|min:2|max:30',
+            "last_name" => 'required|string|min:2|max:30',
+            "profile_picture" => 'nullable|image|mimes:jpeg,png,bmp,tiff|max:2048',
         ]);
 
         if (Auth::guard('user')->check()){
@@ -51,9 +59,6 @@ class ProfileController extends Controller
             $user->fill($validated);
 
             if ($request->hasFile('profile_picture')) {
-                $request->validate([
-                    "profile_picture" => 'mimes:jpeg,png,bmp,tiff|max:2048'
-                ]); 
                 $uploadedFile = $request->file('profile_picture');
                 $imagePath = $uploadedFile->store('profile_picture', 'public'); 
                 $user->profile_picture = $imagePath;
@@ -66,23 +71,20 @@ class ProfileController extends Controller
 
     public function change (Request $request, User $user) {
         $validated = $request->validate([
-            "first_name" => 'required|string',
-            "middle_name" => 'nullable',
-            "last_name" => 'required|string',
-            "profile_picture" => 'image|mimes:jpeg,png,bmp,tiff|max:2048',
+            "first_name" => 'required|string|min:2|max:30',
+            "middle_name" => 'nullable|string|min:2|max:30',
+            "last_name" => 'required|string|min:2|max:30',
+            "profile_picture" => 'nullable|image|mimes:jpeg,png,bmp,tiff|max:2048',
             "role_id" => 'required',
             "email" => 'required|email',
             "company_id" => 'required',
             "department_id" => 'required',
-            "position" => 'required|string'
+            "position" => 'required|string|min:5|max:30',
         ]);
 
         $user->fill($validated); 
 
         if ($request->hasFile('profile_picture')) {
-            $request->validate([
-                "profile_picture" => 'mimes:jpeg,png,bmp,tiff|max:2048'
-            ]); 
             $uploadedFile = $request->file('profile_picture');
             $imagePath = $uploadedFile->store('profile_picture', 'public'); 
             $user->profile_picture = $imagePath;

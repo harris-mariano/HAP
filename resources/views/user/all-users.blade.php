@@ -17,17 +17,15 @@
                             <img id="profile_picture_preview" src="../images/user.png" alt="Default Profile Picture" class="w-20 h-20 mb-3 mt-2 rounded-full object-cover">
                             <input type="file"  name="profile_picture" id="profile_picture" class="w-full text-sm file:mr-2 file:py-2 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-[#EAEAEA]"
                             accept=".png, .jpg, .jpeg, .tiff, .tif"/>
-                            <p class="text-xs text-gray-400 mb-5 mt-1">Accepts formats such as JPEG, PNG, BMP, TIFF, and must not exceed into 2MB.</p>
+                            <p class="text-xs text-gray-400 mb-7 mt-1">Accepts formats such as JPEG, PNG, BMP, TIFF, and must not exceed into 2MB.</p>
                             @error('profile_picture')
-                                <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                                <p class="text-xs text-red-700 -mt-6">{{$message}}</p>
                             @enderror
-            
                             <label for="email" class="text-sm font-medium">Work Email</label>
-                            <input type="text" name="email" id="email" placeholder="Enter the work email" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
+                            <input type="text" name="email" id="email" placeholder="Enter the work email" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required value="{{old('email')}}">
                             @error('email')
-                            <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                            <p class="text-xs text-red-700 -mt-6">{{$message}}</p>
                             @enderror
-                            
                             <label for="password" class="text-sm font-medium">Default Password</label>
                             <div class="relative">
                                 <input type="password" name="password" id="password" class="mt-2 w-full bg-gray-200 p-2 text-sm rounded-sm focus:outline-none focus:ring focus:border-blue-300" value="{{$password}}" readonly>
@@ -35,7 +33,7 @@
                             </div>
                             
                             <div class="mt-4 flex items-center gap-x-2">
-                            <input type="checkbox" id="superuser" name="superuser" value="1" class="w-4 h-4 bg-gray-100 border-gray-300">
+                            <input type="checkbox" id="superuser" name="superuser" value="1" class="w-4 h-4 bg-gray-100 border-gray-300" {{ old('superuser') ? 'checked' : '' }}>
                             <label for="superuser" class="text-sm font-medium">Set as Superuser</label>
                             </div>
             
@@ -43,49 +41,52 @@
                 <div class="w-1/2 p-10">
                             <label for="first_name" class="text-sm font-medium">First Name</label>
                             <input type="text" name="first_name" id="first_name" placeholder="Enter the first name" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required value="{{old('first_name')}}"
-                            pattern="[A-Za-z\s-]+"
+                            pattern="[A-Za-z -]+"
                             title="The input type accepts letters, hypen, and spaces only.">
                             @error('first_name')
-                                <p class="text-xs text-red-700 mt-2">{{$message}}</p>
-                            @enderror
-            
-                            <label for="middle_name" class="text-sm font-medium">Middle Name</label>
-                            <input type="text" name="middle_name" id="middle_name" placeholder="Enter the middle name" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" value="{{old('middle_name')}}"
-                            pattern="[A-Za-z\s-]+"
-                            title="The input type accepts letters, hypen, and spaces only.">
-            
-                            <label for="last_name" class="text-sm font-medium">Last Name</label>
-                            <input type="text" name="last_name" id="last_name" placeholder="Enter the last name" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required value="{{old('last_name')}}"
-                            pattern="[A-Za-z\s-]+"
-                            title="The input type accepts letters, hypen, and spaces only.">
-                            @error('last_name')
-                                <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                                <p class="text-xs text-red-700 -mt-6">{{$message}}</p>
                             @enderror
 
-                            <label for="company" class="text-sm font-medium">Company</label>
-                            <select id="company" name="company" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
-                                <option value="" {{ old('company') == "" ? 'selected' : '' }}>Select the company</option>
+                            <label for="middle_name" class="text-sm font-medium">Middle Name</label>
+                            <input type="text" name="middle_name" id="middle_name" placeholder="Enter the middle name" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" value="{{old('middle_name')}}"
+                            pattern="[A-Za-z -]+"
+                            title="The input type accepts letters, hypen, and spaces only.">
+                            @error('middle_name')
+                            <p class="text-xs text-red-700 -mt-6">{{$message}}</p>
+                            @enderror
+
+                            <label for="last_name" class="text-sm font-medium">Last Name</label>
+                            <input type="text" name="last_name" id="last_name" placeholder="Enter the last name" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required value="{{old('last_name')}}"
+                            pattern="[A-Za-z -]+"
+                            title="The input type accepts letters, hypen, and spaces only.">
+                            @error('last_name')
+                                <p class="text-xs text-red-700 -mt-6">{{$message}}</p>
+                            @enderror
+
+                            <label for="company_id" class="text-sm font-medium">Company</label>
+                            <select id="company_id" name="company_id" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
+                                <option value="" {{ old('company_id') == "" ? 'selected' : '' }}>Select the company</option>
                                 @foreach($companies as $company)
-                                    <option value="{{ $company->id }}" {{ old('company') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
+                                    <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
                                 @endforeach
                             </select>
                         
                             <label for="department" class="text-sm font-medium">Department</label>
-                            <select name="department" id="department" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
-                                <option value="" {{ old('department') == "" ? 'selected' : '' }}>Select the department</option>
+                            <select name="department_id" id="department" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
+                                <option value="" {{ old('department_id') == "" ? 'selected' : '' }}>Select the department</option>
+                                @foreach($departments as $department)
+                                <option value="{{$department->id}}" {{ old('department_id') == $department->id ? 'selected' : ''}}>{{$department->name}}</option>
+                              @endforeach
                             </select>
-                            @error('department')
-                            <p class="text-xs text-red-700 mt-2">{{$message}}</p>
-                            @enderror
             
                             <label for="position" class="text-sm font-medium">Position</label>
                             <input type="text" name="position" id="position" placeholder="Enter the position" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required value="{{old('position')}}"
-                            pattern="[A-Za-z\s-]+"
+                            pattern="[A-Za-z -]+"
                             title="The input type accepts letters, hypen, and spaces only.">
                             @error('position')
-                                <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                                <p class="text-xs text-red-700 -mt-6">{{$message}}</p>
                             @enderror
-            
+                    
                             <div class="flex flex row gap-x-2 justify-end mr-2">
                                 <button id="cancelButton" class="w-24 p-2 mt-5 border border-custom-orange rounded-sm text-sm font-semibold hover:bg-orange-500 hover:text-white">Cancel</button>
                                 <button type="submit" class="w-24 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Create</button>
@@ -161,23 +162,7 @@
                             {{ $user->type->type }}
                             @endif
                         </td>
-                        {{-- <td class="px-6 py-4 text-center">
-                            @if ($user->type_id == 1)
-                            <form action="{{route('change.status', ['user' => $user->id])}}" method="POST">
-                                @method('PUT')
-                                @csrf
-                                <input type="hidden" name="type_id" value="2">
-                                <button type="button" class="p-2 font-medium text-closed rounded-sm hover:bg-closed hover:text-white" onclick="confirmation(event)">Disable</button>
-                            </form>
-                            @elseif ($user->type_id == 2)
-                            <form action="{{route('change.status', ['user' => $user->id])}}" method="POST">
-                                @method('PUT')
-                                @csrf
-                                <input type="hidden" name="type_id" value="1">
-                                <button type="button" class="p-2 font-medium text-resolved rounded-sm hover:bg-resolved hover:text-white" onclick="confirmation(event)">Enable</button>
-                            </form>
-                            @endif
-                        </td> --}}
+
                         <td class="px-6 py-4">
                             <a href="{{ route('show.profile', ['id' => $user->id]) }}" class="p-2 font-medium text-in-progress rounded-sm hover:bg-in-progress hover:text-white">View</a>
                         </td>
@@ -330,7 +315,7 @@
       });
 
     $(document).ready(function() {
-    $('#company').change(function() {
+    $('#company_id').change(function() {
         var company = $(this).val();
         console.log("company", company); 
         $.ajax({

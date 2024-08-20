@@ -39,9 +39,11 @@ class ArticleController extends Controller
     public function store (Request $request) {
         $validated = $request->validate([
             "title" => 'required|string|min:10|max:100',
-            "content" => 'required|string|min:10',
+            "content" => 'required',
+            "content_text" => 'required|string|min:10',
         ]);
 
+        unset($validated['content_text']);
         $userId = Auth::guard('user')->id();
         $validated['user_id'] = $userId; 
 
@@ -54,9 +56,10 @@ class ArticleController extends Controller
     public function update (Request $request, Article $article) {
         $validated = $request->validate([
             "title" => 'required|string|min:10|max:100',
-            "content" => 'required|string|min:10',
+            "content" => 'required',
+            "content_text" => 'required|string|min:10',
         ]);
-        
+        unset($validated['content_text']);
         $article->update($validated);
 
         return back()->with('message', 'Your article has been updated successfully.');

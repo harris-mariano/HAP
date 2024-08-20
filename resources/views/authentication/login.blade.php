@@ -20,7 +20,7 @@
                         <i id="togglePassword" class="absolute top-1/3 mt-3 right-2 transform -translate-y-1/2 cursor-pointer far fa-eye text-gray-400"></i>
                     </div>
                     @error('email')
-                    <p class="text-xs text-red-700">{{$message}}</p>
+                    <p class="text-xs text-red-700 -mt-2">{{$message}}</p>
                     @enderror
                     <button id="loginButton" type="submit" class="w-full p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Login</button>
             </form>

@@ -15,7 +15,7 @@
                         <label for="name" class="text-sm font-medium">Company</label>
                         <input type="text" name="name" id="name" class="mt-2 mb-5 w-full border-[1px] border-black p-2 text-sm rounded-sm" placeholder="Enter the company name" required>
                         @error('name')
-                        <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                        <p class="text-xs text-red-700 -mt-4">{{$message}}</p>
                         @enderror
                     </div>
                 </div>
@@ -43,8 +43,8 @@
                             <div class="form-group">
                                 <label for="department_0" class="text-sm font-medium">Department</label>
                                 <input type="text"name="departments[0][name]" id="department_0" class="mt-2 mb-2 w-full border-[1px] border-black p-2 text-sm rounded-sm" placeholder="Enter the department name"required>
-                                @error('departments.0.name')
-                                <p class="text-xs text-red-700 mt-2">{{ $message }}</p>
+                                 @error('departments.*.name')
+                                 <p class="text-xs text-red-700">{{$message}}</p>
                                  @enderror
                             </div>
                         </div>
@@ -87,8 +87,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     <button type="button" class="close-button text-closed font-medium text-sm hover:text-red-700">Remove</button>
                 </div>
                 <input type="text" name="departments[${departmentIndex}][name]" id="department_${departmentIndex}" class="mt-2 mb-2 w-full border-[1px] border-black p-2 text-sm rounded-sm" placeholder="Enter the department name" required>
-                 @error('departments.${departmentIndex}.name')
-                    <p class="error-message text-xs">{{ $message }}</p>
+                @error('departments.*.name')
+                    <p class="text-xs text-red-700">{{$message}}</p>
                 @enderror
             `;
         container.appendChild(newField);

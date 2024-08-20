@@ -17,11 +17,25 @@ class DepartmentController extends Controller
     }
 
     public function store (Request $request) {
+        $messages = [
+            'departments.*.name.min' => 'The department name must be at least 10 characters',
+        ];
+        
         $validated = $request->validate([
             'company' => 'required|integer|exists:companies,id',
-            'departments.*.name' => 'required|string'
-        ]);
+            'departments.*.name' => 'required|string|min:10'
+        ], $messages);
 
+        $departments = $request->input('departments',[]);
+        $passedDepartments = array_column($departments, 'name');
+        $dbDepartments = Department::where('company_id', $validated['company'])->pluck('name')->toArray();
+        $allDepartments = array_merge($passedDepartments,$dbDepartments);
+        $uniqueDepartments = array_unique($allDepartments);
+
+        if (count($uniqueDepartments) !== count($allDepartments)) {
+            return back()->withErrors(['departments.*.name' => 'The department name has already been taken.']);
+        }
+        
         foreach ($request->input('departments') as $department) {
             Department::create([
                 'name' => $department['name'],
@@ -47,7 +61,7 @@ class DepartmentController extends Controller
     public function update (Request $request, Department $department) {
 
         $validated = $request->validate([
-           'department' => 'required|string',
+           'department' => 'required|string|min:10',
         ]);
         $department->name = $validated['department'];
         $department->update();

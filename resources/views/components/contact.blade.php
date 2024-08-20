@@ -30,23 +30,40 @@
             <form method="POST" action="{{ url("/submit/contact") }}">
             @csrf   
                     <label for="name" class="text-sm font-medium">Name</label>
-                    <input type="text" name="name" id="name" placeholder="Enter your full name" class="mt-2 mb-5 w-full border-[1px] border-black p-1.5 text-sm rounded-sm" required >
+                    <input type="text" name="name" id="name" placeholder="Enter your full name" class="mt-2 mb-5 w-full border-[1px] border-black p-1.5 text-sm rounded-sm" required value="{{old('name')}}" 
+                    pattern="[A-Za-z\s-]+"
+                    title="The input type accepts letters, hypen, and spaces only." >
                     @error('name')
-                    <p class="text-xs text-red-700 mt-2">{{$message}}</p> 
+                    <p class="text-xs text-red-700 -mt-4">{{$message}}</p> 
                      @enderror
                     <label for="email" class="text-sm font-medium">Email</label>
-                    <input type="email" name="email" id="email" placeholder="Enter your email address" class="mt-2 mb-5 w-full border-[1px] border-black p-1.5 text-sm rounded-sm" required >
+                    <input type="email" name="email" id="email" placeholder="Enter your email address" class="mt-2 mb-5 w-full border-[1px] border-black p-1.5 text-sm rounded-sm" required value="{{old('email')}}" >
                     @error('email')
-                    <p class="text-xs text-red-700 mt-2">{{$message}}</p> 
+                    <p class="text-xs text-red-700 -mt-4">{{$message}}</p> 
                      @enderror
                     <label for="message" class="text-sm font-medium">Message</label>
-                    <textarea id="message" name="message" rows="4" cols="50" class="mt-2 mb-5 w-full border-[1px] border-black p-1.5 text-sm rounded-sm" placeholder="What can we help with?"></textarea>
+                    <textarea id="message" name="message" rows="4" cols="50" class="mt-2 mb-5 w-full border-[1px] border-black p-1.5 text-sm rounded-sm" placeholder="What can we help with?" required>{{old('message')}}</textarea>
                     @error('message')
-                    <p class="text-xs text-red-700 mt-2">{{$message}}</p> 
+                    <p class="text-xs text-red-700 -mt-6 mb-2">{{$message}}</p> 
                      @enderror
                     <button type="submit" class="w-full p-2 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Send Message</button>
             </form>
         </div>
     </div>
 </div>
+<script>
+      document.addEventListener('DOMContentLoaded', function() {
+          function sanitizeInput(event) {
+              event.target.value = event.target.value.replace(/[^A-Za-z\s-]/g, '');
+          }
+      
+          const inputs = [
+              document.getElementById('name')
+          ];
+      
+          inputs.forEach(input => {
+              input.addEventListener('input', sanitizeInput);
+          });
+        });
+</script>
 @include('partials.footer')

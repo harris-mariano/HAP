@@ -35,20 +35,21 @@
                     <label for="title" class="text-sm font-medium">Title:</label>
                     <input type="text" name="title" id="title" class="mt-2 mb-5 w-full border-[1px] border-black p-2 text-sm rounded-sm" placeholder="Describe the subject of the article" required value="{{$article->title}}">
                     @error('title')
-                    <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                    <p class="text-xs text-red-700 -mt-4">{{$message}}</p>
                     @enderror
                 </div>
                 <div class="flex flex-col mb-5 h-full">
                     <label for="content" class="text-sm font-medium mb-2">Content:</label>
                     <div id="editor" class="overflow-y-auto">{!! $article->content !!}</div>
                     <textarea name="content" id="content" style="display: none;"></textarea>
-                    @error('content')
-                    <p class="text-xs text-red-700 mt-2">{{$message}}</p>
+                    <textarea name="content_text" id="content_text" style="display: none;"></textarea>
+                    @error('content_text')
+                    <p class="text-xs text-red-700 mt-1">{{$message}}</p>
                     @enderror
                   </div>
             </div>
             <div class="flex justify-end mr-5">
-                <button type="submit" class="w-24 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold">Update</button>
+                <button type="submit" class="w-24 p-2 bg-custom-orange rounded-sm text-white text-sm font-semibold">Update</button>
             </div>
         </form>
         @elseif (auth('user')->user()->isUser() || auth('user')->user()->isCustomer())
@@ -78,6 +79,12 @@
       quill.on('text-change', function() {
         var html = quill.root.innerHTML;
         document.getElementById('content').value = html;
+
+        //plain text
+        var tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+        var plainText = tempDiv.textContent || tempDiv.innerText || '';
+        document.getElementById('content_text').value = plainText;
     });
     </script>
     <script>

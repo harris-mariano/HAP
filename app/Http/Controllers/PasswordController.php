@@ -31,24 +31,40 @@ class PasswordController extends Controller
         ]);
 
         $user = User::where('email', $validated['email'])->first();
-        $token = Str::random(length:64);
-
+        //does not exist
+        if (!$user) {
+            return back()->withErrors(['email' => 'The selected email is invalid'])->onlyInput('email');
+        }
         //inactive account
         if ($user->type_id == 2) {
             return back()->withErrors(['email' => 'Your account is inactive. Please contact administrator for assistance. 
             '])->onlyInput('email'); 
         }
-        
-        //exists in database
-        if ($user->email == $validated['email']) {
-            DB::table('password_reset_tokens')->insert([
-                'email' => $validated['email'],
-                'token' => $token,
-                'created_at' => Carbon::now(),
-                'expires_at' => Carbon::now()->addMinutes(60),
-            ]); 
+        //for authenticated user 
+        if (Auth::guard('user')->check()) {
+            $authUser = Auth::guard('user')->user();
+            if ($authUser->email !== $validated['email']) {
+                return back()->withErrors(['email' => 'This email is not associated with this authenticated user.'])->onlyInput('email');
+            }
+        } else {
+            //for newly created accounts
+            if ($request->session()->has('email')) {
+                $sessionEmail = $request->session()->get('email');
+                if ($sessionEmail !== $validated['email']) {
+                    return back()->withErrors(['email' => 'This email is not associated with the email provided in login.'])->onlyInput('email');
+                }
+                $request->session()->forget('email');
+            }
         }
-        
+        //success and forgot password 
+        $token = Str::random(64);
+        DB::table('password_reset_tokens')->insert([
+            'email' => $validated['email'],
+            'token' => $token,
+            'created_at' => Carbon::now(),
+            'expires_at' => Carbon::now()->addMinutes(60),
+        ]);
+        $request->session()->forget('email');
         Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'reset_password', null, null, null, null, null, null, null, $token));
         return view ('authentication.confirmation'); 
     }

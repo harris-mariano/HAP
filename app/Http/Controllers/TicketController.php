@@ -37,8 +37,12 @@ class TicketController extends Controller
 
     public function create () {
         $user = Auth::guard('user')->user();
-
-        return view('tickets.file-ticket', ['user' => $user]);
+        $employees = User::where('department_id', old('department_id'))
+                    ->where('type_id', '!=', 2) //not inactive
+                    ->get();
+        return view('tickets.file-ticket', [
+            'user' => $user, 
+            'employees' => $employees]);
     }
 
     public function store (Request $request) {
@@ -51,19 +55,19 @@ class TicketController extends Controller
         $validated = $request->validate([
             "department_id" => 'required',
             "employee_id" => 'required',
-            "title" => 'required',
+            "title" => 'required|string|min:10',
             "description" => 'required',
+            "description_text" => 'required|string|min:10',
             'attachments' => 'nullable|array|max:5',
             'attachments.*' => 'file|mimes:jpeg,png,gif,mp4,mov|max:50000',
         ], $messages);
 
+        unset($validated['description_text']);
         $userId = Auth::guard('user')->id();
-
         $validated['priority_id'] = 1; //required
         $validated['status_id'] = 1; //new
         $validated['user_id'] = $userId;
         
-
         $ticket = new Ticket();
         $ticket->fill($validated);
         $ticket->save();
