@@ -25,28 +25,24 @@ class UserController extends Controller
 
     public function index () {
         $allUsers = User::orderBy('created_at', 'desc')
-        ->simplePaginate(5, ['*'], 'allUsers');
+        ->simplePaginate(10, ['*'], 'allUsers');
+                    
+        return view ('user.all-users', [
+            'allUsers' => $allUsers]); 
+    }
 
-        $companies = Company::all();
-
-        $allDepartments = Department::orderBy('created_at', 'desc')
-        ->simplePaginate(5, ['*'], 'allDepartments');
-
+    public function create () {
         //random password
         $password = Str::random(12);
 
+        $companies = Company::all();
         $departments = Department::where('company_id', old('company_id'))
                     ->get();
-                    
-        $roles = Role::all();
-        
-        return view ('user.all-users', [
-            'allUsers' => $allUsers, 
-            'companies' => $companies, 
-            'departments' => $departments,
-            'roles' => $roles,
+
+        return view ('user.create-user', [
             'password' => $password, 
-            'allDepartments' => $allDepartments]); 
+            'companies' => $companies, 
+            'departments' => $departments]);
     }
 
     public function store(Request $request) {
@@ -165,6 +161,22 @@ class UserController extends Controller
         $customerDepartmentFour = Ticket::whereMonth('created_at', '>=', 10)
                             ->whereMonth('created_at', '<=', 12)
                             ->count();
+        $customerDepartment = [];
+        $customerSeries = [];
+        $customerSeries = [
+            [
+                'name' => "My Tickets",
+                'data' => [$customerQuarterOne, $customerQuarterTwo, $customerQuarterThree, $customerQuarterFour],
+                'color' => '#E88504'
+            ]
+        ];
+        $customerDepartment[] = [
+            'name' => " All Tickets",
+            'data' => [$customerDepartmentOne, $customerDepartmentTwo, $customerDepartmentThree, $customerDepartmentFour],
+            'color' => '#9CA3AF',
+        ]; 
+                    
+        $customerDepartmentData = array_merge($customerSeries, $customerDepartment);
         //for user 
         $userTickets = Ticket::where('employee_id', $userId)->count(); 
 
@@ -233,6 +245,23 @@ class UserController extends Controller
                             ->whereMonth('created_at', '>=', 10)
                             ->whereMonth('created_at', '<=', 12)
                             ->count();
+        
+        $departmentSeries = [];
+        $employeeSeries = [];
+        $employeeSeries = [
+            [
+                'name' => "My Tickets",
+                'data' => [$quarterOne, $quarterTwo, $quarterThree, $quarterFour],
+               'color' => '#E88504'
+            ]
+        ];
+        $departmentSeries[] = [
+            'name' => $departmentName ." Tickets",
+            'data' => [$departmentOne, $departmentTwo, $departmentThree, $departmentFour],
+            'color' => '#9CA3AF',
+            ]; 
+
+        $userDepartment = array_merge($employeeSeries, $departmentSeries);
 
         //for superuser
         $allTickets = Ticket::count(); 
@@ -252,49 +281,37 @@ class UserController extends Controller
         $allMedium = Ticket::where('priority_id', 3)->count(); 
 
         $allHigh = Ticket::where('priority_id', 4)->count(); 
-
-
-        $hradOne = Ticket::where('department_id', 1)
-                            ->whereMonth('created_at', '>=', 1)
-                            ->whereMonth('created_at', '<=', 3)
-                            ->count();
-
-        $hradTwo = Ticket::where('department_id', 1)
-                            ->whereMonth('created_at', '>=', 4)
-                            ->whereMonth('created_at', '<=', 6)
-                            ->count();
         
-        $hradThree = Ticket::where('department_id', 1)
+        $departments = Department::where('company_id', 1)
+        ->get(); 
+        $colorPattern = ['#E88504', '#9CA3AF'];
+        
+        $departmentData = [];
+
+        foreach($departments as $index => $department) {
+            $quarterOne = Ticket::where('department_id', $department->id)
+                        ->whereMonth('created_at', '>=', 1)
+                        ->whereMonth('created_at', '<=', 3)
+                        ->count();
+            $quarterTwo = Ticket::where('department_id', $department->id)
+                        ->whereMonth('created_at', '>=', 4)
+                        ->whereMonth('created_at', '<=', 6)
+                        ->count();
+            $quarterThree = Ticket::where('department_id', $department->id)
                             ->whereMonth('created_at', '>=', 7)
                             ->whereMonth('created_at', '<=', 9)
                             ->count();
-        
-        $hradFour = Ticket::where('department_id', 1)
+            $quarterFour = Ticket::where('department_id', $department->id)
                             ->whereMonth('created_at', '>=', 10)
                             ->whereMonth('created_at', '<=', 12)
                             ->count();
-        
-        $bananaOne = Ticket::where('department_id', 2)
-                            ->whereMonth('created_at', '>=', 1)
-                            ->whereMonth('created_at', '<=', 3)
-                            ->count();
-        
-        $bananaTwo = Ticket::where('department_id', 2)
-                            ->whereMonth('created_at', '>=', 4)
-                            ->whereMonth('created_at', '<=', 6)
-                            ->count();
-
-        $bananaThree = Ticket::where('department_id', 2)
-                            ->whereMonth('created_at', '>=', 7)
-                            ->whereMonth('created_at', '<=', 9)
-                            ->count();
-                            
-        $bananaFour = Ticket::where('department_id', 2)
-                            ->whereMonth('created_at', '>=', 10)
-                            ->whereMonth('created_at', '<=', 12)
-                            ->count();
-
-        
+            
+            $departmentData[] = [
+                'name' => $department->name ." Tickets",
+                'data' => [$quarterOne, $quarterTwo, $quarterThree, $quarterFour],
+                'color' => $colorPattern[$index % 2],
+                ]; 
+        }
         $isSuperuser = $user->isSuperUser();
         $isUser = $user->isUser();
 
@@ -309,16 +326,7 @@ class UserController extends Controller
                 'userLow' => $allLow, 
                 'userMedium' => $allMedium,
                 'userHigh' => $allHigh, 
-                'quarterOne' => $hradOne,
-                'quarterTwo' => $hradTwo,
-                'quarterThree' => $hradThree,
-                'quarterFour' => $hradFour, 
-                'departmentName1' => 'HRAD',
-                'departmentName2' => 'Team Banana',
-                'departmentOne' => $bananaOne,
-                'departmentTwo' => $bananaTwo,
-                'departmentThree' => $bananaThree,
-                'departmentFour' => $bananaFour]);
+                'departmentData' => $departmentData]); 
         }
         elseif ($isUser) {
             return view('user.dashboard', [
@@ -331,16 +339,7 @@ class UserController extends Controller
                 'userLow' => $userLow, 
                 'userMedium' => $userMedium,
                 'userHigh' => $userHigh, 
-                'quarterOne' => $quarterOne,
-                'quarterTwo' => $quarterTwo,
-                'quarterThree' => $quarterThree,
-                'quarterFour' => $quarterFour, 
-                'departmentName1' => 'My',
-                'departmentName2' => $departmentName,
-                'departmentOne' => $departmentOne,
-                'departmentTwo' => $departmentTwo,
-                'departmentThree' => $departmentThree,
-                'departmentFour' => $departmentFour]);
+                'departmentData' => $userDepartment]);
         }
         else {
             return view('user.dashboard', [
@@ -353,16 +352,7 @@ class UserController extends Controller
                 'userLow' => $customerLow, 
                 'userMedium' => $customerMedium,
                 'userHigh' => $customerHigh, 
-                'quarterOne' => $customerQuarterOne,
-                'quarterTwo' => $customerQuarterTwo,
-                'quarterThree' => $customerQuarterThree,
-                'quarterFour' => $customerQuarterFour, 
-                'departmentName1' => 'My',
-                'departmentName2' => 'All',
-                'departmentOne' => $customerDepartmentOne,
-                'departmentTwo' => $customerDepartmentTwo,
-                'departmentThree' => $customerDepartmentThree,
-                'departmentFour' => $customerDepartmentFour]);
+                'departmentData' => $customerDepartmentData]);
         }
 
     }

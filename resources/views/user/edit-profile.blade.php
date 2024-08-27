@@ -1,6 +1,6 @@
 @include('partials.header', ['title' => 'adish HAP | User Information'])
 @include('partials.menu')
-<div class="flex flex-row gap-x-10 pt-24">
+<div class="flex flex-row gap-x-10 pt-20">
     <div class="flex-none">
       @include('partials.sidebar')
     </div>
@@ -116,6 +116,41 @@
             </div>
             </div>
         </div>    
+        <div class="w-full bg-white p-5 rounded-lg shadow mt-8">
+          <p class="text-sm font-semibold">Change Password</p>
+          <form action="{{ route('change.password', ['user' => $user->id]) }}" method="POST">
+            @csrf
+            @method('PUT')
+            <div class="grid grid-cols-2 gap-x-24 px-2 py-3">
+              <div>
+                <label for="password" class="text-sm font-medium">New Password</label>
+            <div class="relative">
+                <input type="password" name="password" id="password" placeholder="Enter your new password" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm">
+                <i class="togglePassword absolute top-1/3 right-2 transform -translate-y-1/2 cursor-pointer far fa-eye text-gray-400"></i>
+                <p class="text-xs text-gray-400 -mt-3">Passwords must be 8 characters long, and must contain one lowercase letter, one uppercase letter, one number, and one symbol.  </p>
+            </div>
+            @error('password')
+            <p class="text-xs text-red-700">{{$message}}</p>
+            @enderror
+              </div>
+
+              <div>
+                <label for="password_confirmation" class="text-sm font-medium">Confirm Password</label>
+            <div class="relative">
+                <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Re-type your new password" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm">
+                <i class="togglePassword absolute top-1/2 -mt-1 right-2 transform -translate-y-1/2 cursor-pointer far fa-eye text-gray-400"></i>
+            </div>
+            @error('password_confirmation')
+            <p class="text-xs text-red-700 -mt-4">{{$message}}</p>
+            @enderror
+              </div>
+            </div>
+            <div class="flex flex row gap-x-2 justify-end mr-2">
+            <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Change Password</button>
+            </div>
+        </form>
+      </div>   
+
     </div>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -151,6 +186,18 @@
             } else {
                 imagePreview.src = '{{ asset('images/user.png') }}';
             }
+        });
+
+        const togglePasswordIcons = document.querySelectorAll('.togglePassword');
+
+        togglePasswordIcons.forEach(icon => {
+            icon.addEventListener('click', function() {
+                const passwordField = this.previousElementSibling;
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
         });
 
     $(document).ready(function() {

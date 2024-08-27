@@ -19,6 +19,8 @@ class Ticket extends Model
         'title',
         'description',
         'status_id',
+        'is_admin_creation',
+        'admin_id'
     ];
 
     public function department()
@@ -57,6 +59,10 @@ class Ticket extends Model
 
     public function status () {
         return $this->belongsTo(Status::class, 'status_id');
+    }
+
+    public function admin () {
+        return $this->belongsTo(User::class, 'admin_id');
     }
 
     

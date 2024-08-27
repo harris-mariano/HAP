@@ -1,6 +1,6 @@
 @include('partials.header', ['title' => 'adish HAP | My Profile'])
 @include('partials.menu')
-<div class="flex flex-row gap-x-10 pt-24">
+<div class="flex flex-row gap-x-10 pt-20">
     <div class="flex-none">
       @include('partials.sidebar')
     </div>
@@ -24,12 +24,16 @@
             <div class="grid grid-cols-2 gap-x-24 px-2 py-3">
                 <div class="flex flex-col">
                     <label for="first_name" class="text-sm font-medium">First Name</label>
+                    @if(!Auth::guard('user')->user()->first_name)
                     <input type="text" name="first_name" id="first_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{  Auth::guard('user')->user()->first_name }}" 
                     pattern="[A-Za-z -]+"
                     title="The input type accepts letters, hypen, and spaces only.">
                     @error('first_name')
                     <p class="text-xs text-red-700 -mt-6">{{$message}}</p>
                     @enderror
+                    @else
+                    <input type="first_name" name="first_name" id="first_name" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm" value="{{ Auth::guard('user')->user()->first_name }}" readonly>
+                    @endif
                   </div>
                   <div class="flex flex-col">
                     <label for="email" class="text-sm font-medium">Work Email</label>
@@ -37,12 +41,16 @@
                   </div>
                   <div class="flex flex-col">
                     <label for="middle_name" class="text-sm font-medium">Middle Name</label>
+                    @if(!Auth::guard('user')->user()->middle_name)
                     <input type="text" name="middle_name" id="middle_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" placeholder="Enter your middle name here" value="{{  Auth::guard('user')->user()->middle_name }}"
                     pattern="[A-Za-z -]+"
                     title="The input type accepts letters, hypen, and spaces only.">
                     @error('middle_name')
                     <p class="text-xs text-red-700 -mt-6">{{$message}}</p>
                     @enderror
+                    @else
+                    <input type="middle_name" name="middle_name" id="middle_name" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm" value="{{ Auth::guard('user')->user()->middle_name }}" readonly>
+                    @endif
                   </div>
                   <div class="flex flex-col">
                     <label for="company" class="text-sm font-medium">Company</label>
@@ -50,25 +58,64 @@
                   </div>
                   <div class="flex flex-col">
                     <label for="last_name" class="text-sm font-medium">Last Name</label>
+                    @if(!Auth::guard('user')->user()->last_name)
                     <input type="text" name="last_name" id="last_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{ Auth::guard('user')->user()->last_name }}"
                     pattern="[A-Za-z -]+"
                     title="The input type accepts letters, hypen, and spaces only.">
                     @error('last_name')
                     <p class="text-xs text-red-700 -mt-6">{{$message}}</p>
                   @enderror
+                  @else
+                  <input type="last_name" name="last_name" id="last_name" class="mt-2 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm" value="{{ Auth::guard('user')->user()->last_name }}" readonly>
+                  @endif
                   </div>
                   <div class="flex flex-col">
                     <label for="position" class="text-sm font-medium">Position</label>
-                    <input type="text" name="position" id="position" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm" value="{{ Auth::guard('user')->user()->position }}" readonly>
+                    <input type="text" name="position" id="position" class="mt-2 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm" value="{{ Auth::guard('user')->user()->position }}" readonly>
                   </div>
             </div>
             <div class="flex flex row gap-x-2 justify-end mr-2">
-                <a href="{{ route('view.reset') }}" class="w-32 p-2 mt-5 bg-in-progress rounded-sm text-white text-sm text-center font-semibold hover:bg-blue-600">Reset Password</a>
+                {{-- <a href="{{ route('view.reset') }}" class="w-32 p-2 mt-5 bg-in-progress rounded-sm text-white text-sm text-center font-semibold hover:bg-blue-600">Reset Password</a> --}}
                 <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Update Profile</button>
             </div>
           </form>
           @endauth
-        </div>    
+        </div>   
+        
+        <div class="w-full bg-white p-5 rounded-lg shadow mt-8">
+          <p class="text-sm font-semibold">Change Password</p>
+          <form action="/update/password" method="POST">
+            @csrf
+            @method('PUT')
+            <div class="grid grid-cols-2 gap-x-24 px-2 py-3">
+              <div>
+                <label for="password" class="text-sm font-medium">New Password</label>
+            <div class="relative">
+                <input type="password" name="password" id="password" placeholder="Enter your new password" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm">
+                <i class="togglePassword absolute top-1/3 right-2 transform -translate-y-1/2 cursor-pointer far fa-eye text-gray-400"></i>
+                <p class="text-xs text-gray-400 -mt-3">Passwords must be 8 characters long, and must contain one lowercase letter, one uppercase letter, one number, and one symbol.  </p>
+            </div>
+            @error('password')
+            <p class="text-xs text-red-700">{{$message}}</p>
+            @enderror
+              </div>
+
+              <div>
+                <label for="password_confirmation" class="text-sm font-medium">Confirm Password</label>
+            <div class="relative">
+                <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Re-type your new password" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm">
+                <i class="togglePassword absolute top-1/2 -mt-1 right-2 transform -translate-y-1/2 cursor-pointer far fa-eye text-gray-400"></i>
+            </div>
+            @error('password_confirmation')
+            <p class="text-xs text-red-700 -mt-4">{{$message}}</p>
+            @enderror
+              </div>
+            </div>
+            <div class="flex flex row gap-x-2 justify-end mr-2">
+            <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Change Password</button>
+            </div>
+        </form>
+      </div>    
     </div>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
@@ -104,6 +151,18 @@
                 imagePreview.src = '{{ asset('images/user.png') }}';
             }
         });
+
+    const togglePasswordIcons = document.querySelectorAll('.togglePassword');
+
+    togglePasswordIcons.forEach(icon => {
+        icon.addEventListener('click', function() {
+            const passwordField = this.previousElementSibling;
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            this.classList.toggle('fa-eye');
+            this.classList.toggle('fa-eye-slash');
+        });
+    });
     });
       </script>
 @include('partials.footer')

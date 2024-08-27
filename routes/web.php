@@ -41,7 +41,7 @@ Route::get('/dashboard/user', [UserController::class, 'dashboard'])->name('user.
 //user controller
 Route::middleware('checkRole:1')->group(function () {
     Route::resource('users', UserController::class)->only([
-        'index', 'store'
+        'index', 'create', 'store'
     ]);
 });
 
@@ -61,7 +61,7 @@ Route::post('/add/comment/{id}', [CommentController::class, 'store'])->name('com
 
 //article controller
 Route::resource('articles', ArticleController::class)->only([
-    'index', 'store', 'show', 'update'
+    'index', 'create','store', 'show', 'update'
 ]);
 
 Route::middleware('checkRole:1,2,3')->group(function () {
@@ -73,16 +73,19 @@ Route::middleware('checkRole:1,2,3')->group(function () {
 
 Route::middleware('checkRole:1')->group(function () {
     //show profile
-    Route::get('/profile/{id}', [ProfileController::class, 'show'])->name('show.profile');
+    Route::get('/user/{id}', [ProfileController::class, 'show'])->name('show.profile');
     //edit profile
     Route::put('/change/profile/{user}', [ProfileController::class, 'change'])->name('change.profile');
     //status change
     Route::put('/change/status/{user}', [ProfileController::class, 'status'])->name('change.status');
+    //status change
+    Route::put('/change/password/{user}', [PasswordController::class, 'changePassword'])->name('change.password');
+    
 });
 
 Route::middleware('checkRole:1')->group(function () {
     Route::resource('departments', DepartmentController::class)->only([
-        'create', 'show', 'store', 'update'
+        'index', 'create', 'show', 'store', 'update'
     ]);
 });
 
@@ -99,8 +102,11 @@ Route::get('/reset/password', [PasswordController::class, 'index'])->name('view.
 Route::post('/send/email',[PasswordController::class, 'sendEmail'])->name('send.email');
 //view reset password page
 Route::get('/reset/password/{token}', [PasswordController::class, 'resetPassword'])->name('reset.link'); 
-// reset password user
+// reset password user for forgot password/newly created accts
 Route::put('/user/password', [PasswordController::class, 'resetUserPassword']);
+
+// reset password auth user
+Route::put('/update/password', [PasswordController::class, 'updateUserPassword']);
 
 Route::get('/contact', [ContactController::class, 'index'])->name('view.contact'); 
 Route::post('/submit/contact', [ContactController::class, 'store'])->name('submit.contact'); 

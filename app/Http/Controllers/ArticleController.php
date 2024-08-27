@@ -16,16 +16,20 @@ class ArticleController extends Controller
 
     public function index () {
         $articles = Article::orderBy('created_at', 'desc')
-                    ->simplePaginate(5, ['*'], 'allArticles');
+                    ->simplePaginate(10, ['*'], 'allArticles');
         
         $userId = Auth::guard('user')->id();
         $userArticles = Article::where('user_id', $userId)
                 ->orderBy('created_at', 'desc')
-                ->simplePaginate(5, ['*'], 'userArticles');
+                ->simplePaginate(10, ['*'], 'userArticles');
 
         return view ('articles.all-articles', [
             'articles' => $articles, 
             'userArticles' => $userArticles]);
+    }
+
+    public function create () {
+        return view ('articles.create-article'); 
     }
 
     public function show ($id) {

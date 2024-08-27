@@ -40,22 +40,15 @@ class PasswordController extends Controller
             return back()->withErrors(['email' => 'Your account is inactive. Please contact administrator for assistance. 
             '])->onlyInput('email'); 
         }
-        //for authenticated user 
-        if (Auth::guard('user')->check()) {
-            $authUser = Auth::guard('user')->user();
-            if ($authUser->email !== $validated['email']) {
-                return back()->withErrors(['email' => 'This email is not associated with this authenticated user.'])->onlyInput('email');
-            }
-        } else {
-            //for newly created accounts
-            if ($request->session()->has('email')) {
-                $sessionEmail = $request->session()->get('email');
+         //for newly created accounts
+        if ($request->session()->has('email')) {
+            $sessionEmail = $request->session()->get('email');
                 if ($sessionEmail !== $validated['email']) {
                     return back()->withErrors(['email' => 'This email is not associated with the email provided in login.'])->onlyInput('email');
                 }
                 $request->session()->forget('email');
-            }
         }
+    
         //success and forgot password 
         $token = Str::random(64);
         DB::table('password_reset_tokens')->insert([
@@ -120,11 +113,60 @@ class PasswordController extends Controller
 
         DB::table('password_reset_tokens')->where(['token' => $validated['token']])->delete(); 
 
+        Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'password_changed'));
+        return redirect()->intended('view/profile')->with('message', 'Your password has been updated successfully.');
+    }
+
+    public function updateUserPassword(Request $request) {
+        $validated = $request->validate([
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed', 
+                'regex:/[a-z]/', 
+                'regex:/[A-Z]/', 
+                'regex:/[0-9]/', 
+                'regex:/[@$!%*#?&]/', 
+            ],
+        ]);
+
         if (Auth::guard('user')->check()){
-            Auth::guard('user')->logout();
+            /** @var \App\Models\User $user **/
+            $user = Auth::guard('user')->user();
+             //check old password
+            if (Hash::check($validated['password'], $user->password)) {
+                return redirect()->back()->withErrors(['password' => 'The new password cannot be the same as the old password.']);
+            }
+            $user->password = Hash::make($validated['password']);
+            $user->save();
         }
 
-        Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'password_changed'));
-        return redirect()->intended('/')->with('message', 'Your password has been updated successfully.');
+        return back()->with('message', 'Your password has been updated successfully.');
+    }
+
+    public function changePassword (Request $request, User $user) {
+        $validated = $request->validate([
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed', 
+                'regex:/[a-z]/', 
+                'regex:/[A-Z]/', 
+                'regex:/[0-9]/', 
+                'regex:/[@$!%*#?&]/', 
+            ],
+        ]);
+
+        /** @var \App\Models\User $user **/
+        if (Hash::check($validated['password'], $user->password)) {
+            return redirect()->back()->withErrors(['password' => 'The new password cannot be the same as the old password.']);
+        }
+
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+
+        return redirect()->back()->with('message', 'The user password has been updated successfully.');
     }
 }

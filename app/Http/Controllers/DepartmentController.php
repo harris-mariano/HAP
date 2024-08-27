@@ -7,7 +7,13 @@ use App\Models\Company;
 use Illuminate\Http\Request;
 
 class DepartmentController extends Controller
-{
+{   
+    public function index () {
+        $allDepartments = Department::orderBy('created_at', 'desc')
+                    ->simplePaginate(10, ['*'], 'allDepartments');
+
+        return view('departments.all-departments', ['allDepartments' => $allDepartments]);
+    }
     public function create() {
         $companies = Company::all();
 

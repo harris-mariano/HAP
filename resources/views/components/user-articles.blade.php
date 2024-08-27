@@ -1,5 +1,9 @@
 <div class="flex flex-col gap-y-3">
-      <p class="text-sm font-semibold">Published Articles</p>
+    <div class="flex flex-row items-center">
+        <p class="text-sm font-semibold">My Published Articles</p>
+      <a href="{{ route('articles.create') }}" class="p-2 rounded-sm ml-auto text-sm font-semibold text-custom-orange mr-1 hover:bg-custom-orange hover:text-white">Create New
+    </a> 
+    </div>
       <div class="relative flex items-center">
           <input type="text" id="searchInput" placeholder="Type a keyword here" class="bg-gray-100 p-2 pr-10 text-sm rounded-sm w-full">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="absolute right-3 h-5 w-5">

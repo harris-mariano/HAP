@@ -1,24 +1,39 @@
 @include('partials.header', ['title' => 'adish HAP | User Dashboard'])
 @include('partials.menu')
-<div class="flex flex-row gap-x-10 pt-24">
+<div class="flex flex-row gap-x-10 pt-20">
     <div class="flex-none">
       @include('partials.sidebar')
     </div>     
     <div class="sm:ml-64 w-full flex flex-row gap-x-5 bg-custom-gray p-5">
       @include('components.ticketstatus')
       <div class="w-full flex flex-col gap-y-5">
-        <div class="w-full bg-white p-5 rounded-lg shadow">
-          <p class="text-sm font-semibold">Tickets Priority Level</p>
+        <div id="priority" class="w-full bg-white p-5 rounded-lg shadow">
+          <div class="flex flex-row justify-between" title="Save as PNG">
+            <p class="text-sm font-semibold">Tickets Priority Level</p>
+            <button id="donut-download">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg>
+            </button>
+            </div>
           <div class="py-6" id="donut-chart"></div>
         </div>
         <div class="w-full bg-white p-5 rounded-lg shadow">
+          <div class="flex flex-row justify-between" title="Save as PNG">
           <p class="text-sm font-semibold">Filed Tickets</p>
+          <button id="bar-download">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+          </button>
+          </div>
           <div id="bar-chart"></div>
         </div>
       </div>
     </div>
     
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     const icon = document.getElementById('question-svg');
@@ -45,7 +60,8 @@
   const resolvedPercentage = parseFloat((userResolved / userTickets) * 100).toFixed(2); 
   const closedPercentage = parseFloat((userClosed /userTickets) * 100).toFixed(2);
 
-   const getRadialChartOptions = () => {
+  const ticketPercentages = [newPercentage, progressPercentage, resolvedPercentage, closedPercentage];
+  const getRadialChartOptions = () => {
   return {
     series: [newPercentage,progressPercentage,resolvedPercentage,closedPercentage],
     colors: ["rgba(234, 179, 8, 0.8)",
@@ -79,6 +95,13 @@
       show: true,
       position: "bottom",
       fontFamily: "Inter, sans-serif",
+      formatter: function(seriesName, opts) {
+        let percentage = ticketPercentages[opts.seriesIndex];
+        if (isNaN(percentage)) {
+          percentage = 0;
+        }
+      return `${seriesName}: ${percentage}%`;
+      }
     },
     tooltip: {
       enabled: true,
@@ -115,6 +138,7 @@ const lowPercentage = parseFloat(userLow / userTickets);
 const mediumPercentage = parseFloat(userMedium / userTickets); 
 const highPercentage = parseFloat(userHigh /userTickets);
 
+const priorityPercentages = [requiredPercentage, lowPercentage, mediumPercentage, highPercentage];
 const getDonutChartOptions = () => {
   return {
     series: [requiredPercentage, lowPercentage, mediumPercentage, highPercentage],
@@ -159,10 +183,22 @@ const getDonutChartOptions = () => {
     labels: ["Required", "Low Priority", "Medium Priority", "High Priority"],
     dataLabels: {
       enabled: false,
+      dropShadow: {
+        enabled: false,
+      },
+
     },
     legend: {
+      show: true,
       position: "bottom",
       fontFamily: "Inter, sans-serif",
+      formatter: function(seriesName, opts) {
+        let percentage = priorityPercentages[opts.seriesIndex] * 100;
+        if (isNaN(percentage)) {
+          percentage = 0;
+        }
+      return `${seriesName}: ${percentage.toFixed(2)}%`;
+      }
     },
     yaxis: {
       labels: {
@@ -192,32 +228,10 @@ if (document.getElementById("donut-chart") && typeof ApexCharts !== 'undefined')
   chart.render();
 }
 
-const quarterOne = {{$quarterOne}}
-const quarterTwo = {{$quarterTwo}}
-const quarterThree = {{$quarterThree}}
-const quarterFour = {{$quarterFour}}
-
-const departmentOne = {{$departmentOne}}
-const departmentTwo = {{$departmentTwo}}
-const departmentThree = {{$departmentThree}}
-const departmentFour = {{$departmentFour}}
-
-const departmentName1 = "{{$departmentName1}}"
-const departmentName2 = "{{$departmentName2}}"
+const departmentData = @json($departmentData); 
 
 const barChartOptions = {
-  series: [
-    {
-      name: departmentName1 + " " + "Tickets", 
-      color: "#E88504",
-      data: [quarterOne, quarterTwo, quarterThree, quarterFour],
-    },
-    {
-      name: departmentName2 + " " + "Tickets", 
-      data: [departmentOne, departmentTwo, departmentThree, departmentFour],
-      color: "#9CA3AF",
-    }
-  ],
+  series: departmentData,
   chart: {
     sparkline: {
       enabled: false,
@@ -303,6 +317,29 @@ if(document.getElementById("bar-chart") && typeof ApexCharts !== 'undefined') {
   const chart = new ApexCharts(document.getElementById("bar-chart"), barChartOptions);
   chart.render();
 }
+
+//save filed tickets
+document.getElementById('bar-download').addEventListener('click', function() {
+            html2canvas(document.querySelector('#bar-chart')).then(canvas => {
+                let link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png'); 
+                link.download = 'filed-tickets.png'; 
+                link.click();
+            });
+        });
+
+//save priority level
+document.getElementById('donut-download').addEventListener('click', function() {
+            html2canvas(document.querySelector('#donut-chart')).then(canvas => {
+                let link = document.createElement('a');
+                link.href = canvas.toDataURL('image/png'); 
+                link.download = 'priority-level.png'; 
+                link.click();
+            });
+        });
 });
+
+
+
 </script>
 @include('partials.footer')

@@ -25,7 +25,7 @@ class CommentController extends Controller
 
         $validated = $request->validate([
             'comment' => 'required|string|min:10',
-            'photo' => 'nullable|file|mimes:jpeg,png,gif,mp4,mov|max:50000'
+            'photo' => 'nullable|file|mimes:jpeg,jpg,png,bmp,mp4,mov|max:50000'
         ]);
 
         $userId = Auth::guard('user')->id();

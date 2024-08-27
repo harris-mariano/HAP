@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-y-3">
-    <p class="text-sm font-semibold">Knowledge Base Articles</p>
+    <p class="text-sm font-semibold">Knowledge Base</p>
     <div class="relative flex items-center">
         <input type="text" id="searchValue" placeholder="Type a keyword here" class="bg-gray-100 p-2 pr-10 text-sm rounded-sm w-full">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="absolute right-3 h-5 w-5">

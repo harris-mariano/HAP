@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserMail;
+use App\Models\Department;
 
 class TicketController extends Controller
 {   
@@ -40,15 +41,24 @@ class TicketController extends Controller
         $employees = User::where('department_id', old('department_id'))
                     ->where('type_id', '!=', 2) //not inactive
                     ->get();
+        $names = User::all()
+                ->where('type_id', '!=', 2); //not inactive;
+        $priorities = Priority::all();
+        $departments = Department::where('company_id', 1) //adish depts
+                    ->get(); 
+
         return view('tickets.file-ticket', [
             'user' => $user, 
-            'employees' => $employees]);
+            'employees' => $employees, 
+            'names' => $names, 
+            'priorities' => $priorities, 
+            'departments' => $departments]);
     }
 
     public function store (Request $request) {
         $messages = [
             'attachments.max' => 'You can only upload a maximum of 5 attachments.',
-            "attachments.*.mimes" => 'Only JPEG, PNG, GIF, MP4, and MOV files are allowed.',
+            "attachments.*.mimes" => 'Only JPEG, PNG, MP4, and MOV files are allowed.',
             "attachments.*.max" => 'Each attachment can be a maximum of 50MB.',
         ];
 
@@ -59,14 +69,27 @@ class TicketController extends Controller
             "description" => 'required',
             "description_text" => 'required|string|min:10',
             'attachments' => 'nullable|array|max:5',
-            'attachments.*' => 'file|mimes:jpeg,png,gif,mp4,mov|max:50000',
+            'attachments.*' => 'file|mimes:jpeg,jpg,png,bmp,mp4,mov,doc,docx,pdf|max:50000',
         ], $messages);
 
         unset($validated['description_text']);
-        $userId = Auth::guard('user')->id();
-        $validated['priority_id'] = 1; //required
-        $validated['status_id'] = 1; //new
-        $validated['user_id'] = $userId;
+
+        $user = Auth::guard('user')->user();
+        $nameId = $request->name;
+        $nameObject = User::find($nameId);
+
+        if ($user->role_id != 1) {
+            $validated['priority_id'] = 1; //required
+            $validated['status_id'] = 1; //new
+            $validated['user_id'] = $user->id;
+        }
+        else {
+            $validated['priority_id'] = $request->priority;
+            $validated['status_id'] = 1; //new
+            $validated['user_id'] = $nameId;
+            $validated['is_admin_creation'] = true;
+            $validated['admin_id'] = $user->id;
+        }
         
         $ticket = new Ticket();
         $ticket->fill($validated);
@@ -90,9 +113,14 @@ class TicketController extends Controller
         $history->user_id = $validated['employee_id'];
         $history->save(); 
 
-        $user = Auth::guard('user')->user(); 
-        Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'ticket_creation', $validated['title']));
-        Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_assignment', $validated['title']));
+        // if ($user->role_id != 1){
+        //     Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'ticket_creation', $validated['title']));
+        // }
+        // else {
+        //     Mail::to($this->mailtrapEmail)->send(new UserMail($nameObject->first_name, 'ticket_creation', $validated['title']));
+        // }
+
+        // Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_assignment', $validated['title']));
        
         return redirect()->route('tickets.index')->with('message', 'Your ticket has been submitted successfully.');
     }
@@ -100,15 +128,21 @@ class TicketController extends Controller
     public function show ($id) {
         $ticket = Ticket::with(['attachments', 'histories'])->findOrFail($id); 
         $employees = User::where('department_id', $ticket->department_id)
-                    ->where('role_id', '!=', 1) //not superuser
                     ->where('type_id', '!=', 2) //not inactive
                     ->get();
         $histories = $ticket->histories()->orderBy('created_at', 'desc')->get();
+        $priorities = Priority::all();
+        $statuses = Status::all();
+        $departments = Department::where('company_id', 1) //adish depts
+        ->get(); 
 
         return view('tickets.edit-ticket', [
             'ticket' => $ticket,
             'employees' => $employees,
             'histories' =>$histories, 
+            'priorities' => $priorities,
+            'departments' => $departments,
+            'statuses' => $statuses,
             ]);
     }
 
@@ -157,12 +191,12 @@ class TicketController extends Controller
         $employeeFirstName = $employeeChanged ? User::find($validated['employee_id'])->first_name : null;
         $employeeFullName = $employeeChanged ? User::find($validated['employee_id'])->first_name . ' ' . User::find($validated['employee_id'])->last_name : null;
 
-        if ($statusChanged || $priorityChanged || $employeeChanged) {
-                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->user->first_name, 'ticket_update', $ticket->title, $status, $priority, $employeeFullName));
-                if ($employeeChanged) {
-                    Mail::to($this->mailtrapEmail)->send(new UserMail($employeeFirstName, 'ticket_assignment', $ticket->title));
-                }
-        }
+        // if ($statusChanged || $priorityChanged || $employeeChanged) {
+        //         Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->user->first_name, 'ticket_update', $ticket->title, $status, $priority, $employeeFullName));
+        //         if ($employeeChanged) {
+        //             Mail::to($this->mailtrapEmail)->send(new UserMail($employeeFirstName, 'ticket_assignment', $ticket->title));
+        //         }
+        // }
         
         $ticket->update($validated);
 

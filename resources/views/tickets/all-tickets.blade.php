@@ -1,6 +1,6 @@
 @include('partials.header', ['title' => 'adish HAP | All Tickets'])
 @include('partials.menu')
-<div class="flex flex-row gap-x-10 pt-24">
+<div class="flex flex-row gap-x-10 pt-20">
     <div class="flex-none">
       @include('partials.sidebar')
     </div>
