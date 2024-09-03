@@ -9,7 +9,7 @@
         <div class="flex flex-col gap-y-5">
         <div class="w-full bg-white p-5 rounded-lg shadow">
             <div class="flex flex-row items-center">
-            <p class="text-sm font-semibold">All Users and Customers</p>
+            <p class="text-sm font-semibold">All Users</p>
             <a href="{{ route('users.create') }}" class="p-2 rounded-sm ml-auto text-sm font-semibold text-custom-orange mr-1 hover:bg-custom-orange hover:text-white">Create New
             </a> 
         </div>

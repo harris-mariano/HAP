@@ -110,20 +110,16 @@ class UserController extends Controller
                             ->where('status_id', 4)
                             ->count();
 
-        $customerRequired = Ticket::where('user_id', $userId)
+        $customerLow = Ticket::where('user_id', $userId)
                             -> where ('priority_id', 1)
                             ->count(); 
 
-        $customerLow = Ticket::where('user_id', $userId)
+        $customerMedium = Ticket::where('user_id', $userId)
                             -> where ('priority_id', 2)
                             ->count(); 
 
-        $customerMedium = Ticket::where('user_id', $userId)
-                            -> where ('priority_id', 3)
-                            ->count(); 
-
         $customerHigh = Ticket::where('user_id', $userId)
-                            -> where ('priority_id', 4)
+                            -> where ('priority_id', 3)
                             ->count(); 
 
         $customerQuarterOne = Ticket::where('user_id', $userId)
@@ -192,18 +188,15 @@ class UserController extends Controller
         $userClosed = Ticket::where('employee_id', $userId)
                             ->where('status_id', 4)
                             ->count();
-
-        $userRequired = Ticket::where('employee_id', $userId)
+                        
+        $userLow = Ticket::where('employee_id', $userId)
                             -> where ('priority_id', 1)
                             ->count(); 
-        $userLow = Ticket::where('employee_id', $userId)
+        $userMedium = Ticket::where('employee_id', $userId)
                             -> where ('priority_id', 2)
                             ->count(); 
-        $userMedium = Ticket::where('employee_id', $userId)
-                            -> where ('priority_id', 3)
-                            ->count(); 
         $userHigh = Ticket::where('employee_id', $userId)
-                            -> where ('priority_id', 4)
+                            -> where ('priority_id', 3)
                             ->count(); 
 
         $quarterOne = Ticket::where('employee_id', $userId)
@@ -274,13 +267,11 @@ class UserController extends Controller
                                                
         $allClosed = Ticket::where('status_id', 4)->count();
 
-        $allRequired = Ticket::where('priority_id', 1) ->count(); 
-    
-        $allLow = Ticket::where('priority_id', 2)->count(); 
+        $allLow = Ticket::where('priority_id', 1)->count(); 
                             
-        $allMedium = Ticket::where('priority_id', 3)->count(); 
+        $allMedium = Ticket::where('priority_id', 2)->count(); 
 
-        $allHigh = Ticket::where('priority_id', 4)->count(); 
+        $allHigh = Ticket::where('priority_id', 3)->count(); 
         
         $departments = Department::where('company_id', 1)
         ->get(); 
@@ -322,7 +313,6 @@ class UserController extends Controller
                 'userInProgress' => $allInProgress,
                 'userResolved' => $allResolved,
                 'userClosed' => $allClosed,
-                'userRequired' => $allRequired,
                 'userLow' => $allLow, 
                 'userMedium' => $allMedium,
                 'userHigh' => $allHigh, 
@@ -335,7 +325,6 @@ class UserController extends Controller
                 'userInProgress' => $userInProgress,
                 'userResolved' => $userResolved,
                 'userClosed' => $userClosed,
-                'userRequired' => $userRequired,
                 'userLow' => $userLow, 
                 'userMedium' => $userMedium,
                 'userHigh' => $userHigh, 
@@ -348,7 +337,6 @@ class UserController extends Controller
                 'userInProgress' => $customerInProgress,
                 'userResolved' => $customerResolved,
                 'userClosed' => $customerClosed,
-                'userRequired' => $customerRequired,
                 'userLow' => $customerLow, 
                 'userMedium' => $customerMedium,
                 'userHigh' => $customerHigh, 

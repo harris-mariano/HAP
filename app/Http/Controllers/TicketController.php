@@ -66,6 +66,7 @@ class TicketController extends Controller
             "department_id" => 'required',
             "employee_id" => 'required',
             "title" => 'required|string|min:10',
+            "priority_id" => 'required|integer|exists:priorities,id',
             "description" => 'required',
             "description_text" => 'required|string|min:10',
             'attachments' => 'nullable|array|max:5',
@@ -78,19 +79,19 @@ class TicketController extends Controller
         $nameId = $request->name;
         $nameObject = User::find($nameId);
 
-        if ($user->role_id != 1) {
-            $validated['priority_id'] = 1; //required
+        // //customer or support creation of ticket
+        if ($nameObject == null) {
             $validated['status_id'] = 1; //new
             $validated['user_id'] = $user->id;
         }
+        //admin creation
         else {
-            $validated['priority_id'] = $request->priority;
             $validated['status_id'] = 1; //new
             $validated['user_id'] = $nameId;
             $validated['is_admin_creation'] = true;
             $validated['admin_id'] = $user->id;
         }
-        
+
         $ticket = new Ticket();
         $ticket->fill($validated);
         $ticket->save();
@@ -113,14 +114,14 @@ class TicketController extends Controller
         $history->user_id = $validated['employee_id'];
         $history->save(); 
 
-        // if ($user->role_id != 1){
-        //     Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'ticket_creation', $validated['title']));
-        // }
-        // else {
-        //     Mail::to($this->mailtrapEmail)->send(new UserMail($nameObject->first_name, 'ticket_creation', $validated['title']));
-        // }
+        if ($user->role_id != 1){
+            Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'ticket_creation', $validated['title']));
+        }
+        else {
+            Mail::to($this->mailtrapEmail)->send(new UserMail($nameObject->first_name, 'ticket_creation', $validated['title']));
+        }
 
-        // Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_assignment', $validated['title']));
+        Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_assignment', $validated['title']));
        
         return redirect()->route('tickets.index')->with('message', 'Your ticket has been submitted successfully.');
     }
@@ -191,12 +192,12 @@ class TicketController extends Controller
         $employeeFirstName = $employeeChanged ? User::find($validated['employee_id'])->first_name : null;
         $employeeFullName = $employeeChanged ? User::find($validated['employee_id'])->first_name . ' ' . User::find($validated['employee_id'])->last_name : null;
 
-        // if ($statusChanged || $priorityChanged || $employeeChanged) {
-        //         Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->user->first_name, 'ticket_update', $ticket->title, $status, $priority, $employeeFullName));
-        //         if ($employeeChanged) {
-        //             Mail::to($this->mailtrapEmail)->send(new UserMail($employeeFirstName, 'ticket_assignment', $ticket->title));
-        //         }
-        // }
+        if ($statusChanged || $priorityChanged || $employeeChanged) {
+                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->user->first_name, 'ticket_update', $ticket->title, $status, $priority, $employeeFullName));
+                if ($employeeChanged) {
+                    Mail::to($this->mailtrapEmail)->send(new UserMail($employeeFirstName, 'ticket_assignment', $ticket->title));
+                }
+        }
         
         $ticket->update($validated);
 

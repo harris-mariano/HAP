@@ -18,7 +18,11 @@
         @if($userArticles->count() > 0)
         @include('components.user-articles')
         @else 
-        <p class="text-sm font-semibold">Published Articles</p>
+        <div class="flex flex-row items-center">
+          <p class="text-sm font-semibold">Published Articles</p>
+          <a href="{{ route('articles.create') }}" class="p-2 rounded-sm ml-auto text-sm font-semibold text-custom-orange mr-1 hover:bg-custom-orange hover:text-white">Create New
+          </a> 
+        </div>
         <label for="attachments" class="flex flex-col items-center justify-center w-full h-30  rounded-lg cursor-pointer mt-2">
           <div class="flex flex-col items-center justify-center pt-5 pb-6">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">

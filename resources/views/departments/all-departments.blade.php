@@ -1,4 +1,4 @@
-@include('partials.header', ['title' => 'adish HAP | All Users'])
+@include('partials.header', ['title' => 'adish HAP | All Departments'])
 @include('partials.menu')
 <div class="flex flex-row gap-x-10 pt-20">
     <div class="flex-none">
@@ -56,77 +56,6 @@
 
    <script>
     document.addEventListener("DOMContentLoaded", function() {
-
-        function sanitizeInput(event) {
-              event.target.value = event.target.value.replace(/[^A-Za-z\s-]/g, '');
-          }
-      
-          const inputs = [
-              document.getElementById('first_name'),
-              document.getElementById('middle_name'),
-              document.getElementById('last_name'),
-              document.getElementById('position')
-          ];
-      
-          inputs.forEach(input => {
-              input.addEventListener('input', sanitizeInput);
-          });
-
-          const fileInput = document.getElementById('profile_picture');
-        const imagePreview = document.getElementById('profile_picture_preview');
-
-        fileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0]; 
-            
-            if (file) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    imagePreview.src = e.target.result;
-                };
-                
-                reader.readAsDataURL(file); 
-            } else {
-                imagePreview.src = '{{ asset('images/user.png') }}';
-            }
-        });
-        
-    var cancelButton = document.getElementById("cancelButton");
-    const superuserCheckbox = document.getElementById('superuser');
-    cancelButton.addEventListener("click", function(){
-    var clearElements = ["profile_picture", "email", "first_name", "middle_name", "last_name", "department", "position", "company", "superuser"];
-        clearElements.forEach(function(elementId) {
-        document.getElementById(elementId).value = "";
-        superuserCheckbox.checked = false;
-        imagePreview.src = '{{ asset('images/user.png') }}';
-    });
-    });
-
-    const togglePassword = document.getElementById('togglePassword');
-    const passwordField = document.getElementById('password');
-
-    togglePassword.addEventListener('click', function() {
-      const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-      passwordField.setAttribute('type', type);
-      this.classList.toggle('fa-eye');
-      this.classList.toggle('fa-eye-slash');
-    });
-
-    const searchUser = document.getElementById('searchUser');
-    const usersTable = document.getElementById('usersTable').getElementsByTagName('tbody')[0];
-
-    searchUser.addEventListener('input', function () {
-        const searchQuery = this.value.trim().toLowerCase();
-
-        Array.from(usersTable.rows).forEach(function (row) {
-            const title = row.cells[1].textContent.trim().toLowerCase();
-            if (title.includes(searchQuery)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-          });
-      });
 
     const searchDepartment = document.getElementById('searchDepartment');
     const departmentsTable = document.getElementById('departmentsTable').getElementsByTagName('tbody')[0];

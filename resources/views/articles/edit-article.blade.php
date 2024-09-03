@@ -76,25 +76,25 @@
         ]
       }});
 
-      quill.on('text-change', function() {
-        var html = quill.root.innerHTML;
-        document.getElementById('content').value = html;
+      function updateContent() {
+            var html = quill.root.innerHTML;
+            document.getElementById('content').value = html;
 
-        //plain text
-        var tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-        var plainText = tempDiv.textContent || tempDiv.innerText || '';
-        document.getElementById('content_text').value = plainText;
-    });
-    </script>
-    <script>
-      var editor = document.getElementById('editor');
-    var content = document.getElementById('content');
+            //plain text
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            var plainText = tempDiv.textContent || tempDiv.innerText || '';
+            document.getElementById('content_text').value = plainText;
+        }
 
-    content.value = editor.querySelector('.ql-editor').innerHTML.trim();
+        quill.on('text-change', function() {
+            updateContent();
+        });
 
-    editor.addEventListener('input', function () {
-        content.value = editor.querySelector('.ql-editor').innerHTML.trim();
+        updateContent();
+
+        document.getElementById('editor').addEventListener('input', function () {
+            updateContent();
     });
     </script>
 @include('partials.footer')

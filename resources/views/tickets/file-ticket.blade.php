@@ -55,17 +55,13 @@
               @enderror
             </div>
             <div class="flex flex-col">
-              <label for="priority" class="text-sm font-medium">Priority Level</label>
-              @if(auth('user')->user()->isSuperUser())
-              <select id="priority" name="priority" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
-                <option value="" {{ old('priority') == "" ? 'selected' : '' }}>Select priority</option>
+              <label for="priority_id" class="text-sm font-medium">Priority Level</label>
+              <select id="priority_id" name="priority_id" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
+                <option value="" {{ old('priority_id') == "" ? 'selected' : '' }}>Select priority</option>
                 @foreach($priorities as $priority)
-                    <option value="{{ $priority->id }}" {{ old('priority') == $priority->id ? 'selected' : '' }}>{{ $priority->category }}</option>
+                    <option value="{{ $priority->id }}" {{ old('priority_id') == $priority->id ? 'selected' : '' }}>{{ $priority->category }}</option>
                 @endforeach
             </select>
-              @else
-              <input type="text" name="priority" id="priority" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm" value="Required" readonly>
-              @endif
             </div>
           </div>
           <div class="flex flex-col px-2 mb-7 h-64">
@@ -138,7 +134,7 @@
       const fileInput = document.getElementById('attachments');
       const fileList = document.getElementById('file-list');
       cancelButton.addEventListener("click", function(){
-      var clearElements = ["department", "employee", "title", "description", "attachments"];
+      var clearElements = ["department", "employee", "title", "description", "attachments", 'priority_id'];
           clearElements.forEach(function(elementId) {
           document.getElementById(elementId).value = "";
           quill.setContents([]);

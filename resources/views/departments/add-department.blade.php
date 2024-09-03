@@ -13,7 +13,7 @@
                     <p class="text-sm font-semibold">Create a New Company</p>
                     <div>
                         <label for="name" class="text-sm font-medium">Company</label>
-                        <input type="text" name="name" id="name" class="mt-2 mb-5 w-full border-[1px] border-black p-2 text-sm rounded-sm" placeholder="Enter the company name" required>
+                        <input type="text" name="name" id="name" class="mt-2 mb-5 w-full border-[1px] border-black p-2 text-sm rounded-sm" placeholder="Enter company name" required>
                         @error('name')
                         <p class="text-xs text-red-700 -mt-4">{{$message}}</p>
                         @enderror
@@ -34,7 +34,7 @@
                         <div>
                             <label for="company" class="text-sm font-medium">Company</label>
                             <select id="company" name="company" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
-                                <option value="" {{ old('company') == "" ? 'selected' : '' }}>Select the company</option>
+                                <option value="" {{ old('company') == "" ? 'selected' : '' }}>Select company</option>
                                 @foreach($companies as $company)
                                     <option value="{{ $company->id }}" {{ old('company') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
                                 @endforeach
@@ -42,7 +42,7 @@
                             <div id="department-container">
                             <div class="form-group">
                                 <label for="department_0" class="text-sm font-medium">Department</label>
-                                <input type="text"name="departments[0][name]" id="department_0" class="mt-2 mb-2 w-full border-[1px] border-black p-2 text-sm rounded-sm" placeholder="Enter the department name"required>
+                                <input type="text"name="departments[0][name]" id="department_0" class="mt-2 mb-2 w-full border-[1px] border-black p-2 text-sm rounded-sm" placeholder="Enter department name"required>
                                  @error('departments.*.name')
                                  <p class="text-xs text-red-700">{{$message}}</p>
                                  @enderror

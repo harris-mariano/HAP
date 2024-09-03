@@ -22,7 +22,7 @@
                                 <p class="text-xs text-red-700 -mt-6">{{$message}}</p>
                             @enderror
                             <label for="email" class="text-sm font-medium">Work Email</label>
-                            <input type="text" name="email" id="email" placeholder="Enter the work email" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required value="{{old('email')}}">
+                            <input type="text" name="email" id="email" placeholder="Enter work email" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required value="{{old('email')}}">
                             @error('email')
                             <p class="text-xs text-red-700 -mt-6">{{$message}}</p>
                             @enderror
@@ -40,7 +40,7 @@
                 </div>
                 <div class="w-1/2 p-10">
                             <label for="first_name" class="text-sm font-medium">First Name</label>
-                            <input type="text" name="first_name" id="first_name" placeholder="Enter the first name" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required value="{{old('first_name')}}"
+                            <input type="text" name="first_name" id="first_name" placeholder="Enter first name" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required value="{{old('first_name')}}"
                             pattern="[A-Za-z -]+"
                             title="The input type accepts letters, hypen, and spaces only.">
                             @error('first_name')
@@ -48,7 +48,7 @@
                             @enderror
 
                             <label for="middle_name" class="text-sm font-medium">Middle Name</label>
-                            <input type="text" name="middle_name" id="middle_name" placeholder="Enter the middle name" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" value="{{old('middle_name')}}"
+                            <input type="text" name="middle_name" id="middle_name" placeholder="Enter middle name" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" value="{{old('middle_name')}}"
                             pattern="[A-Za-z -]+"
                             title="The input type accepts letters, hypen, and spaces only.">
                             @error('middle_name')
@@ -56,7 +56,7 @@
                             @enderror
 
                             <label for="last_name" class="text-sm font-medium">Last Name</label>
-                            <input type="text" name="last_name" id="last_name" placeholder="Enter the last name" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required value="{{old('last_name')}}"
+                            <input type="text" name="last_name" id="last_name" placeholder="Enter last name" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required value="{{old('last_name')}}"
                             pattern="[A-Za-z -]+"
                             title="The input type accepts letters, hypen, and spaces only.">
                             @error('last_name')
@@ -65,22 +65,22 @@
 
                             <label for="company_id" class="text-sm font-medium">Company</label>
                             <select id="company_id" name="company_id" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
-                                <option value="" {{ old('company_id') == "" ? 'selected' : '' }}>Select the company</option>
+                                <option value="" {{ old('company_id') == "" ? 'selected' : '' }}>Select company</option>
                                 @foreach($companies as $company)
                                     <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>{{ $company->name }}</option>
                                 @endforeach
                             </select>
                         
                             <label for="department" class="text-sm font-medium">Department</label>
-                            <select name="department_id" id="department" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
-                                <option value="" {{ old('department_id') == "" ? 'selected' : '' }}>Select the department</option>
+                            <select name="department_id" id="department_id" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
+                                <option value="" {{ old('department_id') == "" ? 'selected' : '' }}>Select department</option>
                                 @foreach($departments as $department)
                                 <option value="{{$department->id}}" {{ old('department_id') == $department->id ? 'selected' : ''}}>{{$department->name}}</option>
                               @endforeach
                             </select>
             
                             <label for="position" class="text-sm font-medium">Position</label>
-                            <input type="text" name="position" id="position" placeholder="Enter the position" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required value="{{old('position')}}"
+                            <input type="text" name="position" id="position" placeholder="Enter position" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required value="{{old('position')}}"
                             pattern="[A-Za-z -]+"
                             title="The input type accepts letters, hypen, and spaces only.">
                             @error('position')
@@ -156,6 +156,28 @@
       this.classList.toggle('fa-eye-slash');
     });
 
+    $(document).ready(function() {
+    $('#company_id').change(function() {
+        var company = $(this).val();
+        console.log("company", company); 
+        $.ajax({
+            url: '{{ route("get.departments") }}', 
+            type: 'GET',
+            data: { company: company },
+            success: function(data) {
+                console.log('data', data);
+                $('#department_id').empty();
+                $('#department_id').append('<option value="">Select the department</option>');
+                $.each(data, function(index, department) {
+                  $('#department_id').append('<option value="' + department.id + '">' + department.name + '</option>');
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching users:', error);
+            }
+        });
+    });
+});
 });
 </script>
 @include('partials.footer')

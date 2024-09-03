@@ -125,7 +125,7 @@
               <div>
                 <label for="password" class="text-sm font-medium">New Password</label>
             <div class="relative">
-                <input type="password" name="password" id="password" placeholder="Enter your new password" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm">
+                <input type="password" name="password" id="password" placeholder="Enter new password" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm">
                 <i class="togglePassword absolute top-1/3 right-2 transform -translate-y-1/2 cursor-pointer far fa-eye text-gray-400"></i>
                 <p class="text-xs text-gray-400 -mt-3">Passwords must be 8 characters long, and must contain one lowercase letter, one uppercase letter, one number, and one symbol.  </p>
             </div>
@@ -137,7 +137,7 @@
               <div>
                 <label for="password_confirmation" class="text-sm font-medium">Confirm Password</label>
             <div class="relative">
-                <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Re-type your new password" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm">
+                <input type="password" name="password_confirmation" id="password_confirmation" placeholder="Re-type new password" class="mt-2 mb-4 w-full border-[1px] border-black p-2 text-sm rounded-sm">
                 <i class="togglePassword absolute top-1/2 -mt-1 right-2 transform -translate-y-1/2 cursor-pointer far fa-eye text-gray-400"></i>
             </div>
             @error('password_confirmation')

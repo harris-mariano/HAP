@@ -100,7 +100,7 @@
         if (isNaN(percentage)) {
           percentage = 0;
         }
-      return `${seriesName}: ${percentage}%`;
+      return `${seriesName}: ${percentage.toFixed(2)}%`;
       }
     },
     tooltip: {
@@ -128,21 +128,19 @@ else {
   console.error("Chart element or ApexCharts library not found.");
 }
 
-const userRequired = {{$userRequired}}
 const userLow = {{$userLow}}
 const userMedium = {{$userMedium}}
 const userHigh = {{$userHigh}}
 
-const requiredPercentage = parseFloat(userRequired / userTickets); 
 const lowPercentage = parseFloat(userLow / userTickets); 
 const mediumPercentage = parseFloat(userMedium / userTickets); 
 const highPercentage = parseFloat(userHigh /userTickets);
 
-const priorityPercentages = [requiredPercentage, lowPercentage, mediumPercentage, highPercentage];
+const priorityPercentages = [lowPercentage, mediumPercentage, highPercentage];
 const getDonutChartOptions = () => {
   return {
-    series: [requiredPercentage, lowPercentage, mediumPercentage, highPercentage],
-    colors: ["#9CA3AF", "#FEBE82", "#FCA863", "#FB923C"],
+    series: [lowPercentage, mediumPercentage, highPercentage],
+    colors: ["#FEBE82", "#FCA863", "#FB923C"],
     chart: {
       height: 320,
       width: "100%",
@@ -180,7 +178,7 @@ const getDonutChartOptions = () => {
         top: -2,
       },
     },
-    labels: ["Required", "Low Priority", "Medium Priority", "High Priority"],
+    labels: ["Low Priority", "Medium Priority", "High Priority"],
     dataLabels: {
       enabled: false,
       dropShadow: {

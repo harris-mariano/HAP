@@ -7,7 +7,11 @@
     <div class="sm:ml-64 w-full min-h-screen flex flex-col gap-x-5 bg-custom-gray p-5">
         @include('components.messages')
         <div class="w-full bg-white p-5 rounded-lg shadow">
-            <p class="text-sm font-semibold">My Filed Tickets</p>
+            <div class="flex flex-row items-center">
+                <p class="text-sm font-semibold">My Filed Tickets</p>
+                <a href="{{ route('tickets.create') }}" class="p-2 rounded-sm ml-auto text-sm font-semibold text-custom-orange mr-1 hover:bg-custom-orange hover:text-white">Create New
+                </a> 
+              </div>
             @if ($userTickets->count() <= 0) 
             <div class="h-screen flex items-center justify-center">
                 <div class="text-center">
@@ -81,26 +85,20 @@
                         </li>
                         <li class="w-full">
                             <div class="flex items-center ps-1">
-                                <input id="required" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded">
-                                <label for="required" class="w-full py-1.5 ms-2">Required</label>
-                            </div>
-                        </li>
-                        <li class="w-full">
-                            <div class="flex items-center ps-1">
                                 <input id="low" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded">
-                                <label for="low" class="w-full py-1.5 ms-2">Low Priority</label>
+                                <label for="low" class="w-full py-1.5 ms-2">Low</label>
                             </div>
                         </li>
                         <li class="w-full">
                             <div class="flex items-center ps-1">
                                 <input id="medium" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded">
-                                <label for="medium" class="w-full py-1.5 ms-2">Medium Priority</label>
+                                <label for="medium" class="w-full py-1.5 ms-2">Medium</label>
                             </div>
                         </li>
                         <li class="w-full">
                             <div class="flex items-center ps-1">
                                 <input id="high" type="checkbox" value="" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded">
-                                <label for="high" class="w-full py-1.5 ms-2">High Priority</label>
+                                <label for="high" class="w-full py-1.5 ms-2">High</label>
                             </div>
                         </li>
                         </ul>
@@ -161,9 +159,7 @@
                             @endif
                         </td>
                         <td class="px-6 py-4">
-                            @if ($ticket->priority->category == 'Required')
-                                <span class="inline-block bg-gray-400 rounded-full py-1.5 w-full text-white text-center">{{ $ticket->priority->category }}</span>
-                            @elseif ($ticket->priority->category == 'Low')
+                            @if ($ticket->priority->category == 'Low')
                                 <span class="inline-block bg-low rounded-full py-1.5 w-full text-white text-center">{{ $ticket->priority->category }}</span>
                             @elseif ($ticket->priority->category == 'Medium')
                                 <span class="inline-block bg-medium rounded-full py-1.5 w-full text-white text-center">{{ $ticket->priority->category }}</span>
@@ -208,7 +204,7 @@
         })
 
         const allPriorityCheckbox = document.getElementById('allPriority');
-        const otherPriorityCheckboxes = document.querySelectorAll('#required, #low, #medium, #high');
+        const otherPriorityCheckboxes = document.querySelectorAll('#low, #medium, #high');
         let checkedPriorities = [];
 
         allPriorityCheckbox.addEventListener('change', function() {
@@ -312,9 +308,7 @@
         }
 
         function extractPriorityKeyword(priorityString) {
-        if (priorityString.includes("required")) {
-            return "required";
-        } else if (priorityString.includes("high")) {
+        if (priorityString.includes("high")) {
             return "high";
         } else if (priorityString.includes("medium")) {
             return "medium";

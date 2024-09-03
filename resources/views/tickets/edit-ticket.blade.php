@@ -210,10 +210,15 @@
         </div>
         @endif
         @endforeach
-        @if ($ticket->is_admin_creation == true && $ticket->priority_id != 1) 
+        @if ($ticket->is_admin_creation == true ) 
         <div class="flex flex-col gap-y-1 border-b p-2">
             <p class="text-xs text-gray-500">{{ $ticket->created_at->format('F d, Y h:i A') }}</p>
             <p class="text-sm">Ticket has set its priority to {{$ticket->priority->category}} by {{$ticket->admin->first_name}} {{$ticket->admin->last_name}}.</p>
+        </div>
+        @else
+        <div class="flex flex-col gap-y-1 border-b p-2">
+            <p class="text-xs text-gray-500">{{ $ticket->created_at->format('F d, Y h:i A') }}</p>
+            <p class="text-sm">Ticket has set its priority to {{$ticket->priority->category}} by {{$ticket->user->first_name}} {{$ticket->user->last_name}}.</p>
         </div>
         @endif
         <div class="flex flex-col gap-y-1 border-b p-2">
