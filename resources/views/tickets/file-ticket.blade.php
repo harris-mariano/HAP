@@ -39,8 +39,14 @@
               </select>
             </div>
             <div class="flex flex-col">
-              <label for="employee" class="text-sm font-medium">Assign to Employee</label>
-              <select name="employee_id" id="employee" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
+              <div class="flex flex-row items-center justify-between">
+                <label for="employee" class="text-sm font-medium">Assign to Employee</label>
+                <div class="flex items-center gap-x-2">
+                  <input type="checkbox" id="unassigned" name="unassigned" value="1" class="w-4 h-4 bg-gray-100 border-gray-300" {{ old('unassigned') ? 'checked' : '' }}>
+                  <label for="unassigned" class="text-sm font-medium">Leave Unassigned</label>
+                  </div>
+              </div>
+              <select name="employee_id" id="employee" class="mt-2 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
                   <option value="" {{ old('employee_id') == "" ? 'selected' : '' }}>Select employee</option>
                   @foreach($employees as $employee)
                     <option value="{{$employee->id}}" {{ old('employee_id') == $employee->id ? 'selected' : ''}}>{{$employee->first_name}} {{$employee->last_name}}</option>
@@ -168,6 +174,19 @@
         }
     });
   });
+
+  const checkbox = document.getElementById('unassigned');
+  const select = document.getElementById('employee');
+
+  checkbox.disabled = select.value !== "";
+
+  checkbox.addEventListener('change', function () {
+    select.disabled = checkbox.checked; 
+  })
+
+  select.addEventListener('change', function () {
+    checkbox.disabled = select.value !== ""; 
+  })
 
     $(document).ready(function() {
     $('#department').change(function() {

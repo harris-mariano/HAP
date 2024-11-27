@@ -57,14 +57,27 @@
                 <div class="flex flex-col">
                     <label for="employee" class="text-sm font-medium">Employee Assigned</label>
                     @if(auth('user')->user()->isCustomer())
+                    @if($ticket->employee_id)
                     <div id="employee" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }}</div>
+                    @else
+                    <div id="employee" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">Unassigned</div>
+                    @endif
                     @elseif(auth('user')->user()->department_id == $ticket->department_id || auth('user')->user()->isSuperUser())
+                        @if($ticket->employee_id)
                         <select name="employee_id" id="employee" class="mt-2 mb-7 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
                             <option value="" {{$ticket->employee->id == "" ? 'selected' : ''}}>Select employee</option>
                             @foreach($employees as $employee)
                             <option value="{{$employee->id}}" {{$ticket->employee->id == $employee->id ? 'selected' : ''}}>{{$employee->first_name}} {{$employee->last_name}}</option>
                             @endforeach
                         </select>
+                        @else
+                        <select name="employee_id" id="employee" class="mt-2 w-full border-[1px] border-black p-2 text-sm rounded-sm" required>
+                            <option value="" {{ old('employee_id') == "" ? 'selected' : '' }}>Select employee</option>
+                            @foreach($employees as $employee)
+                              <option value="{{$employee->id}}" {{ old('employee_id') == $employee->id ? 'selected' : ''}}>{{$employee->first_name}} {{$employee->last_name}}</option>
+                            @endforeach
+                        </select>
+                        @endif
                     @else
                     <div id="employee" class="mt-2 mb-7 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }}</div>
                     @endif
@@ -231,10 +244,14 @@
         </div>
         <div class="flex flex-col gap-y-1 border-b p-2">
             <p class="text-xs text-gray-500">{{ $ticket->created_at->format('F d, Y h:i A') }}</p>
+            @if($ticket->employee_id)
             @if ($ticket->is_admin_creation == true) 
             <p class="text-sm">Ticket has been assigned to {{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }} by {{$ticket->admin->first_name}} {{$ticket->admin->last_name}}.</p>
             @else
             <p class="text-sm">Ticket has been assigned to {{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }} by {{$ticket->user->first_name}} {{$ticket->user->last_name}}.</p>
+            @endif
+            @else
+            <p class="text-sm">Ticket has no employee assignee yet.</p>
             @endif
         </div>
         <div class="flex flex-col gap-y-1 border-b p-2">

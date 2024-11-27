@@ -159,7 +159,11 @@
                         <td class="px-6 py-4">{{ $ticket->created_at->format('F d, Y') }}</td>
                         <td class="px-6 py-4">{{ $ticket->title }}</td>
                         <td class="px-6 py-4">{{ $ticket->department->name }}</td>
+                        @if($ticket->employee_id)
                         <td class="px-6 py-4">{{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }}</td>
+                        @else
+                        <td class="px-6 py-4">Unassigned</td>
+                        @endif
                         <td class="px-6 py-4">
                             @if ($ticket->status->category == 'New')
                                 <span class="inline-block bg-open rounded-full py-1.5 w-full text-white text-center">{{ $ticket->status->category }}</span>
@@ -319,7 +323,11 @@
                         <td class="px-6 py-4">{{ $ticket->created_at->format('F d, Y') }}</td>
                         <td class="px-6 py-4">{{ $ticket->title }}</td>
                         <td class="px-6 py-4">{{ $ticket->department->name }}</td>
+                        @if($ticket->employee_id)
                         <td class="px-6 py-4">{{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }}</td>
+                        @else
+                        <td class="px-6 py-4">Unassigned</td>
+                        @endif
                         <td class="px-6 py-4">
                             @if ($ticket->status->category == 'New')
                                 <span class="inline-block bg-open rounded-full py-1.5 w-full text-white text-center">{{ $ticket->status->category }}</span>

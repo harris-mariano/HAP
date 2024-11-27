@@ -64,7 +64,7 @@ class TicketController extends Controller
 
         $validated = $request->validate([
             "department_id" => 'required',
-            "employee_id" => 'required',
+            "employee_id" => $request->input('unassigned') ? 'nullable' : 'required|integer|exists:users,id',
             "title" => 'required|string|min:10',
             "priority_id" => 'required|integer|exists:priorities,id',
             "description" => 'required',
@@ -109,19 +109,19 @@ class TicketController extends Controller
             }
         }
 
-        $history = new History();
-        $history->ticket_id = $ticket->id;
-        $history->user_id = $validated['employee_id'];
-        $history->save(); 
+        // $history = new History();
+        // $history->ticket_id = $ticket->id;
+        // $history->user_id = $validated['employee_id'];
+        // $history->save(); 
 
-        if ($user->role_id != 1){
-            Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'ticket_creation', $validated['title']));
-        }
-        else {
-            Mail::to($this->mailtrapEmail)->send(new UserMail($nameObject->first_name, 'ticket_creation', $validated['title']));
-        }
+        // if ($user->role_id != 1){
+        //     Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'ticket_creation', $validated['title']));
+        // }
+        // else {
+        //     Mail::to($this->mailtrapEmail)->send(new UserMail($nameObject->first_name, 'ticket_creation', $validated['title']));
+        // }
 
-        Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_assignment', $validated['title']));
+        // Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_assignment', $validated['title']));
        
         return redirect()->route('tickets.index')->with('message', 'Your ticket has been submitted successfully.');
     }
@@ -192,12 +192,12 @@ class TicketController extends Controller
         $employeeFirstName = $employeeChanged ? User::find($validated['employee_id'])->first_name : null;
         $employeeFullName = $employeeChanged ? User::find($validated['employee_id'])->first_name . ' ' . User::find($validated['employee_id'])->last_name : null;
 
-        if ($statusChanged || $priorityChanged || $employeeChanged) {
-                Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->user->first_name, 'ticket_update', $ticket->title, $status, $priority, $employeeFullName));
-                if ($employeeChanged) {
-                    Mail::to($this->mailtrapEmail)->send(new UserMail($employeeFirstName, 'ticket_assignment', $ticket->title));
-                }
-        }
+        // if ($statusChanged || $priorityChanged || $employeeChanged) {
+        //         Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->user->first_name, 'ticket_update', $ticket->title, $status, $priority, $employeeFullName));
+        //         if ($employeeChanged) {
+        //             Mail::to($this->mailtrapEmail)->send(new UserMail($employeeFirstName, 'ticket_assignment', $ticket->title));
+        //         }
+        // }
         
         $ticket->update($validated);
 

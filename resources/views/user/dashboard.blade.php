@@ -61,6 +61,7 @@
   const closedPercentage = parseFloat((userClosed /userTickets) * 100).toFixed(2);
 
   const ticketPercentages = [newPercentage, progressPercentage, resolvedPercentage, closedPercentage];
+  console.log(ticketPercentages); 
   const getRadialChartOptions = () => {
   return {
     series: [newPercentage,progressPercentage,resolvedPercentage,closedPercentage],
@@ -100,7 +101,7 @@
         if (isNaN(percentage)) {
           percentage = 0;
         }
-      return `${seriesName}: ${percentage.toFixed(2)}%`;
+      return `${seriesName}: ${percentage}%`;
       }
     },
     tooltip: {

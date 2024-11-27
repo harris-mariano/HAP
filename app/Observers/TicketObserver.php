@@ -83,7 +83,7 @@ class TicketObserver
             $newEmployeeId = $ticket->employee_id;
 
             $oldEmployee = User::find($oldEmployeeId);
-            $oldEmployeeFullName = $oldEmployee ? $oldEmployee->first_name . ' ' . $oldEmployee->last_name : 'Unknown';
+            $oldEmployeeFullName = $oldEmployee ? $oldEmployee->first_name . ' ' . $oldEmployee->last_name : 'Unassigned';
 
             $newEmployee = User::find($newEmployeeId);
             $newEmployeeFullName = $newEmployee ? $newEmployee->first_name . ' ' . $newEmployee->last_name : 'Unknown';
