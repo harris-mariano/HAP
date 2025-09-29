@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User; 
-use App\Models\Ticket; 
-use App\Models\Attachment; 
-use App\Models\History; 
-use App\Models\Status; 
+use App\Models\User;
+use App\Models\Ticket;
+use App\Models\Attachment;
+use App\Models\History;
+use App\Models\Status;
 use App\Models\Priority;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -16,16 +16,14 @@ use App\Mail\UserMail;
 use App\Models\Department;
 
 class TicketController extends Controller
-{   
-    protected $mailtrapEmail; 
+{
 
     public function __construct()
     {
-        $this->mailtrapEmail = env('EMAIL');
         $this->middleware('checkRole:1,2,3')->only(['index', 'create', 'store', 'show']);
         $this->middleware('checkRole:1,2')->only(['update']);
     }
-    
+
     public function index () {
         $userId = Auth::guard('user')->id();
         $userTickets = Ticket::where('user_id', $userId)
@@ -45,13 +43,13 @@ class TicketController extends Controller
                 ->where('type_id', '!=', 2); //not inactive;
         $priorities = Priority::all();
         $departments = Department::where('company_id', 1) //adish depts
-                    ->get(); 
+                    ->get();
 
         return view('tickets.file-ticket', [
-            'user' => $user, 
-            'employees' => $employees, 
-            'names' => $names, 
-            'priorities' => $priorities, 
+            'user' => $user,
+            'employees' => $employees,
+            'names' => $names,
+            'priorities' => $priorities,
             'departments' => $departments]);
     }
 
@@ -98,36 +96,36 @@ class TicketController extends Controller
 
         if ($request->hasFile('attachments')) {
             foreach ($request->file('attachments') as $file) {
-                $originalFileName = $file->getClientOriginalName(); 
-                $path = $file->store('attachments', 'public'); 
-        
+                $originalFileName = $file->getClientOriginalName();
+                $path = $file->store('attachments', 'public');
+
                 $attachment = new Attachment();
                 $attachment->ticket_id = $ticket->id;
-                $attachment->file_name = $originalFileName; 
-                $attachment->file_path = Storage::url($path); 
+                $attachment->file_name = $originalFileName;
+                $attachment->file_path = Storage::url($path);
                 $attachment->save();
             }
         }
 
-        // $history = new History();
-        // $history->ticket_id = $ticket->id;
-        // $history->user_id = $validated['employee_id'];
-        // $history->save(); 
+        $history = new History();
+        $history->ticket_id = $ticket->id;
+        $history->user_id = $validated['employee_id'];
+        $history->save();
 
-        // if ($user->role_id != 1){
-        //     Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'ticket_creation', $validated['title']));
-        // }
-        // else {
-        //     Mail::to($this->mailtrapEmail)->send(new UserMail($nameObject->first_name, 'ticket_creation', $validated['title']));
-        // }
+        if ($user->role_id != 1){
+            Mail::send(new UserMail($user->first_name, 'ticket_creation', $validated['title']));
+        }
+        else {
+            Mail::send(new UserMail($nameObject->first_name, 'ticket_creation', $validated['title']));
+        }
 
-        // Mail::to($this->mailtrapEmail)->send(new UserMail($ticket->employee->first_name, 'ticket_assignment', $validated['title']));
-       
+        Mail::send(new UserMail($ticket->employee->first_name, 'ticket_assignment', $validated['title']));
+
         return redirect()->route('tickets.index')->with('message', 'Your ticket has been submitted successfully.');
     }
 
     public function show ($id) {
-        $ticket = Ticket::with(['attachments', 'histories'])->findOrFail($id); 
+        $ticket = Ticket::with(['attachments', 'histories'])->findOrFail($id);
         $employees = User::where('department_id', $ticket->department_id)
                     ->where('type_id', '!=', 2) //not inactive
                     ->get();
@@ -135,12 +133,12 @@ class TicketController extends Controller
         $priorities = Priority::all();
         $statuses = Status::all();
         $departments = Department::where('company_id', 1) //adish depts
-        ->get(); 
+        ->get();
 
         return view('tickets.edit-ticket', [
             'ticket' => $ticket,
             'employees' => $employees,
-            'histories' =>$histories, 
+            'histories' =>$histories,
             'priorities' => $priorities,
             'departments' => $departments,
             'statuses' => $statuses,
@@ -149,14 +147,14 @@ class TicketController extends Controller
 
     public function attachment($id)
     {
-        $attachment = Attachment::findOrFail($id); 
+        $attachment = Attachment::findOrFail($id);
         return view('partials.show', ['attachment' => $attachment]);
     }
 
     public function assigned () {
         $userId = Auth::guard('user')->id();
         $user = User::find($userId);
-        $userDepartment = $user->department->id; 
+        $userDepartment = $user->department->id;
 
         $departmentTickets = Ticket::where('department_id', $userDepartment)
         ->orderBy('created_at', 'desc')
@@ -164,12 +162,12 @@ class TicketController extends Controller
 
         $allTickets = Ticket::orderBy('created_at', 'desc')
         ->simplePaginate(10);
-        
+
         return view ('tickets.assigned-tickets', [
             'user' => $user,
             'departmentTickets' => $departmentTickets,
-            'allTickets' => $allTickets, 
-        ]); 
+            'allTickets' => $allTickets,
+        ]);
     }
 
 
@@ -179,8 +177,8 @@ class TicketController extends Controller
         $validated = $request->validate([
             "department_id" => 'required',
             "employee_id" => 'required',
-            "priority_id" => 'required', 
-            "status_id" => 'required', 
+            "priority_id" => 'required',
+            "status_id" => 'required',
         ]);
 
         $statusChanged = $ticket->status_id != $validated['status_id'];
@@ -198,7 +196,7 @@ class TicketController extends Controller
         //             Mail::to($this->mailtrapEmail)->send(new UserMail($employeeFirstName, 'ticket_assignment', $ticket->title));
         //         }
         // }
-        
+
         $ticket->update($validated);
 
         return back()->with('message', 'Your ticket has been updated successfully.');

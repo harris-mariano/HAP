@@ -121,4 +121,6 @@ return [
         ],
     ],
 
+    'mailtrap_email' => env('EMAIL', 'kuschell.amulong@adish.com.ph'),
+
 ];

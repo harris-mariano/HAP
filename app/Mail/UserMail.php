@@ -40,6 +40,7 @@ class UserMail extends Mailable
      */
     public function build()
     {
+        $mailtrapEmail = config('mail.mailtrap_email');
         $subject = '';
         $view = '';
 
@@ -80,7 +81,8 @@ class UserMail extends Mailable
                 break;
         }
 
-        return $this->from('helpdesk@adish.com.ph', 'Adish HAP')
+        return $this->to($mailtrapEmail)
+            ->from('helpdesk@adish.com.ph', 'Adish HAP')
             ->subject($subject)
             ->view($view)
             ->with([

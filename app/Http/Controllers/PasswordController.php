@@ -10,19 +10,12 @@ use App\Mail\UserMail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User; 
+use App\Models\User;
 
 class PasswordController extends Controller
 {
-    protected $mailtrapEmail;
-
-    public function __construct()
-    {
-        $this->mailtrapEmail = env('EMAIL');
-    }
-
     public function index () {
-        return view ('authentication.verify'); 
+        return view ('authentication.verify');
     }
 
     public function sendEmail (Request $request) {
@@ -37,8 +30,8 @@ class PasswordController extends Controller
         }
         //inactive account
         if ($user->type_id == 2) {
-            return back()->withErrors(['email' => 'Your account is inactive. Please contact administrator for assistance. 
-            '])->onlyInput('email'); 
+            return back()->withErrors(['email' => 'Your account is inactive. Please contact administrator for assistance.
+            '])->onlyInput('email');
         }
          //for newly created accounts
         if ($request->session()->has('email')) {
@@ -48,8 +41,8 @@ class PasswordController extends Controller
                 }
                 $request->session()->forget('email');
         }
-    
-        //success and forgot password 
+
+        //success and forgot password
         $token = Str::random(64);
         DB::table('password_reset_tokens')->insert([
             'email' => $validated['email'],
@@ -58,8 +51,8 @@ class PasswordController extends Controller
             'expires_at' => Carbon::now()->addMinutes(60),
         ]);
         $request->session()->forget('email');
-        Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'reset_password', null, null, null, null, null, null, null, $token));
-        return view ('authentication.confirmation'); 
+        Mail::send(new UserMail($user->first_name, 'reset_password', null, null, null, null, null, null, null, $token));
+        return view ('authentication.confirmation');
     }
 
     public function resetPassword ($token) {
@@ -72,7 +65,7 @@ class PasswordController extends Controller
 
         $email = $resetToken->email;
         return view('authentication.reset', [
-            'token' => $token, 
+            'token' => $token,
             'email' => $email]);
     }
 
@@ -84,11 +77,11 @@ class PasswordController extends Controller
                 'required',
                 'string',
                 'min:8',
-                'confirmed', 
-                'regex:/[a-z]/', 
-                'regex:/[A-Z]/', 
-                'regex:/[0-9]/', 
-                'regex:/[@$!%*#?&]/', 
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&]/',
             ],
         ]);
 
@@ -111,9 +104,9 @@ class PasswordController extends Controller
         $user->is_new = false; //to handle newly created accounts
         $user->save();
 
-        DB::table('password_reset_tokens')->where(['token' => $validated['token']])->delete(); 
+        DB::table('password_reset_tokens')->where(['token' => $validated['token']])->delete();
 
-        Mail::to($this->mailtrapEmail)->send(new UserMail($user->first_name, 'password_changed'));
+        Mail::send(new UserMail($user->first_name, 'password_changed'));
         return redirect()->intended('view/profile')->with('message', 'Your password has been updated successfully.');
     }
 
@@ -123,11 +116,11 @@ class PasswordController extends Controller
                 'required',
                 'string',
                 'min:8',
-                'confirmed', 
-                'regex:/[a-z]/', 
-                'regex:/[A-Z]/', 
-                'regex:/[0-9]/', 
-                'regex:/[@$!%*#?&]/', 
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&]/',
             ],
         ]);
 
@@ -151,11 +144,11 @@ class PasswordController extends Controller
                 'required',
                 'string',
                 'min:8',
-                'confirmed', 
-                'regex:/[a-z]/', 
-                'regex:/[A-Z]/', 
-                'regex:/[0-9]/', 
-                'regex:/[@$!%*#?&]/', 
+                'confirmed',
+                'regex:/[a-z]/',
+                'regex:/[A-Z]/',
+                'regex:/[0-9]/',
+                'regex:/[@$!%*#?&]/',
             ],
         ]);
 
