@@ -101,7 +101,7 @@
                     <div id="priority" class="mt-2 mb-5 w-full bg-[#EAEAEA] p-2 text-sm rounded-sm">{{ $ticket->priority->category }}</div>
                     @endif
                 </div>
-      </div> 
+      </div>
       <div class="flex flex-col px-2 h-auto mb-7">
         <label for="description" class="text-sm font-medium mb-2">Description</label>
         <div class="ql-editor mt-1 w-full h-auto bg-[#EAEAEA] p-2 text-sm rounded-sm">{!! $ticket->description !!}</div>
@@ -134,7 +134,7 @@
             </div>
             @endforeach
             </div>
-            @else 
+            @else
             <label for="attachments" class="flex flex-col items-center justify-center w-full h-30 border border-gray-300 rounded-sm cursor-pointer mt-2">
                 <div class="flex flex-col items-center justify-center pt-5 pb-6">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 ">
@@ -164,7 +164,7 @@
                 <div class="flex flex-row items-center gap-x-2 ">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 text-in-progress">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                      </svg>                      
+                      </svg>
                     <p id="file-name" class="text-sm text-in-progress">Attach a photo or video</p>
                 </div>
                 <input id="photo" name="photo" type="file" class="hidden" accept=".jpg, .jpeg, .png, .bmp, .mov, .mp4"/>
@@ -184,8 +184,10 @@
         <div class="border-b p-2 ">
             <div class="flex flex-row items-center justify-between">
                 <div class="flex flex-row items-center gap-x-2">
-                    @if ($comment->user && isset($comment->user->profile_picture))
+                    @if ($comment->user && isset($comment->user->profile_picture) && !$comment->user->is_google_login)
                         <img src="{{ asset('storage/' . $comment->user->profile_picture) }}" class="w-8 h-8 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+                    @elseif ($comment->user && $comment->user->is_google_login)
+                        <img src="{{ asset($comment->user->profile_picture) }}" class="w-8 h-8 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
                     @else
                         <img src="{{ asset('images/user.png') }}" class="w-8 h-8" alt="Default Profile Picture" />
                     @endif
@@ -211,7 +213,7 @@
         </div>
         @endforeach
     </div>
-    
+
     {{-- to replace by cron jobs --}}
     <div class="w-full bg-white p-5 rounded-lg shadow">
         <p class="text-sm font-semibold mb-3">Ticket Logs</p>
@@ -223,7 +225,7 @@
         </div>
         @endif
         @endforeach
-        @if ($ticket->is_admin_creation == true ) 
+        @if ($ticket->is_admin_creation == true )
         <div class="flex flex-col gap-y-1 border-b p-2">
             <p class="text-xs text-gray-500">{{ $ticket->created_at->format('F d, Y h:i A') }}</p>
             <p class="text-sm">Ticket has set its priority to {{$ticket->priority->category}} by {{$ticket->admin->first_name}} {{$ticket->admin->last_name}}.</p>
@@ -236,7 +238,7 @@
         @endif
         <div class="flex flex-col gap-y-1 border-b p-2">
             <p class="text-xs text-gray-500">{{ $ticket->created_at->format('F d, Y h:i A') }}</p>
-            @if ($ticket->is_admin_creation == true) 
+            @if ($ticket->is_admin_creation == true)
             <p class="text-sm">Ticket has set its status to New by {{$ticket->admin->first_name}} {{$ticket->admin->last_name}}.</p>
             @else
             <p class="text-sm">Ticket has set its status to New by {{$ticket->user->first_name}} {{$ticket->user->last_name}}.</p>
@@ -245,7 +247,7 @@
         <div class="flex flex-col gap-y-1 border-b p-2">
             <p class="text-xs text-gray-500">{{ $ticket->created_at->format('F d, Y h:i A') }}</p>
             @if($ticket->employee_id)
-            @if ($ticket->is_admin_creation == true) 
+            @if ($ticket->is_admin_creation == true)
             <p class="text-sm">Ticket has been assigned to {{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }} by {{$ticket->admin->first_name}} {{$ticket->admin->last_name}}.</p>
             @else
             <p class="text-sm">Ticket has been assigned to {{ $ticket->employee->first_name }} {{ $ticket->employee->last_name }} by {{$ticket->user->first_name}} {{$ticket->user->last_name}}.</p>
@@ -256,7 +258,7 @@
         </div>
         <div class="flex flex-col gap-y-1 border-b p-2">
             <p class="text-xs text-gray-500">{{ $ticket->created_at->format('F d, Y h:i A') }}</p>
-            @if ($ticket->is_admin_creation == true) 
+            @if ($ticket->is_admin_creation == true)
             <p class="text-sm">Ticket has been created by {{$ticket->admin->first_name}} {{$ticket->admin->last_name}} for {{$ticket->user->first_name}} {{$ticket->user->last_name}}.</p>
             @else
             <p class="text-sm">Ticket has been created by {{$ticket->user->first_name}} {{$ticket->user->last_name}} .</p>
@@ -265,10 +267,10 @@
     </div>
     </div>
 </div>
-    
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-      
+
     const photo = document.getElementById('photo');
       const fileName = document.getElementById('file-name');
 
@@ -288,7 +290,7 @@
     $('#department').change(function() {
         var department = $(this).val();
         $.ajax({
-            url: '{{ route("get.users") }}', 
+            url: '{{ route("get.users") }}',
             type: 'GET',
             data: { department: department },
             success: function(data) {

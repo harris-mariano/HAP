@@ -11,7 +11,7 @@
             <div class="flex flex-row items-center">
             <p class="text-sm font-semibold">All Users</p>
             <a href="{{ route('users.create') }}" class="p-2 rounded-sm ml-auto text-sm font-semibold text-custom-orange mr-1 hover:bg-custom-orange hover:text-white">Create New
-            </a> 
+            </a>
         </div>
             <div class="relative flex items-center mt-5">
                 <input type="text" id="searchUser" placeholder="Type a name here" class="bg-gray-100 p-2 pr-10 text-sm rounded-sm w-full">
@@ -56,8 +56,10 @@
                     @foreach($allUsers as $user)
                     <tr class="border-b">
                         <td class="px-6 py-4">
-                            @if ($user->profile_picture)
+                            @if ($user->profile_picture && !$user->is_google_login)
                             <img src="{{ asset('storage/' . $user->profile_picture) }}" class="w-10 h-10 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+                            @elseif ($user->profile_picture && $user->is_google_login)
+                            <img src="{{ asset($user->profile_picture) }}" class="w-10 h-10 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
                             @else
                             <img src="{{ asset('images/user.png') }}" class="w-10 h-10" alt="Default Profile Picture" />
                             @endif
@@ -88,7 +90,7 @@
                 <div class="mt-5">
                     {{ $allUsers->links() }}
                 </div>
-            </div>       
+            </div>
       </div>
     </div>
 

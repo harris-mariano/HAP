@@ -24,6 +24,10 @@
                     @enderror
                     <button id="loginButton" type="submit" class="w-full p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Login</button>
             </form>
+            <p class="text-sm text-center my-3">or</p>
+                <a href="{{ route('login.google') }}">
+                     <button id="googleButton" class="w-full p-2 bg-blue-500 rounded-sm text-white text-sm font-semibold hover:bg-blue-500">Login with Google</button>
+                </a>
             <p class="text-sm text-center mt-3">No account yet? <a href="{{route('view.contact')}}" class="text-custom-orange underline hover:text-orange-500">Contact us</a>.</p>
         </div>
     </div>

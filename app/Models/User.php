@@ -18,17 +18,19 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'email', 
-        'password', 
-        'first_name', 
+        'email',
+        'password',
+        'first_name',
         'middle_name',
-        'last_name', 
-        'company_id', 
-        'position', 
+        'last_name',
+        'company_id',
+        'position',
         'department_id',
         'profile_picture',
         'role_id',
         'type_id',
+        'is_new',
+        'is_google_login'
     ];
 
     /**
@@ -77,12 +79,12 @@ class User extends Authenticatable
         return $this->belongsTo(Company::class, 'company_id');
     }
 
-    public function type () 
+    public function type ()
     {
         return $this->belongsTo(Type::class, 'type_id');
     }
 
-    public function role () 
+    public function role ()
     {
         return $this->belongsTo(Role::class, 'role_id');
     }

@@ -14,18 +14,25 @@
               @csrf
               <div class="flex flex-col items-center justify-center">
                 <label for="profile_picture" class="text-sm font-medium">Profile Picture</label>
-                <img id="profile_picture_preview" src="{{ Auth::guard('user')->user()->profile_picture ? asset('storage/' . Auth::guard('user')->user()->profile_picture) : asset('images/user.png') }}" class="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+                @if (Auth::guard('user')->user()->profile_picture && Auth::guard('user')->user()->is_google_login)
+                    <img id="profile_picture_preview" src="{{ Auth::guard('user')->user()->profile_picture }}" class="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+                @elseif (Auth::guard('user')->user()->profile_picture && !Auth::guard('user')->user()->is_google_login)
+                    <img id="profile_picture_preview" src="{{ Auth::guard('user')->user()->profile_picture ? asset('storage/' . Auth::guard('user')->user()->profile_picture) : asset('images/user.png') }}" class="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+                @endif
+
+                @if (Auth::guard('user')->user()->profile_picture && !Auth::guard('user')->user()->is_google_login)
                 <input type="file" name="profile_picture" id="profile_picture" class="text-sm file:mr-2 file:py-2 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-[#EAEAEA]" accept=".png, .jpg, .jpeg, .tiff, .tif">
                 <p class="text-xs text-gray-400 mb-5 mt-1">Accepts formats such as JPEG, PNG, BMP, TIFF, and must not exceed into 2MB.</p>
                 @error('profile_picture')
                     <p class="text-xs text-red-700 -mt-5">{{$message}}</p>
                 @enderror
+                @endif
             </div>
             <div class="grid grid-cols-2 gap-x-24 px-2 py-3">
                 <div class="flex flex-col">
                     <label for="first_name" class="text-sm font-medium">First Name</label>
                     @if(!Auth::guard('user')->user()->first_name)
-                    <input type="text" name="first_name" id="first_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{  Auth::guard('user')->user()->first_name }}" 
+                    <input type="text" name="first_name" id="first_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{  Auth::guard('user')->user()->first_name }}"
                     pattern="[A-Za-z -]+"
                     title="The input type accepts letters, hypen, and spaces only.">
                     @error('first_name')
@@ -80,8 +87,9 @@
             </div>
           </form>
           @endauth
-        </div>   
-        
+        </div>
+
+        @if (Auth::guard('user')->user()->profile_picture && !Auth::guard('user')->user()->is_google_login)
         <div class="w-full bg-white p-5 rounded-lg shadow mt-8">
           <p class="text-sm font-semibold">Change Password</p>
           <form action="/update/password" method="POST">
@@ -115,20 +123,22 @@
             <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Change Password</button>
             </div>
         </form>
-      </div>    
+      </div>
+    @endif
+
     </div>
     <script>
       document.addEventListener('DOMContentLoaded', function() {
           function sanitizeInput(event) {
               event.target.value = event.target.value.replace(/[^A-Za-z\s-]/g, '');
           }
-      
+
           const inputs = [
               document.getElementById('first_name'),
               document.getElementById('middle_name'),
               document.getElementById('last_name')
           ];
-      
+
           inputs.forEach(input => {
               input.addEventListener('input', sanitizeInput);
           });
@@ -137,16 +147,16 @@
         const imagePreview = document.getElementById('profile_picture_preview');
 
         fileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0]; 
-            
+            const file = event.target.files[0];
+
             if (file) {
                 const reader = new FileReader();
-                
+
                 reader.onload = function(e) {
                     imagePreview.src = e.target.result;
                 };
-                
-                reader.readAsDataURL(file); 
+
+                reader.readAsDataURL(file);
             } else {
                 imagePreview.src = '{{ asset('images/user.png') }}';
             }

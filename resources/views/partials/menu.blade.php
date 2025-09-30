@@ -5,15 +5,17 @@
       </a>
       @auth('user')
         <div class=" w-1/4 flex flex-row gap-x-3 items-center">
-          @if (Auth::guard('user')->user()->profile_picture)
-          <img src="{{ asset('storage/' . Auth::guard('user')->user()->profile_picture) }}" class="w-10 h-10 rounded-full object-cover" alt="Profile Picture" />
+          @if (Auth::guard('user')->user()->profile_picture && Auth::guard('user')->user()->is_google_login)
+            <img src="{{ Auth::guard('user')->user()->profile_picture }}" class="w-10 h-10 rounded-full object-cover" alt="Profile Picture" />
+          @elseif (Auth::guard('user')->user()->profile_picture && !Auth::guard('user')->user()->is_google_login)
+            <img src="{{ asset('storage/' . Auth::guard('user')->user()->profile_picture) }}" class="w-10 h-10 rounded-full object-cover" alt="Profile Picture" />
           @else
           <img src="{{ asset('images/user.png') }}" class="w-10 h-10" alt="Default Profile Picture" />
           @endif
           <a href="{{route('view.profile')}}">
           <div>
                 <p class="text-sm font-medium">{{ Auth::guard('user')->user()->first_name }} {{ Auth::guard('user')->user()->last_name }}</p>
-                <p class="text-sm">{{ Auth::guard('user')->user()->position }} at {{ Auth::guard('user')->user()->company->name }}</p> 
+                <p class="text-sm">{{ Auth::guard('user')->user()->position }} at {{ Auth::guard('user')->user()->company->name }}</p>
         </div>
       </a>
         </div>

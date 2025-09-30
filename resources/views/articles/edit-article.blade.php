@@ -9,9 +9,11 @@
         <div class="w-full bg-white p-5 rounded-lg shadow">
             <div class="flex flex-row justify-between p-2 items-center">
                 <div class="flex flex-row items-center gap-x-2">
-                    @if($article->user->profile_picture)
-                    <img src="{{ asset('storage/' . $article->user->profile_picture) }}" class="w-10 h-10 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
-                    @else 
+                    @if($article->user->profile_picture && !$article->user->is_google_login)
+                        <img src="{{ asset('storage/' . $article->user->profile_picture) }}" class="w-10 h-10 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+                    @elseif($article->user->profile_picture && $article->user->is_google_login)
+                        <img src="{{ asset( $article->user->profile_picture) }}" class="w-10 h-10 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+                    @else
                     <img src="{{ asset('images/user.png') }}" class="w-10 h-10 mb-3 mt-2" alt="Default Profile Picture" />
                     @endif
                     <div class="flex flex-col text-sm">

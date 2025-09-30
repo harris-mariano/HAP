@@ -29,13 +29,16 @@ Route::get('/', [LoginController::class, 'index'])->name('login.user');
 Route::post('/login/user', [LoginController::class, 'store']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('checkRole:1,2,3');
 
-//ajax routes 
+Route::get('/login/google', [LoginController::class, 'loginWithGoogle'])->name('login.google');
+Route::get('login/google/callback', [LoginController::class, 'handleGoogleCallback']);
+
+//ajax routes
 //route to get users by department
 Route::get('department/users', [UserController::class, 'getUsers'])->name('get.users')->middleware('checkRole:1,2,3');
 //route to get departments by company
 Route::get('company/departments', [UserController::class, 'getDepartments'])->name('get.departments')->middleware('checkRole:1');
 
-//view dashboard 
+//view dashboard
 Route::get('/dashboard/user', [UserController::class, 'dashboard'])->name('user.dashboard')->middleware('checkRole:1,2,3');
 
 //user controller
@@ -54,10 +57,10 @@ Route::resource('tickets', TicketController::class)->only([
 Route::get('/attachments/{id}', [TicketController::class, 'attachment'])->name('show.attachment')->middleware('checkRole:1,2,3');
 
 //to view assigned tickets
-Route::get('assigned/tickets', [TicketController::class, 'assigned'])->name('tickets.assigned')->middleware('checkRole:1,2'); 
+Route::get('assigned/tickets', [TicketController::class, 'assigned'])->name('tickets.assigned')->middleware('checkRole:1,2');
 
 //to add comment
-Route::post('/add/comment/{id}', [CommentController::class, 'store'])->name('comment.create')->middleware('checkRole:1,2,3'); 
+Route::post('/add/comment/{id}', [CommentController::class, 'store'])->name('comment.create')->middleware('checkRole:1,2,3');
 
 //article controller
 Route::resource('articles', ArticleController::class)->only([
@@ -80,7 +83,7 @@ Route::middleware('checkRole:1')->group(function () {
     Route::put('/change/status/{user}', [ProfileController::class, 'status'])->name('change.status');
     //status change
     Route::put('/change/password/{user}', [PasswordController::class, 'changePassword'])->name('change.password');
-    
+
 });
 
 Route::middleware('checkRole:1')->group(function () {
@@ -101,15 +104,15 @@ Route::get('/reset/password', [PasswordController::class, 'index'])->name('view.
 //send email link and push data in db
 Route::post('/send/email',[PasswordController::class, 'sendEmail'])->name('send.email');
 //view reset password page
-Route::get('/reset/password/{token}', [PasswordController::class, 'resetPassword'])->name('reset.link'); 
+Route::get('/reset/password/{token}', [PasswordController::class, 'resetPassword'])->name('reset.link');
 // reset password user for forgot password/newly created accts
 Route::put('/user/password', [PasswordController::class, 'resetUserPassword']);
 
 // reset password auth user
 Route::put('/update/password', [PasswordController::class, 'updateUserPassword']);
 
-Route::get('/contact', [ContactController::class, 'index'])->name('view.contact'); 
-Route::post('/submit/contact', [ContactController::class, 'store'])->name('submit.contact'); 
+Route::get('/contact', [ContactController::class, 'index'])->name('view.contact');
+Route::post('/submit/contact', [ContactController::class, 'store'])->name('submit.contact');
 
 
 

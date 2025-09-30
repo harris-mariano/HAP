@@ -13,17 +13,24 @@
               @csrf
               <div class="flex flex-col items-center justify-center">
                 <label for="profile_picture" class="text-sm font-medium">Profile Picture</label>
-                <img id="profile_picture_preview" src="{{ $user->profile_picture ? asset('storage/' . $user->profile_picture) : asset('images/user.png') }}" class="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+                @if (!$user->is_google_login)
+                    <img id="profile_picture_preview" src="{{ $user->profile_picture ? asset('storage/' . $user->profile_picture) : asset('images/user.png') }}" class="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+                @else
+                    <img id="profile_picture_preview" src="{{ $user->profile_picture ? asset($user->profile_picture) : asset('images/user.png') }}" class="w-20 h-20 mb-3 mt-2 rounded-full object-cover" alt="Profile Picture" />
+                @endif
+
+                @if (!$user->is_google_login)
                 <input type="file" name="profile_picture" id="profile_picture" class="text-sm file:mr-2 file:py-2 file:px-3 file:rounded-sm file:border-0 file:text-sm file:bg-[#EAEAEA]" accept=".png, .jpg, .jpeg, .tiff, .tif">
                 <p class="text-xs text-gray-400 mb-5 mt-1">Accepts formats such as JPEG, PNG, BMP, TIFF, and must not exceed into 2MB.</p>
                 @error('profile_picture')
                     <p class="text-xs text-red-700 -mt-5">{{$message}}</p>
                 @enderror
+                @endif
             </div>
             <div class="grid grid-cols-2 gap-x-24 px-2 py-3">
                 <div class="flex flex-col">
                     <label for="first_name" class="text-sm font-medium">First Name</label>
-                    <input type="text" name="first_name" id="first_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{ $user->first_name }}" 
+                    <input type="text" name="first_name" id="first_name" class="mt-2 mb-7 w-full border border-black p-2 text-sm rounded-sm" value="{{ $user->first_name }}"
                     pattern="[A-Za-z\s-]+"
                     title="The input type accepts letters, hypen, and spaces only.">
                     @error('first_name')
@@ -105,7 +112,7 @@
                 <input type="hidden" name="type_id" value="2">
                 <button type="submit" class="w-32 p-2 mt-5 bg-closed rounded-sm text-white text-sm font-semibold hover:bg-red-600" onclick="confirmation(event)">Disable Account</button>
             </form>
-              @else 
+              @else
               <form action="{{route('change.status', ['user' => $user->id])}}" method="POST">
                 @method('PUT')
                 @csrf
@@ -115,7 +122,9 @@
               @endif
             </div>
             </div>
-        </div>    
+        </div>
+
+        @if (!$user->is_google_login)
         <div class="w-full bg-white p-5 rounded-lg shadow mt-8">
           <p class="text-sm font-semibold">Change Password</p>
           <form action="{{ route('change.password', ['user' => $user->id]) }}" method="POST">
@@ -149,7 +158,8 @@
             <button type="submit" class="w-32 p-2 mt-5 bg-custom-orange rounded-sm text-white text-sm font-semibold hover:bg-orange-500">Change Password</button>
             </div>
         </form>
-      </div>   
+      </div>
+      @endif
 
     </div>
     <script>
@@ -157,14 +167,14 @@
           function sanitizeInput(event) {
               event.target.value = event.target.value.replace(/[^A-Za-z\s-]/g, '');
           }
-      
+
           const inputs = [
               document.getElementById('first_name'),
               document.getElementById('middle_name'),
               document.getElementById('last_name'),
               document.getElementById('position')
           ];
-      
+
           inputs.forEach(input => {
               input.addEventListener('input', sanitizeInput);
           });
@@ -173,16 +183,16 @@
         const imagePreview = document.getElementById('profile_picture_preview');
 
         fileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0]; 
-            
+            const file = event.target.files[0];
+
             if (file) {
                 const reader = new FileReader();
-                
+
                 reader.onload = function(e) {
                     imagePreview.src = e.target.result;
                 };
-                
-                reader.readAsDataURL(file); 
+
+                reader.readAsDataURL(file);
             } else {
                 imagePreview.src = '{{ asset('images/user.png') }}';
             }
@@ -203,9 +213,9 @@
     $(document).ready(function() {
     $('#company_id').change(function() {
         var company = $(this).val();
-        console.log("company", company); 
+        console.log("company", company);
         $.ajax({
-            url: '{{ route("get.departments") }}', 
+            url: '{{ route("get.departments") }}',
             type: 'GET',
             data: { company: company },
             success: function(data) {
