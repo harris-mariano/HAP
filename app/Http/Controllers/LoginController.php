@@ -65,8 +65,8 @@ class LoginController extends Controller
             $email = $googleUser->getEmail();
             $domain = substr(strrchr($email, "@"), 1);
 
-            if ($domain !== 'adish.com') {
-                return back()->withErrors(['email' => 'Only users with company related email addresses are permitted to log in.']);
+            if ($domain !== 'adish.com.ph') {
+                return redirect('/')->withErrors(['email' => 'Only users with company related email addresses are permitted to log in.']);
             }
 
             $user = User::where('email', $googleUser->getEmail())->first();

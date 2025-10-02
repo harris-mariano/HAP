@@ -74,7 +74,7 @@ class UserMail extends Mailable
                 $view = 'email.password-changed';
             break;
             case 'new_message':
-                $subject = 'New Message';
+                $subject = 'New Contact Form Submission ';
                 $view = 'email.new-message';
             break;
             default:
